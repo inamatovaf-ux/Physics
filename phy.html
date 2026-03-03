@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8-сынып Физика – Көз оптикасы</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#56ab2f;--lime:#a8e063;--yellow:#f9d423;--radius:20px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#f0fce0;min-height:100vh;}
+.page{display:none;min-height:100vh;flex-direction:column;}
+.page.active{display:flex;}
+.page-header{background:linear-gradient(90deg,#56ab2f,#a8e063,#f9d423);padding:18px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 16px rgba(86,171,47,.2);}
+.page-header .back-btn{background:rgba(255,255,255,.25);border:none;color:#fff;padding:8px 16px;border-radius:50px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;transition:all .2s;}
+.page-header .back-btn:hover{background:rgba(255,255,255,.4);}
+.page-title{color:#fff;font-weight:800;font-size:1.1rem;flex:1;}
+.page-num{background:rgba(255,255,255,.25);color:#fff;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:700;}
+#cover{background:linear-gradient(135deg,#e8fbd0,#fffde4,#d4f5a0);}
+.cover-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center;}
+.cover-eye{font-size:5rem;animation:float 3s ease-in-out infinite;margin-bottom:16px;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.cover-title{font-family:'Comfortaa',cursive;font-size:clamp(1.8rem,5vw,2.8rem);color:#2d6a00;margin-bottom:8px;}
+.cover-sub{color:#56ab2f;font-size:1.1rem;font-weight:600;margin-bottom:32px;}
+.cover-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;width:100%;max-width:600px;margin-bottom:40px;}
+.cover-card{background:#fff;border-radius:16px;padding:16px;border:2px solid #d4f5a0;box-shadow:0 4px 16px rgba(86,171,47,.1);cursor:pointer;transition:all .25s;}
+.cover-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(86,171,47,.2);border-color:#a8e063;}
+.cover-card-num{font-size:1.8rem;font-weight:900;color:#a8e063;line-height:1;}
+.cover-card-title{font-size:.78rem;color:#4a7020;font-weight:700;margin-top:6px;line-height:1.3;}
+.cover-card-pts{font-size:.72rem;color:#56ab2f;margin-top:4px;}
+.start-btn{background:linear-gradient(90deg,#56ab2f,#a8e063);color:#fff;border:none;padding:18px 48px;border-radius:50px;font-size:1.2rem;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(86,171,47,.35);transition:all .25s;font-family:'Nunito',sans-serif;}
+.start-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(86,171,47,.45);}
+.task-body{flex:1;padding:24px 20px;max-width:760px;width:100%;margin:0 auto;}
+.task-card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 32px rgba(86,171,47,.12);border:2px solid #e8f5d0;margin-bottom:20px;}
+.info-text{font-size:.9rem;color:#5a7a30;margin-bottom:16px;line-height:1.7;background:#f8fef2;padding:10px 14px;border-radius:10px;border-left:3px solid #a8e063;}
+.progress-strip{background:#d4f5a0;height:10px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#56ab2f,#a8e063,#f9d423);transition:width .5s;}
+.bottom-nav{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:#fff;border-top:2px solid #e8f5d0;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
+.nav-score{font-weight:700;color:#56ab2f;font-size:.9rem;}
+.nav-btn{background:linear-gradient(90deg,#56ab2f,#a8e063);color:#fff;border:none;padding:12px 28px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .25s;box-shadow:0 4px 12px rgba(86,171,47,.3);}
+.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(86,171,47,.4);}
+.nav-btn.yellow{background:linear-gradient(90deg,#f9d423,#f0c040);color:#4a3000;}
+.feedback{padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;margin-top:12px;display:none;animation:fadeUp .3s ease;}
+.feedback.show{display:block;}
+.feedback.correct{background:#e8fcd0;color:#2d6a00;border-left:4px solid #56ab2f;}
+.feedback.wrong{background:#fde8e8;color:#a00;border-left:4px solid #e74c3c;}
+.feedback.partial{background:#fffde4;color:#6a4000;border-left:4px solid #f9d423;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hint-box{background:#fffde4;border-left:4px solid #f9d423;border-radius:8px;padding:12px 16px;font-size:.85rem;color:#6a5000;margin-top:10px;display:none;}
+.hint-box.show{display:block;}
+.btn{padding:10px 22px;border:none;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .25s;}
+.btn-primary{background:linear-gradient(90deg,#56ab2f,#a8e063);color:#fff;box-shadow:0 4px 12px rgba(86,171,47,.3);}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-secondary{background:#f0f9e4;color:#56ab2f;border:2px solid #a8e063;}
+.canvas-wrap{width:100%;border-radius:14px;overflow:hidden;background:#fff;cursor:crosshair;border:2px solid #ccc;}
+#periscope-canvas{width:100%;display:block;}
+.canvas-controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+
+/* TASK 2 */
+.eye-cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:14px;}
+.eye-case{border:2px solid #e0f0c0;border-radius:14px;padding:14px;text-align:center;background:#f8fef2;}
+.eye-case svg{width:100%;max-width:160px;height:auto;margin-bottom:8px;}
+.eye-case-title{font-weight:700;font-size:.85rem;color:#2d6a00;margin-bottom:10px;}
+.radio-group{display:flex;flex-direction:column;gap:6px;text-align:left;}
+.radio-option{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:8px;transition:background .2s;font-size:.82rem;}
+.radio-option:hover{background:#e0f5c0;}
+.radio-option input{accent-color:#56ab2f;width:15px;height:15px;flex-shrink:0;}
+.sec-label{display:block;font-weight:700;color:#3a6000;font-size:.82rem;margin:8px 0 4px;}
+/* TASK 3 */
+.tf-list{display:flex;flex-direction:column;gap:12px;}
+.tf-item{display:flex;align-items:center;gap:12px;background:#f8fef2;border:2px solid #e0f0c0;border-radius:12px;padding:14px;transition:border-color .3s;}
+.tf-item.answered{border-color:#a8e063;}
+.tf-text{flex:1;font-size:.9rem;color:#2a4a00;font-weight:600;line-height:1.4;}
+.tf-btns{display:flex;gap:8px;flex-shrink:0;}
+.tf-btn{padding:7px 14px;border:2px solid #e0f0c0;border-radius:50px;font-weight:700;font-size:.8rem;cursor:pointer;background:#fff;transition:all .2s;font-family:'Nunito',sans-serif;}
+.tf-btn.true-btn{color:#56ab2f;}.tf-btn.false-btn{color:#e74c3c;}
+.tf-btn.selected-true{background:#56ab2f;color:#fff;border-color:#56ab2f;}
+.tf-btn.selected-false{background:#e74c3c;color:#fff;border-color:#e74c3c;}
+/* TASK 4 */
+.match-area{display:flex;flex-direction:column;gap:10px;}
+.match-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;}
+.match-term{background:linear-gradient(90deg,#56ab2f,#7ac84a);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;font-size:.85rem;text-align:center;}
+.match-arrow{color:#a8e063;font-size:1.4rem;flex-shrink:0;}
+.match-select{border:2px solid #a8e063;border-radius:12px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:600;color:#2d6a00;background:#f8fef2;cursor:pointer;width:100%;outline:none;}
+.match-select.correct-ans{border-color:#56ab2f;background:#e8fcd0;}
+.match-select.wrong-ans{border-color:#e74c3c;background:#fde8e8;}
+/* TASK 5 */
+.lens-canvas-wrap{width:100%;border-radius:14px;overflow:hidden;background:#e8f9ff;border:2px solid #c0e8f8;}
+#lens-canvas{width:100%;display:block;}
+.lens-options{display:flex;justify-content:center;gap:16px;margin-top:16px;flex-wrap:wrap;}
+.lens-option{padding:12px 22px;border:3px solid #e0f0c0;border-radius:14px;background:#f8fef2;cursor:pointer;font-weight:700;font-size:.9rem;color:#2d6a00;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.lens-option:hover{border-color:#56ab2f;background:#e8f9d0;transform:translateY(-2px);}
+.lens-option.selected{border-color:#56ab2f;background:#d4f5a0;}
+.lens-option svg{width:64px;height:42px;}
+/* TASK 6 */
+.calc-problem{background:linear-gradient(135deg,#f0fce0,#fffde4);border:2px solid #c8e890;border-radius:16px;padding:20px;margin-bottom:16px;}
+.calc-problem p{font-size:.92rem;color:#2d4a00;line-height:1.8;margin-bottom:8px;}
+.formula-box{background:#fff;border:2px solid #a8e063;border-radius:10px;padding:12px;margin:10px 0;text-align:center;font-size:1.1rem;font-weight:700;color:#2d6a00;}
+.calc-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.calc-step{display:flex;align-items:center;gap:10px;}
+.step-label{font-size:.82rem;font-weight:700;color:#56ab2f;white-space:nowrap;min-width:130px;}
+.step-input{flex:1;border:2px solid #a8e063;border-radius:10px;padding:9px 14px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;color:#2d4a00;outline:none;background:#f8fef2;}
+.step-unit{font-size:.82rem;color:#7ab040;font-weight:700;white-space:nowrap;}
+.calc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.calc-opt{padding:12px;border:2px solid #e0f0c0;border-radius:12px;background:#f8fef2;cursor:pointer;text-align:center;font-weight:700;font-size:.88rem;color:#2d6a00;transition:all .2s;}
+.calc-opt:hover{border-color:#56ab2f;background:#e8f9d0;}
+.calc-opt.correct-sel{border-color:#56ab2f;background:#c8f0a0;color:#1a5000;}
+.calc-opt.wrong-sel{border-color:#e74c3c;background:#fde8e8;color:#a00;}
+/* RESULT */
+#result-page{background:linear-gradient(135deg,#e8fbd0,#fffde4);}
+.result-body{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 20px;}
+.result-card{background:#fff;border-radius:28px;padding:36px 28px;max-width:500px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(86,171,47,.15);border:3px solid #d4f5a0;animation:popIn .4s cubic-bezier(.17,.67,.38,1.4);}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.result-card::before{content:'';display:block;height:8px;background:linear-gradient(90deg,#56ab2f,#a8e063,#f9d423);border-radius:4px;margin-bottom:24px;}
+.result-emoji{font-size:4rem;margin-bottom:8px;display:block;}
+.result-score{font-size:3.8rem;font-weight:900;background:linear-gradient(90deg,#56ab2f,#f9d423);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.result-max{color:#aaa;font-size:1rem;margin-bottom:12px;}
+.result-pct{font-size:1.7rem;font-weight:800;color:#56ab2f;margin-bottom:10px;}
+.stars{font-size:2rem;letter-spacing:4px;margin-bottom:14px;}
+.result-msg{background:linear-gradient(90deg,#f0fce0,#fffde4);border-radius:14px;padding:14px;font-size:1rem;font-weight:700;color:#2d6a00;margin-bottom:20px;border:2px solid #d4f5a0;}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;}
+.bd-row{background:#f8fef2;border-radius:10px;padding:8px 12px;font-size:.82rem;color:#4a7020;display:flex;justify-content:space-between;}
+.bd-row span{font-weight:800;color:#56ab2f;}
+.reset-btn{background:linear-gradient(90deg,#56ab2f,#a8e063);color:#fff;border:none;padding:14px 36px;border-radius:50px;font-size:1rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+.confetti-piece{position:fixed;width:12px;height:12px;border-radius:2px;animation:cFall 1.5s ease forwards;pointer-events:none;z-index:9999;}
+@keyframes cFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@media(max-width:520px){.eye-cases{grid-template-columns:1fr}.match-row{grid-template-columns:1fr}.match-arrow{display:none}.calc-options{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page active" id="cover">
+  <div class="cover-body">
+    <div class="cover-eye">👁️</div>
+    <div class="cover-title">Көз – оптикалық жүйе</div>
+    <div class="cover-sub">8-сынып физикасы · Формативті бағалау · 22 балл</div>
+    <div class="cover-cards">
+      <div class="cover-card" onclick="goPage('p1')"><div class="cover-card-num">1</div><div class="cover-card-title">Перископ – сәуле жолы</div><div class="cover-card-pts">6 балл</div></div>
+      <div class="cover-card" onclick="goPage('p2')"><div class="cover-card-num">2</div><div class="cover-card-title">Көздің ақауын анықта</div><div class="cover-card-pts">4 балл</div></div>
+      <div class="cover-card" onclick="goPage('p3')"><div class="cover-card-num">3</div><div class="cover-card-title">Дұрыс / Бұрыс</div><div class="cover-card-pts">4 балл</div></div>
+      <div class="cover-card" onclick="goPage('p4')"><div class="cover-card-num">4</div><div class="cover-card-title">Сәйкестендіру</div><div class="cover-card-pts">4 балл</div></div>
+      <div class="cover-card" onclick="goPage('p5')"><div class="cover-card-num">5</div><div class="cover-card-title">Линзаны таңда</div><div class="cover-card-pts">2 балл</div></div>
+      <div class="cover-card" onclick="goPage('p6')"><div class="cover-card-num">6</div><div class="cover-card-title">Есеп шығару</div><div class="cover-card-pts">2 балл</div></div>
+    </div>
+    <button class="start-btn" onclick="goPage('p1')">Бастау →</button>
+  </div>
+</div>
+
+<!-- PAGE 1: PERISCOPE -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('cover')">← Артқа</button>
+    <div class="page-title">Тапсырма 1 – Перископ</div>
+    <div class="page-num">6 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:0%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="info-text">Суретте қолдан жасалған перископ көрсетілген. <strong>Жарық сәулесінің жолын сызыңыз:</strong> жарық сәулесі сол жақтан кіріп, екі жазық айнада шағылып, оң жақтағы көзге жетуі тиіс.</div>
+      <div class="canvas-wrap">
+        <canvas id="periscope-canvas"></canvas>
+      </div>
+      <div class="canvas-controls">
+        <button class="btn btn-secondary" onclick="clearCanvas()">🗑 Тазалау</button>
+        <button class="btn btn-primary" onclick="checkPeriscope()">✔ Тексеру</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+      <div class="hint-box" id="hint1">💡 <b>Кеңес:</b> Жарық сол жақтан горизонталь кіреді → жоғарғы оң айнада (45°) шағылып төмен бұрылады → төменгі сол айнада (45°) шағылып оңға бұрылады → көзге жетеді.</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns1">0 / 6 балл</div>
+    <button class="nav-btn" onclick="goPage('p2')">Келесі →</button>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('p1')">← Артқа</button>
+    <div class="page-title">Тапсырма 2 – Көздің ақауы</div>
+    <div class="page-num">4 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:16%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="info-text">Суреттерде сәуленің фокусталу жағдайы көрсетілген. Әр жағдай үшін <strong>ақау атауын</strong> және <strong>түзету линзасын</strong> таңдаңыз.</div>
+      <div class="eye-cases">
+        <div class="eye-case">
+          <svg viewBox="0 0 170 100"><ellipse cx="85" cy="50" rx="65" ry="44" fill="#fff9f0" stroke="#c8a060" stroke-width="2"/><ellipse cx="85" cy="50" rx="50" ry="32" fill="#ffe8c8"/><circle cx="85" cy="50" r="21" fill="#8b5e20"/><circle cx="85" cy="50" r="11" fill="#2c1a00"/><circle cx="91" cy="43" r="4" fill="white" opacity="0.8"/><path d="M148 18 Q165 50 148 82" fill="none" stroke="#56ab2f" stroke-width="2.5"/><line x1="10" y1="30" x2="110" y2="50" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><line x1="10" y1="70" x2="110" y2="50" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><circle cx="110" cy="50" r="5" fill="#f9d423"/><text x="85" y="95" text-anchor="middle" font-size="9" fill="#888">1-жағдай</text></svg>
+          <div class="eye-case-title">Фокус тор қабықтың <em>алдында</em></div>
+          <span class="sec-label">Ақауы:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q1a" value="myopia"> Жақыннан көргіштік</label>
+            <label class="radio-option"><input type="radio" name="t2q1a" value="hyper"> Алыстан көргіштік</label>
+            <label class="radio-option"><input type="radio" name="t2q1a" value="normal"> Қалыпты көру</label>
+          </div>
+          <span class="sec-label">Түзету:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q1b" value="convex"> Дөңес линза</label>
+            <label class="radio-option"><input type="radio" name="t2q1b" value="concave"> Ойыс линза</label>
+            <label class="radio-option"><input type="radio" name="t2q1b" value="none"> Линза қажет емес</label>
+          </div>
+        </div>
+        <div class="eye-case">
+          <svg viewBox="0 0 170 100"><ellipse cx="85" cy="50" rx="65" ry="44" fill="#fff9f0" stroke="#c8a060" stroke-width="2"/><ellipse cx="85" cy="50" rx="50" ry="32" fill="#ffe8c8"/><circle cx="85" cy="50" r="21" fill="#8b5e20"/><circle cx="85" cy="50" r="11" fill="#2c1a00"/><circle cx="91" cy="43" r="4" fill="white" opacity="0.8"/><path d="M148 18 Q165 50 148 82" fill="none" stroke="#56ab2f" stroke-width="2.5"/><line x1="10" y1="30" x2="148" y2="46" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><line x1="10" y1="70" x2="148" y2="54" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><circle cx="165" cy="50" r="5" fill="#f9d423"/><text x="85" y="95" text-anchor="middle" font-size="9" fill="#888">2-жағдай</text></svg>
+          <div class="eye-case-title">Фокус тор қабықтың <em>артында</em></div>
+          <span class="sec-label">Ақауы:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q2a" value="normal"> Қалыпты көру</label>
+            <label class="radio-option"><input type="radio" name="t2q2a" value="myopia"> Жақыннан көргіштік</label>
+            <label class="radio-option"><input type="radio" name="t2q2a" value="hyper"> Алыстан көргіштік</label>
+          </div>
+          <span class="sec-label">Түзету:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q2b" value="none"> Линза қажет емес</label>
+            <label class="radio-option"><input type="radio" name="t2q2b" value="concave"> Ойыс линза</label>
+            <label class="radio-option"><input type="radio" name="t2q2b" value="convex"> Дөңес линза</label>
+          </div>
+        </div>
+        <div class="eye-case">
+          <svg viewBox="0 0 170 100"><ellipse cx="85" cy="50" rx="65" ry="44" fill="#fff9f0" stroke="#c8a060" stroke-width="2"/><ellipse cx="85" cy="50" rx="50" ry="32" fill="#ffe8c8"/><circle cx="85" cy="50" r="21" fill="#8b5e20"/><circle cx="85" cy="50" r="11" fill="#2c1a00"/><circle cx="91" cy="43" r="4" fill="white" opacity="0.8"/><path d="M148 18 Q165 50 148 82" fill="none" stroke="#56ab2f" stroke-width="2.5"/><line x1="10" y1="30" x2="148" y2="50" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><line x1="10" y1="70" x2="148" y2="50" stroke="#f9d423" stroke-width="2" stroke-dasharray="4,3"/><circle cx="148" cy="50" r="5" fill="#56ab2f"/><text x="85" y="95" text-anchor="middle" font-size="9" fill="#888">3-жағдай</text></svg>
+          <div class="eye-case-title">Фокус тор қабықта <em>дәл</em></div>
+          <span class="sec-label">Ақауы:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q3a" value="hyper"> Алыстан көргіштік</label>
+            <label class="radio-option"><input type="radio" name="t2q3a" value="normal"> Қалыпты көру</label>
+            <label class="radio-option"><input type="radio" name="t2q3a" value="myopia"> Жақыннан көргіштік</label>
+          </div>
+          <span class="sec-label">Түзету:</span>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="t2q3b" value="concave"> Ойыс линза</label>
+            <label class="radio-option"><input type="radio" name="t2q3b" value="convex"> Дөңес линза</label>
+            <label class="radio-option"><input type="radio" name="t2q3b" value="none"> Линза қажет емес</label>
+          </div>
+        </div>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns2">0 / 4 балл</div>
+    <button class="nav-btn" onclick="goPage('p3')">Келесі →</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('p2')">← Артқа</button>
+    <div class="page-title">Тапсырма 3 – Дұрыс / Бұрыс</div>
+    <div class="page-num">4 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:33%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="info-text">Төмендегі тұжырымдардың <strong>дұрыс</strong> немесе <strong>бұрыс</strong> екенін белгілеңіз.</div>
+      <div class="tf-list">
+        <div class="tf-item" id="tfi0"><div class="tf-text">1. Жақыннан көргіштікте фокус тор қабықтың алдына түседі.</div><div class="tf-btns"><button class="tf-btn true-btn" onclick="selectTF(0,'T',this)">✓ Дұрыс</button><button class="tf-btn false-btn" onclick="selectTF(0,'F',this)">✗ Бұрыс</button></div></div>
+        <div class="tf-item" id="tfi1"><div class="tf-text">2. Алыстан көргіштік ойыс линзамен түзетіледі.</div><div class="tf-btns"><button class="tf-btn true-btn" onclick="selectTF(1,'T',this)">✓ Дұрыс</button><button class="tf-btn false-btn" onclick="selectTF(1,'F',this)">✗ Бұрыс</button></div></div>
+        <div class="tf-item" id="tfi2"><div class="tf-text">3. Тор қабықта кескін пайда болады.</div><div class="tf-btns"><button class="tf-btn true-btn" onclick="selectTF(2,'T',this)">✓ Дұрыс</button><button class="tf-btn false-btn" onclick="selectTF(2,'F',this)">✗ Бұрыс</button></div></div>
+        <div class="tf-item" id="tfi3"><div class="tf-text">4. Көздің бұршағы – шашыратқыш линза рөлін атқарады.</div><div class="tf-btns"><button class="tf-btn true-btn" onclick="selectTF(3,'T',this)">✓ Дұрыс</button><button class="tf-btn false-btn" onclick="selectTF(3,'F',this)">✗ Бұрыс</button></div></div>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns3">0 / 4 балл</div>
+    <button class="nav-btn" onclick="goPage('p4')">Келесі →</button>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('p3')">← Артқа</button>
+    <div class="page-title">Тапсырма 4 – Сәйкестендіру</div>
+    <div class="page-num">4 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:50%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="info-text">Сол жақтағы терминге сәйкес анықтаманы оң жақтан таңдаңыз.</div>
+      <div class="match-area">
+        <div class="match-row"><div class="match-term">Жақыннан көргіштік</div><div class="match-arrow">→</div><select class="match-select" id="ms1"><option value="">— таңда —</option><option value="a">Фокус тор қабықтан артқа түседі; дөңес линзамен түзетіледі</option><option value="b">Фокус тор қабықтың алдына түседі; ойыс линзамен түзетіледі</option><option value="c">Жарық тор қабықта фокусқа келіп, линза қажет емес</option><option value="d">Жарықты жинайды, нысанды үлкейтіп көрсетеді</option></select></div>
+        <div class="match-row"><div class="match-term">Алыстан көргіштік</div><div class="match-arrow">→</div><select class="match-select" id="ms2"><option value="">— таңда —</option><option value="a">Фокус тор қабықтан артқа түседі; дөңес линзамен түзетіледі</option><option value="b">Фокус тор қабықтың алдына түседі; ойыс линзамен түзетіледі</option><option value="c">Жарықты тор қабықта фокустайды; линза қажет емес</option><option value="d">Жарықты шашыратады, фокус қашықтайды</option></select></div>
+        <div class="match-row"><div class="match-term">Ойыс линза</div><div class="match-arrow">→</div><select class="match-select" id="ms3"><option value="">— таңда —</option><option value="a">Жарықты жинайды, нысанды үлкейтіп көрсетеді</option><option value="b">Жарықты шашыратады, жақыннан көргіштікті түзетеді</option><option value="c">Фокус тор қабықтың алдына түседі</option><option value="d">Фокус тор қабықтан артқа түседі</option></select></div>
+        <div class="match-row"><div class="match-term">Дөңес линза</div><div class="match-arrow">→</div><select class="match-select" id="ms4"><option value="">— таңда —</option><option value="a">Жарықты шашыратады, жақыннан көргіштікті түзетеді</option><option value="b">Фокус тор қабықтан артқа түседі</option><option value="c">Жарықты жинайды, алыстан көргіштікті түзетеді</option><option value="d">Фокус тор қабықтың алдына түседі</option></select></div>
+      </div>
+      <div style="margin-top:14px"><button class="btn btn-primary" onclick="checkMatch()">✔ Тексеру</button></div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns4">0 / 4 балл</div>
+    <button class="nav-btn" onclick="goPage('p5')">Келесі →</button>
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('p4')">← Артқа</button>
+    <div class="page-title">Тапсырма 5 – Линзаны таңда</div>
+    <div class="page-num">2 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:67%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="info-text">Суретте <strong>алыстан көргіш</strong> адамның көзі көрсетілген (фокус тор қабықтың артында). Сәулені тор қабыққа дұрыс жеткізу үшін қандай линза қажет?</div>
+      <div class="lens-canvas-wrap"><canvas id="lens-canvas" height="180"></canvas></div>
+      <div class="lens-options">
+        <div class="lens-option" id="lo-concave" onclick="selectLens('concave')">
+          <svg viewBox="0 0 64 42"><path d="M22 4 Q32 21 22 38 M42 4 Q32 21 42 38" stroke="#56ab2f" stroke-width="3" fill="none"/></svg>
+          Ойыс линза
+        </div>
+        <div class="lens-option" id="lo-convex" onclick="selectLens('convex')">
+          <svg viewBox="0 0 64 42"><path d="M26 4 Q16 21 26 38 M38 4 Q48 21 38 38" stroke="#56ab2f" stroke-width="3" fill="none"/></svg>
+          Дөңес линза
+        </div>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns5">0 / 2 балл</div>
+    <button class="nav-btn" onclick="goPage('p6')">Келесі →</button>
+  </div>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <button class="back-btn" onclick="goPage('p5')">← Артқа</button>
+    <div class="page-title">Тапсырма 6 – Есеп</div>
+    <div class="page-num">2 балл</div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" style="width:83%"></div></div>
+  <div class="task-body">
+    <div class="task-card">
+      <div class="calc-problem">
+        <p>Адамның көзінің оптикалық күші <strong>F = 60 дптр</strong>. Дұрыс көру кезінде тор қабыққа дейінгі қашықтық <strong>d = 2,5 см</strong>.</p>
+        <p>Алыстан дұрыс көру үшін нысан (<em>алшақ нүкте</em>) мен бұршақ арасындағы ара қашықтықты табыңыз.</p>
+        <div class="formula-box">1/f = 1/d + 1/u → жұқа линза формуласы</div>
+      </div>
+      <div class="calc-steps">
+        <div class="calc-step"><span class="step-label">f = 1/F =</span><input class="step-input" id="ci_f" type="text" placeholder="мысалы: 0.01667"><span class="step-unit">м</span></div>
+        <div class="calc-step"><span class="step-label">d = 2,5 см =</span><input class="step-input" id="ci_d" type="text" placeholder="метрге айналдырыңыз"><span class="step-unit">м</span></div>
+      </div>
+      <div class="info-text" style="margin-bottom:12px">Есептеп болған соң жауабыңызды таңдаңыз:</div>
+      <div class="calc-options">
+        <div class="calc-opt" id="co1" onclick="selectCalc('co1','wrong')">u ≈ 0.5 м</div>
+        <div class="calc-opt" id="co2" onclick="selectCalc('co2','correct')">u → ∞ (өте алыс)</div>
+        <div class="calc-opt" id="co3" onclick="selectCalc('co3','wrong')">u ≈ 0.1 м</div>
+        <div class="calc-opt" id="co4" onclick="selectCalc('co4','wrong')">u ≈ 0.025 м</div>
+      </div>
+      <div class="feedback" id="fb6"></div>
+      <div class="hint-box" id="hint6">💡 f=1/60≈0.0167м, d=0.025м. Дұрыс көру үшін d=f болуы тиіс → 1/u=0 → u=∞</div>
+      <div style="margin-top:12px"><button class="btn btn-secondary" onclick="document.getElementById('hint6').classList.toggle('show')">💡 Кеңес</button></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-score" id="ns6">0 / 2 балл</div>
+    <button class="nav-btn yellow" onclick="submitAll()">🚀 Нәтижені көру</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="page" id="result-page">
+  <div class="result-body">
+    <div class="result-card">
+      <span class="result-emoji" id="result-emoji">🎉</span>
+      <div class="stars" id="result-stars">⭐⭐⭐⭐⭐</div>
+      <div class="result-score" id="result-score">0</div>
+      <div class="result-max">балл / 22</div>
+      <div class="result-pct" id="result-pct">0%</div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="breakdown" id="breakdown"></div>
+      <button class="reset-btn" onclick="resetAll()">🔄 Қайта орындау</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// STATE
+let scores={t1:0,t2:0,t3:0,t4:0,t5:0,t6:0};
+let checked={t1:false,t2:false,t3:false,t4:false,t5:false,t6:false};
+let tfSel=[null,null,null,null];
+let t5Sel=null, t6Sel=null;
+let periscopePoints=[];
+
+// ── Periscope geometry (computed after canvas sized) ──
+// The shape from the photo:
+//   - Top horizontal tube: enters from LEFT, goes RIGHT to top-right corner
+//   - Vertical tube: goes DOWN from top-right corner to bottom-left corner (offset)
+//   - Bottom horizontal tube: goes RIGHT from bottom-left corner to eye on RIGHT
+// This makes a Z/S shape rotated — matching the photo exactly.
+
+let G = {}; // geometry cache
+
+function computeGeometry(W, H) {
+  const T = Math.round(W * 0.13); // tube thickness
+  // Top tube: left portion of canvas
+  const topL = Math.round(W * 0.08);
+  const topR = Math.round(W * 0.62);
+  const topY1 = Math.round(H * 0.12);
+  const topY2 = topY1 + T;
+
+  // Vertical tube: right side, connects top-right corner down to bottom-left corner
+  const vertX1 = topR - T;
+  const vertX2 = topR;
+  const vertY1 = topY2;
+  const vertY2 = Math.round(H * 0.72);
+
+  // Bottom tube: right portion of canvas
+  const botL = vertX1;
+  const botR = Math.round(W * 0.92);
+  const botY1 = vertY2;
+  const botY2 = botY1 + T;
+
+  G = { T, topL, topR, topY1, topY2, vertX1, vertX2, vertY1, vertY2, botL, botR, botY1, botY2, W, H };
+}
+
+// NAV
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='p2'&&!checked.t2) checkTask2();
+  if(id==='p3'&&!checked.t3) checkTask3Partial();
+  updateNavScores();
+}
+function updateNavScores(){
+  document.getElementById('ns1').textContent=scores.t1+' / 6 балл';
+  document.getElementById('ns2').textContent=scores.t2+' / 4 балл';
+  document.getElementById('ns3').textContent=scores.t3+' / 4 балл';
+  document.getElementById('ns4').textContent=scores.t4+' / 4 балл';
+  document.getElementById('ns5').textContent=scores.t5+' / 2 балл';
+  document.getElementById('ns6').textContent=scores.t6+' / 2 балл';
+}
+
+// ── PERISCOPE CANVAS ──
+const pCanvas = document.getElementById('periscope-canvas');
+const pCtx = pCanvas.getContext('2d');
+
+function initCanvas(){
+  const wrap = pCanvas.parentElement;
+  const W = Math.min(wrap.clientWidth || 500, 500);
+  const H = Math.round(W * 0.72);
+  pCanvas.width = W;
+  pCanvas.height = H;
+  computeGeometry(W, H);
+  drawBG();
+}
+
+function drawBG(){
+  const {T,topL,topR,topY1,topY2,vertX1,vertX2,vertY1,vertY2,botL,botR,botY1,botY2,W,H} = G;
+  pCtx.clearRect(0,0,W,H);
+  pCtx.fillStyle='#f8f8f8';
+  pCtx.fillRect(0,0,W,H);
+
+  // ── Draw periscope tubes (white fill, black stroke) ──
+  pCtx.fillStyle='#ffffff';
+  pCtx.strokeStyle='#222';
+  pCtx.lineWidth=2;
+
+  // Top horizontal tube
+  pCtx.beginPath();
+  pCtx.rect(topL, topY1, topR-topL, T);
+  pCtx.fill(); pCtx.stroke();
+
+  // Vertical tube
+  pCtx.beginPath();
+  pCtx.rect(vertX1, vertY1, T, vertY2-vertY1);
+  pCtx.fill(); pCtx.stroke();
+
+  // Bottom horizontal tube
+  pCtx.beginPath();
+  pCtx.rect(botL, botY1, botR-botL, T);
+  pCtx.fill(); pCtx.stroke();
+
+  // ── Mirror 1: top-right corner, 45° diagonal ──
+  // goes from top-left of the corner square to bottom-right
+  pCtx.strokeStyle='#e53935';
+  pCtx.lineWidth=3;
+  pCtx.beginPath();
+  pCtx.moveTo(vertX1, topY1);
+  pCtx.lineTo(vertX2, topY2);
+  pCtx.stroke();
+
+  // ── Mirror 2: rotated 180° from original → goes from top-left to bottom-right ──
+  pCtx.beginPath();
+  pCtx.moveTo(botL, botY1);
+  pCtx.lineTo(botL + T, botY2);
+  pCtx.stroke();
+
+  // ── Mirror labels ──
+  pCtx.fillStyle='#666';
+  pCtx.font=`bold ${Math.max(9,Math.round(W*0.022))}px Nunito,sans-serif`;
+  pCtx.fillText('1-айна', vertX2+4, topY1+T*0.6);
+  pCtx.fillText('2-айна', botL-T*0.5, botY2+Math.round(W*0.025));
+
+  // ── Light source arrow (left of top tube) ──
+  const srcX = Math.round(W*0.04);
+  const srcY = Math.round((topY1+topY2)/2);
+  const arrowEndX = topL - 2;
+
+  // Sun circle
+  pCtx.fillStyle='#f9d423';
+  pCtx.beginPath();
+  pCtx.arc(srcX, srcY, Math.round(T*0.22), 0, Math.PI*2);
+  pCtx.fill();
+  pCtx.strokeStyle='#f0a800';
+  pCtx.lineWidth=1.5;
+  pCtx.stroke();
+
+  // Arrow shaft
+  pCtx.strokeStyle='#f9d423';
+  pCtx.lineWidth=2.5;
+  pCtx.beginPath();
+  pCtx.moveTo(srcX + Math.round(T*0.45), srcY);
+  pCtx.lineTo(arrowEndX, srcY);
+  pCtx.stroke();
+
+  // Arrowhead
+  pCtx.fillStyle='#f9d423';
+  pCtx.beginPath();
+  pCtx.moveTo(arrowEndX + 7, srcY);
+  pCtx.lineTo(arrowEndX - 1, srcY - 5);
+  pCtx.lineTo(arrowEndX - 1, srcY + 5);
+  pCtx.closePath();
+  pCtx.fill();
+
+  // Label
+  pCtx.fillStyle='#c87800';
+  pCtx.font=`bold ${Math.max(9,Math.round(W*0.021))}px Nunito,sans-serif`;
+  pCtx.textAlign='center';
+  pCtx.fillText('жарық сәулесі', srcX + Math.round(W*0.06), srcY - Math.round(T*0.6));
+  pCtx.textAlign='left';
+
+  // ── Eye (right of bottom tube) ──
+  const eyeX = botR + 6;
+  const eyeY = Math.round((botY1+botY2)/2);
+  // Draw a simple eye icon in yellow/gold
+  const er = Math.round(T*0.26);
+  // Outer eye shape
+  pCtx.fillStyle='#f9d423';
+  pCtx.strokeStyle='#c87800';
+  pCtx.lineWidth=2;
+  pCtx.beginPath();
+  pCtx.ellipse(eyeX + er, eyeY, er*1.6, er, 0, 0, Math.PI*2);
+  pCtx.fill(); pCtx.stroke();
+  // Pupil
+  pCtx.fillStyle='#c87800';
+  pCtx.beginPath();
+  pCtx.arc(eyeX + er, eyeY, er*0.5, 0, Math.PI*2);
+  pCtx.fill();
+  // Highlight
+  pCtx.fillStyle='#fff';
+  pCtx.beginPath();
+  pCtx.arc(eyeX + er + er*0.15, eyeY - er*0.2, er*0.18, 0, Math.PI*2);
+  pCtx.fill();
+
+  // ── Instruction ──
+  pCtx.fillStyle='#888';
+  pCtx.font=`${Math.max(9,Math.round(W*0.02))}px Nunito,sans-serif`;
+  pCtx.textAlign='center';
+  pCtx.fillText('Нүктелерді бірізді басып сәуле жолын сызыңыз', W/2, H-5);
+  pCtx.textAlign='left';
+}
+
+function redrawPeriscope(){
+  drawBG();
+  if(!periscopePoints.length) return;
+  pCtx.beginPath();
+  pCtx.moveTo(periscopePoints[0].x, periscopePoints[0].y);
+  for(let i=1;i<periscopePoints.length;i++) pCtx.lineTo(periscopePoints[i].x, periscopePoints[i].y);
+  pCtx.strokeStyle='#f9a825';
+  pCtx.lineWidth=3;
+  pCtx.shadowColor='#f9d423';
+  pCtx.shadowBlur=8;
+  pCtx.stroke();
+  pCtx.shadowBlur=0;
+  periscopePoints.forEach(p=>{
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,4,0,Math.PI*2);
+    pCtx.fillStyle='#f9a825';
+    pCtx.fill();
+  });
+}
+
+pCanvas.addEventListener('click', e=>{
+  const r = pCanvas.getBoundingClientRect();
+  const sx = pCanvas.width / r.width;
+  const sy = pCanvas.height / r.height;
+  periscopePoints.push({x:(e.clientX-r.left)*sx, y:(e.clientY-r.top)*sy});
+  redrawPeriscope();
+});
+
+function clearCanvas(){
+  periscopePoints=[];scores.t1=0;checked.t1=false;
+  drawBG();
+  const fb=document.getElementById('fb1');fb.className='feedback';fb.textContent='';
+  document.getElementById('hint1').classList.remove('show');
+  updateNavScores();
+}
+
+function checkPeriscope(){
+  const fb=document.getElementById('fb1'), hint=document.getElementById('hint1');
+  if(periscopePoints.length<3){
+    fb.className='feedback show wrong';fb.textContent='❌ Кем дегенде 3 нүкте белгілеңіз.';
+    hint.classList.add('show');return;
+  }
+  const {topL,topR,topY1,topY2,vertX1,vertX2,vertY1,vertY2,botL,botR,botY1,botY2,W,T} = G;
+  const tol = T * 0.9;
+
+  const first = periscopePoints[0];
+  const last  = periscopePoints[periscopePoints.length-1];
+
+  // Entry: near left side of top tube
+  const entry = first.x < topL + W*0.18 && first.y >= topY1-tol && first.y <= topY2+tol;
+  // Passed mirror 1 region (top-right corner)
+  const m1 = periscopePoints.some(p => p.x >= vertX1-tol && p.x <= vertX2+tol && p.y >= topY1-tol && p.y <= topY2+tol);
+  // Passed mirror 2 region (bottom-left corner)
+  const m2 = periscopePoints.some(p => p.x >= botL-tol && p.x <= vertX2+tol && p.y >= botY1-tol && p.y <= botY2+tol);
+  // Exit: near right side of bottom tube
+  const exit = last.x > botR - W*0.15 && last.y >= botY1-tol && last.y <= botY2+tol;
+
+  checked.t1=true;
+  if(entry&&m1&&m2&&exit){
+    scores.t1=6;fb.className='feedback show correct';
+    fb.textContent='✅ Керемет! Сәуле екі айнада да дұрыс шағылды. 6 балл!';
+    hint.classList.remove('show');
+  } else if(m1&&m2){
+    scores.t1=4;fb.className='feedback show partial';
+    fb.textContent='⚠️ Екі айнадан өтті, бірақ кіру/шығу нүктелерін тексеріңіз. 4 балл.';
+    hint.classList.add('show');
+  } else if(m1||m2){
+    scores.t1=2;fb.className='feedback show partial';
+    fb.textContent='⚠️ Бір айна арқылы өтті. 2 балл.';
+    hint.classList.add('show');
+  } else {
+    scores.t1=0;fb.className='feedback show wrong';
+    fb.textContent='❌ Сәуле айналардан өтпеді. Қайтадан байқаңыз!';
+    hint.classList.add('show');
+  }
+  updateNavScores();
+}
+
+// ── TASK 2 ──
+function checkTask2(){
+  let s=0;
+  if(document.querySelector('input[name="t2q1a"]:checked')?.value==='myopia')s++;
+  if(document.querySelector('input[name="t2q1b"]:checked')?.value==='concave')s++;
+  if(document.querySelector('input[name="t2q2a"]:checked')?.value==='hyper')s++;
+  if(document.querySelector('input[name="t2q2b"]:checked')?.value==='convex')s++;
+  if(document.querySelector('input[name="t2q3a"]:checked')?.value==='normal')s=Math.min(s+.5,4);
+  if(document.querySelector('input[name="t2q3b"]:checked')?.value==='none')s=Math.min(s+.5,4);
+  scores.t2=Math.round(s);checked.t2=true;
+  const fb=document.getElementById('fb2');
+  if(scores.t2>=4){fb.className='feedback show correct';fb.textContent='✅ Барлық жауаптар дұрыс! 4 балл!';}
+  else if(scores.t2>=2){fb.className='feedback show partial';fb.textContent=`⚠️ ${scores.t2} балл. Дұрыс: 1→Жақыннан+Ойыс, 2→Алыстан+Дөңес, 3→Қалыпты+Линза жоқ.`;}
+  else{fb.className='feedback show wrong';fb.textContent=`❌ ${scores.t2} балл.`;}
+  updateNavScores();
+}
+
+// ── TASK 3 ──
+const tfCorrect=['T','F','T','F'];
+function selectTF(idx,val,btn){
+  tfSel[idx]=val;
+  const item=document.getElementById('tfi'+idx);item.classList.add('answered');
+  item.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected-true','selected-false'));
+  btn.classList.add(val==='T'?'selected-true':'selected-false');
+  checkTask3Partial();
+}
+function checkTask3Partial(){
+  let s=0;tfSel.forEach((v,i)=>{if(v===tfCorrect[i])s++;});
+  scores.t3=s;checked.t3=true;
+  const fb=document.getElementById('fb3');
+  if(tfSel.filter(v=>v!==null).length<4)return;
+  if(s===4){fb.className='feedback show correct';fb.textContent='✅ Барлық 4 тұжырым дұрыс! 4 балл!';}
+  else if(s>=2){fb.className='feedback show partial';fb.textContent=`⚠️ ${s}/4 дұрыс. Жауаптар: 1-Дұрыс, 2-Бұрыс, 3-Дұрыс, 4-Бұрыс.`;}
+  else{fb.className='feedback show wrong';fb.textContent='❌ Жауаптар: 1-Дұрыс, 2-Бұрыс, 3-Дұрыс, 4-Бұрыс.';}
+  updateNavScores();
+}
+
+// ── TASK 4 ──
+const matchAnswers={ms1:'b',ms2:'a',ms3:'b',ms4:'c'};
+function checkMatch(){
+  let s=0;
+  ['ms1','ms2','ms3','ms4'].forEach(id=>{
+    const sel=document.getElementById(id);
+    sel.classList.remove('correct-ans','wrong-ans');
+    if(sel.value===matchAnswers[id]){s++;sel.classList.add('correct-ans');}
+    else if(sel.value){sel.classList.add('wrong-ans');}
+  });
+  scores.t4=s;checked.t4=true;
+  const fb=document.getElementById('fb4');
+  if(s===4){fb.className='feedback show correct';fb.textContent='✅ 4 балл!';}
+  else if(s>=2){fb.className='feedback show partial';fb.textContent=`⚠️ ${s}/4 дұрыс.`;}
+  else{fb.className='feedback show wrong';fb.textContent=`❌ ${s}/4 дұрыс.`;}
+  updateNavScores();
+}
+
+// ── TASK 5 ──
+const lCanvas=document.getElementById('lens-canvas');
+const lCtx=lCanvas.getContext('2d');
+function initLens(){lCanvas.width=lCanvas.parentElement.clientWidth||500;lCanvas.height=180;drawLens(null);}
+function drawLens(sel){
+  const w=lCanvas.width,h=180;
+  lCtx.clearRect(0,0,w,h);
+  lCtx.fillStyle='#e8f9ff';lCtx.fillRect(0,0,w,h);
+  const ex=w*.78,ey=h/2;
+  lCtx.fillStyle='#fff9f0';lCtx.strokeStyle='#c8a060';lCtx.lineWidth=2;
+  lCtx.beginPath();lCtx.ellipse(ex,ey,72,50,0,0,Math.PI*2);lCtx.fill();lCtx.stroke();
+  lCtx.fillStyle='#ffe8c8';lCtx.beginPath();lCtx.ellipse(ex,ey,55,36,0,0,Math.PI*2);lCtx.fill();
+  lCtx.fillStyle='#8b5e20';lCtx.beginPath();lCtx.ellipse(ex,ey,22,22,0,0,Math.PI*2);lCtx.fill();
+  lCtx.fillStyle='#2c1a00';lCtx.beginPath();lCtx.ellipse(ex,ey,12,12,0,0,Math.PI*2);lCtx.fill();
+  lCtx.fillStyle='white';lCtx.beginPath();lCtx.ellipse(ex+6,ey-5,4,4,0,0,Math.PI*2);lCtx.fill();
+  lCtx.strokeStyle='#56ab2f';lCtx.lineWidth=3;
+  lCtx.beginPath();lCtx.moveTo(ex+55,ey-36);lCtx.quadraticCurveTo(ex+82,ey,ex+55,ey+36);lCtx.stroke();
+  const lx=w*.46;
+  if(!sel){
+    const fx=ex+70;
+    lCtx.strokeStyle='#f9d423';lCtx.lineWidth=2.5;lCtx.setLineDash([6,4]);
+    lCtx.beginPath();lCtx.moveTo(30,h*.27);lCtx.lineTo(ex+55,ey-10);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(30,h*.73);lCtx.lineTo(ex+55,ey+10);lCtx.stroke();
+    lCtx.setLineDash([]);
+    lCtx.fillStyle='#f9d423';lCtx.beginPath();lCtx.arc(fx,ey,6,0,Math.PI*2);lCtx.fill();
+    lCtx.strokeStyle='rgba(249,212,35,.4)';lCtx.lineWidth=1.5;lCtx.setLineDash([3,3]);
+    lCtx.beginPath();lCtx.moveTo(ex+55,ey-10);lCtx.lineTo(fx,ey);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(ex+55,ey+10);lCtx.lineTo(fx,ey);lCtx.stroke();
+    lCtx.setLineDash([]);
+    lCtx.fillStyle='#e74c3c';lCtx.font='bold 11px Nunito';lCtx.textAlign='center';lCtx.fillText('Фокус тор қабықтың артында!',w*.5,h-6);lCtx.textAlign='left';
+  } else if(sel==='convex'){
+    const fx=ex+55;
+    lCtx.strokeStyle='#56ab2f';lCtx.lineWidth=2.5;
+    lCtx.beginPath();lCtx.moveTo(30,h*.27);lCtx.lineTo(lx,h*.32);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx,h*.32);lCtx.lineTo(fx,ey);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(30,h*.73);lCtx.lineTo(lx,h*.68);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx,h*.68);lCtx.lineTo(fx,ey);lCtx.stroke();
+    lCtx.fillStyle='#56ab2f';lCtx.beginPath();lCtx.arc(fx,ey,6,0,Math.PI*2);lCtx.fill();
+    lCtx.strokeStyle='#3498db';lCtx.lineWidth=4;
+    lCtx.beginPath();lCtx.moveTo(lx+7,h*.13);lCtx.quadraticCurveTo(lx-9,ey,lx+7,h*.87);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx-7,h*.13);lCtx.quadraticCurveTo(lx+9,ey,lx-7,h*.87);lCtx.stroke();
+    lCtx.fillStyle='#56ab2f';lCtx.font='bold 11px Nunito';lCtx.textAlign='center';lCtx.fillText('✅ Фокус тор қабыққа дұрыс түсті!',w*.5,h-6);lCtx.textAlign='left';
+  } else {
+    const fx=ex+90;
+    lCtx.strokeStyle='#e74c3c';lCtx.lineWidth=2.5;lCtx.setLineDash([5,4]);
+    lCtx.beginPath();lCtx.moveTo(30,h*.27);lCtx.lineTo(lx,h*.29);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx,h*.29);lCtx.lineTo(ex+55,ey-14);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(30,h*.73);lCtx.lineTo(lx,h*.71);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx,h*.71);lCtx.lineTo(ex+55,ey+14);lCtx.stroke();
+    lCtx.setLineDash([]);
+    lCtx.fillStyle='#e74c3c';lCtx.beginPath();lCtx.arc(fx,ey,6,0,Math.PI*2);lCtx.fill();
+    lCtx.strokeStyle='#e74c3c';lCtx.lineWidth=4;
+    lCtx.beginPath();lCtx.moveTo(lx-7,h*.13);lCtx.quadraticCurveTo(lx+8,ey,lx-7,h*.87);lCtx.stroke();
+    lCtx.beginPath();lCtx.moveTo(lx+7,h*.13);lCtx.quadraticCurveTo(lx-8,ey,lx+7,h*.87);lCtx.stroke();
+    lCtx.fillStyle='#e74c3c';lCtx.font='bold 11px Nunito';lCtx.textAlign='center';lCtx.fillText('❌ Ойыс линза жағдайды нашарлатады!',w*.5,h-6);lCtx.textAlign='left';
+  }
+  lCtx.fillStyle='#f9d423';lCtx.beginPath();lCtx.arc(30,ey,13,0,Math.PI*2);lCtx.fill();
+  lCtx.fillStyle='#4a3000';lCtx.font='bold 9px Nunito';lCtx.textAlign='center';lCtx.fillText('Жарық',30,ey+23);lCtx.textAlign='left';
+}
+function selectLens(type){
+  t5Sel=type;
+  document.querySelectorAll('.lens-option').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('lo-'+type).classList.add('selected');
+  lCanvas.width=lCanvas.parentElement.clientWidth||500;lCanvas.height=180;drawLens(type);
+  const fb=document.getElementById('fb5');
+  if(type==='convex'){scores.t5=2;checked.t5=true;fb.className='feedback show correct';fb.textContent='✅ Дұрыс! Дөңес линза алыстан көргіштікті түзетеді. 2 балл!';}
+  else{scores.t5=0;checked.t5=true;fb.className='feedback show wrong';fb.textContent='❌ Бұрыс. Дөңес линза қажет!';}
+  updateNavScores();
+}
+
+// ── TASK 6 ──
+function selectCalc(id,type){
+  if(t6Sel)return;
+  t6Sel=id;
+  const el=document.getElementById(id);
+  const fb=document.getElementById('fb6');
+  if(type==='correct'){
+    scores.t6=2;checked.t6=true;el.classList.add('correct-sel');
+    fb.className='feedback show correct';fb.textContent='✅ Дұрыс! u→∞. 2 балл.';
+  } else {
+    scores.t6=0;checked.t6=true;el.classList.add('wrong-sel');
+    document.getElementById('co2').classList.add('correct-sel');
+    fb.className='feedback show wrong';fb.textContent='❌ Дұрыс жауап: u→∞.';
+  }
+  updateNavScores();
+}
+
+// ── SUBMIT ──
+function submitAll(){
+  if(!checked.t2) checkTask2();
+  if(!checked.t3) checkTask3Partial();
+  if(!checked.t4) checkMatch();
+  const total=scores.t1+scores.t2+scores.t3+scores.t4+scores.t5+scores.t6;
+  const pct=Math.round(total/22*100);
+  let emoji,stars,msg;
+  if(total>=20){emoji='🏆';stars='⭐⭐⭐⭐⭐';msg='Өте жақсы! Көз оптикасын тамаша меңгердің!';}
+  else if(total>=16){emoji='😊';stars='⭐⭐⭐⭐';msg='Жақсы нәтиже!';}
+  else if(total>=11){emoji='🤔';stars='⭐⭐⭐';msg='Тақырыпты тереңірек түсіну қажет.';}
+  else{emoji='📚';stars='⭐⭐';msg='Қосымша жұмыс қажет!';}
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-stars').textContent=stars;
+  document.getElementById('result-score').textContent=total;
+  document.getElementById('result-pct').textContent=pct+'%';
+  document.getElementById('result-msg').textContent=msg;
+  document.getElementById('breakdown').innerHTML=`
+    <div class="bd-row">1. Перископ <span>${scores.t1}/6</span></div>
+    <div class="bd-row">2. Көз ақауы <span>${scores.t2}/4</span></div>
+    <div class="bd-row">3. Д/Б <span>${scores.t3}/4</span></div>
+    <div class="bd-row">4. Сәйкестік <span>${scores.t4}/4</span></div>
+    <div class="bd-row">5. Линза <span>${scores.t5}/2</span></div>
+    <div class="bd-row">6. Есеп <span>${scores.t6}/2</span></div>`;
+  goPage('result-page');
+  if(total>=16) launchConfetti();
+}
+
+function launchConfetti(){
+  const c=['#56ab2f','#a8e063','#f9d423','#fff','#d4f5a0'];
+  for(let i=0;i<60;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:0;background:${c[Math.floor(Math.random()*c.length)]};animation-delay:${Math.random()*.6}s;animation-duration:${1+Math.random()}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
+  },i*20);
+}
+
+function resetAll(){
+  scores={t1:0,t2:0,t3:0,t4:0,t5:0,t6:0};
+  checked={t1:false,t2:false,t3:false,t4:false,t5:false,t6:false};
+  tfSel=[null,null,null,null];t5Sel=null;t6Sel=null;periscopePoints=[];
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected-true','selected-false'));
+  document.querySelectorAll('.tf-item').forEach(i=>i.classList.remove('answered'));
+  ['ms1','ms2','ms3','ms4'].forEach(id=>{const s=document.getElementById(id);s.value='';s.classList.remove('correct-ans','wrong-ans');});
+  document.querySelectorAll('.lens-option').forEach(o=>o.classList.remove('selected'));
+  initLens();
+  document.querySelectorAll('.calc-opt').forEach(o=>o.classList.remove('selected','correct-sel','wrong-sel'));
+  document.getElementById('ci_f').value='';document.getElementById('ci_d').value='';
+  document.getElementById('hint6').classList.remove('show');
+  document.querySelectorAll('.feedback').forEach(f=>{f.className='feedback';f.textContent='';});
+  document.querySelectorAll('.hint-box').forEach(h=>h.classList.remove('show'));
+  drawBG();
+  updateNavScores();
+  goPage('cover');
+}
+
+window.addEventListener('load',()=>{ initCanvas(); initLens(); });
+window.addEventListener('resize',()=>{
+  initCanvas();
+  redrawPeriscope();
+  lCanvas.width=lCanvas.parentElement.clientWidth||500;
+  lCanvas.height=180;
+  drawLens(t5Sel);
+});
+</script>
+</body>
+</html>
