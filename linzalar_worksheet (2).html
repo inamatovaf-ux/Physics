@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Линзалар — Физика 8-сынып</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #060d18;
+    --deep: #081420;
+    --mid: #0a1a28;
+    --card: #0d2030;
+    --accent1: #00e5c8;
+    --accent2: #00a8cc;
+    --accent3: #f59e0b;
+    --accent4: #26d98a;
+    --accent5: #ff5f7e;
+    --text: #e2f0ef;
+    --muted: #7ab8b4;
+    --glass: rgba(0,229,200,0.05);
+    --glow: 0 0 30px rgba(0,229,200,0.25);
+    --grad: linear-gradient(135deg, #00e5c8, #00a8cc, #0077b6);
+    --grad2: linear-gradient(135deg, #00c8e5, #00e5b0, #00a8cc);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--sky);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  .stars {
+    position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(0,168,204,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(0,229,200,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(0,119,182,0.06) 0%, transparent 70%),
+                var(--sky);
+  }
+  .stars::before, .stars::after {
+    content:'';position:absolute;width:100%;height:100%;
+    background-image: radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 25%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 65% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  }
+
+  .wrapper { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:20px; }
+
+  /* Header */
+  .header {
+    text-align:center; padding:40px 20px 30px;
+    border-bottom: 1px solid rgba(0,229,200,0.2);
+    margin-bottom:30px;
+    position:relative;
+  }
+  .header-badge {
+    display:inline-block; background: var(--grad);
+    color:#fff; font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+    padding:5px 18px; border-radius:20px; margin-bottom:15px;
+  }
+  .header h1 {
+    font-family:'Baloo 2',sans-serif; font-size:clamp(28px,5vw,48px); font-weight:800;
+    background: linear-gradient(135deg, #e0fffc 0%, #00e5c8 40%, #00a8cc 75%, #0077b6 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    line-height:1.2; margin-bottom:10px;
+    animation: shimmer 4s ease-in-out infinite alternate;
+    background-size:200% auto;
+  }
+  @keyframes shimmer {
+    0%{background-position:0% 50%}
+    100%{background-position:100% 50%}
+  }
+  .header p { color:var(--muted); font-size:15px; }
+  .header-lens {
+    position:absolute; right:30px; top:20px; font-size:60px; opacity:0.15; user-select:none;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  .meta-bar {
+    display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-bottom:30px;
+  }
+  .meta-chip {
+    background:var(--glass); border:1px solid rgba(0,229,200,0.15); border-radius:30px;
+    padding:6px 16px; font-size:13px; font-weight:700; color:var(--accent1);
+    display:flex; align-items:center; gap:6px;
+  }
+  .meta-chip span { color:var(--muted); font-weight:500; }
+
+  /* Progress */
+  .progress-bar {
+    background:rgba(255,255,255,0.05); border-radius:10px; height:8px; margin-bottom:30px;
+    overflow:hidden; border:1px solid rgba(0,229,200,0.1);
+  }
+  .progress-fill {
+    height:100%; border-radius:10px;
+    background: var(--grad);
+    background-size: 200% auto;
+    animation: gradMove 3s linear infinite;
+    transition: width 0.5s ease;
+    width:0%;
+    box-shadow: 0 0 12px rgba(0,229,200,0.5);
+  }
+  @keyframes gradMove { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+  .progress-label { text-align:center; font-size:12px; color:var(--muted); margin-bottom:20px; }
+
+  /* Cards */
+  .card {
+    background: linear-gradient(135deg, rgba(8,24,38,0.92), rgba(6,18,30,0.96));
+    border:1px solid rgba(0,229,200,0.12);
+    border-radius:20px; padding:28px; margin-bottom:24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position:relative; overflow:hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: var(--grad2);
+    opacity:0.7;
+  }
+  .card:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,0.5), var(--glow); }
+
+  .q-header {
+    display:flex; align-items:flex-start; gap:14px; margin-bottom:20px;
+  }
+  .q-num {
+    min-width:40px; height:40px; border-radius:12px; font-weight:900; font-size:16px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .q1 .q-num { background: var(--grad); }
+  .q2 .q-num { background: linear-gradient(135deg,#00a8cc,#00e5c8); }
+  .q3 .q-num { background: linear-gradient(135deg,#d97706,#f59e0b); }
+  .q4 .q-num { background: linear-gradient(135deg,#008a80,#26d98a); }
+  .q5 .q-num { background: linear-gradient(135deg,#e11d48,#ff5f7e); }
+  .q-lab .q-num { background: var(--grad2); }
+
+  .q-title { font-family:'Baloo 2',sans-serif; font-weight:700; font-size:17px; line-height:1.4; }
+  .q-score {
+    margin-left:auto; min-width:55px; background:rgba(0,229,200,0.1);
+    border:1px solid rgba(0,229,200,0.2); border-radius:10px;
+    padding:4px 10px; font-size:12px; font-weight:800; color:var(--accent1); text-align:center;
+    white-space:nowrap;
+  }
+
+  /* MCQ */
+  .options { display:flex; flex-direction:column; gap:10px; }
+  .option {
+    background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.08);
+    border-radius:12px; padding:12px 16px; cursor:pointer;
+    display:flex; align-items:center; gap:12px; transition:all 0.2s;
+    font-size:14px; font-weight:600;
+  }
+  .option:hover { background:rgba(0,229,200,0.07); border-color:rgba(0,229,200,0.3); }
+  .option.selected { border-color:var(--accent1); background:rgba(0,229,200,0.12); color:var(--accent1); }
+  .option.correct { border-color:var(--accent4); background:rgba(0,229,200,0.12); color:var(--accent4); }
+  .option.wrong { border-color:var(--accent5); background:rgba(255,95,126,0.12); color:var(--accent5); }
+  .opt-letter {
+    min-width:28px; height:28px; border-radius:8px; background:rgba(255,255,255,0.08);
+    display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px;
+  }
+
+  /* True/False */
+  .tf-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+  .tf-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.06); }
+  .tf-text { font-size:14px; flex:1; }
+  .tf-btns { display:flex; gap:8px; }
+  .tf-btn {
+    padding:5px 14px; border-radius:8px; border:1.5px solid transparent; cursor:pointer;
+    font-size:13px; font-weight:800; transition:all 0.2s; background:transparent;
+  }
+  .tf-btn.true-btn { border-color:rgba(0,229,200,0.4); color:var(--accent4); }
+  .tf-btn.false-btn { border-color:rgba(255,95,126,0.4); color:var(--accent5); }
+  .tf-btn.true-btn:hover, .tf-btn.true-btn.selected { background:rgba(0,229,200,0.15); border-color:var(--accent4); }
+  .tf-btn.false-btn:hover, .tf-btn.false-btn.selected { background:rgba(255,95,126,0.15); border-color:var(--accent5); }
+  .tf-btn.correct { background:rgba(0,229,200,0.25) !important; border-color:var(--accent4) !important; }
+  .tf-btn.wrong { background:rgba(255,95,126,0.25) !important; border-color:var(--accent5) !important; }
+
+  /* Fill blank */
+  .fill-group { display:flex; flex-direction:column; gap:12px; }
+  .fill-item { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:14px; }
+  .fill-inp {
+    background:rgba(0,229,200,0.07); border:1.5px solid rgba(0,229,200,0.2);
+    border-radius:8px; padding:7px 12px; color:var(--text); font-size:14px; font-family:inherit;
+    width:140px; outline:none; transition:all 0.2s;
+  }
+  .fill-inp:focus { border-color:var(--accent1); box-shadow:0 0 0 3px rgba(0,229,200,0.1); }
+  .fill-inp.correct { border-color:var(--accent4); background:rgba(0,229,200,0.1); }
+  .fill-inp.wrong { border-color:var(--accent5); background:rgba(255,95,126,0.1); }
+
+  /* Canvas drawing task */
+  .canvas-section { margin-top:15px; }
+  .canvas-label { font-size:13px; color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .drawing-tools { display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .draw-btn {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:8px;
+    padding:6px 13px; font-size:12px; font-weight:700; color:var(--text); cursor:pointer;
+    transition:all 0.2s;
+  }
+  .draw-btn:hover { background:rgba(0,229,200,0.15); border-color:var(--accent1); color:var(--accent1); }
+  .draw-btn.active { background:rgba(0,229,200,0.2); border-color:var(--accent1); color:var(--accent1); }
+  .color-pick { display:flex; gap:6px; align-items:center; }
+  .color-dot {
+    width:22px; height:22px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+    transition:all 0.2s;
+  }
+  .color-dot:hover, .color-dot.active { border-color:#fff; transform:scale(1.2); }
+  canvas {
+    width:100%; border-radius:12px; border:1.5px solid rgba(0,229,200,0.2);
+    cursor:crosshair; display:block; background:#060d18;
+    touch-action:none;
+  }
+  .canvas-hint { font-size:11px; color:var(--muted); margin-top:6px; font-style:italic; }
+
+  /* Physics task */
+  .formula-box {
+    background:rgba(0,168,204,0.1); border:1px solid rgba(0,168,204,0.3);
+    border-radius:12px; padding:14px 18px; margin:14px 0; font-size:15px; text-align:center;
+    font-family:'Baloo 2',sans-serif; font-weight:700; color:#99f0ea;
+    letter-spacing:1px;
+  }
+  .formula-box sub, .formula-box sup { font-size:11px; }
+  .calc-input-group { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .calc-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:14px; }
+  .calc-inp {
+    background:rgba(0,168,204,0.1); border:1.5px solid rgba(0,168,204,0.3);
+    border-radius:8px; padding:7px 12px; color:var(--text); font-size:14px; font-family:inherit;
+    width:120px; outline:none; transition:all 0.2s;
+  }
+  .calc-inp:focus { border-color:#00e5c8; box-shadow:0 0 0 3px rgba(0,168,204,0.15); }
+  .calc-inp.correct { border-color:var(--accent4); }
+  .calc-inp.wrong { border-color:var(--accent5); }
+  .unit { color:var(--muted); font-size:13px; }
+
+  /* Lab */
+  .lab-card {
+    background: linear-gradient(135deg, rgba(0,229,200,0.05), rgba(0,229,200,0.05));
+    border:1.5px solid rgba(0,229,200,0.2); border-radius:20px; padding:24px;
+    margin-bottom:24px; position:relative;
+  }
+  .lab-badge {
+    display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#00a8a0,#00e5c8);
+    color:#fff; padding:5px 14px; border-radius:20px; font-size:12px; font-weight:800;
+    letter-spacing:1px; margin-bottom:16px; text-transform:uppercase;
+  }
+  .lab-scene {
+    background:#060d18; border-radius:14px; border:1px solid rgba(0,229,200,0.15);
+    padding:20px; margin:16px 0; position:relative; overflow:hidden;
+  }
+  .lab-controls { display:flex; flex-wrap:wrap; gap:14px; margin:14px 0; align-items:center; }
+  .lab-slider-group { flex:1; min-width:200px; }
+  .lab-slider-group label { font-size:12px; color:var(--muted); display:block; margin-bottom:6px; font-weight:600; }
+  .slider-row { display:flex; align-items:center; gap:10px; }
+  input[type=range] {
+    flex:1; -webkit-appearance:none; height:5px; border-radius:5px;
+    background: var(--grad);
+    background-size: 200% auto;
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+    background: #fff; cursor:pointer; box-shadow:0 0 8px rgba(0,229,200,0.7);
+  }
+  .slider-val { font-size:13px; font-weight:800; color:var(--accent1); min-width:35px; }
+  .lab-result {
+    background:rgba(0,229,200,0.07); border:1px solid rgba(0,229,200,0.2);
+    border-radius:10px; padding:12px 16px; display:flex; flex-wrap:wrap; gap:20px;
+    font-size:13px;
+  }
+  .lab-val { display:flex; flex-direction:column; gap:2px; }
+  .lab-val .lv-label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:1px; }
+  .lab-val .lv-num { font-size:20px; font-weight:900; color:var(--accent1); font-family:'Baloo 2',sans-serif; }
+
+  /* Matching */
+  .match-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .match-col { display:flex; flex-direction:column; gap:8px; }
+  .match-item {
+    background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.08);
+    border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600; cursor:pointer;
+    transition:all 0.2s; text-align:center;
+  }
+  .match-item:hover { border-color:var(--accent3); background:rgba(245,158,11,0.08); }
+  .match-item.selected { border-color:var(--accent3); background:rgba(245,158,11,0.15); color:var(--accent3); }
+  .match-item.matched { border-color:var(--accent4); background:rgba(0,229,200,0.12); color:var(--accent4); }
+  .match-item.wrong-match { border-color:var(--accent5); background:rgba(255,95,126,0.1); color:var(--accent5); }
+
+  /* Feedback */
+  .feedback {
+    padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700;
+    margin-top:12px; display:none;
+  }
+  .feedback.show { display:block; }
+  .feedback.ok { background:rgba(0,229,200,0.12); border:1px solid rgba(0,229,200,0.3); color:var(--accent4); }
+  .feedback.err { background:rgba(255,95,126,0.1); border:1px solid rgba(255,95,126,0.3); color:var(--accent5); }
+
+  /* Submit */
+  .submit-area { text-align:center; margin:30px 0; }
+  .submit-btn {
+    background: var(--grad);
+    background-size: 200% auto;
+    border:none; border-radius:50px; padding:16px 50px; font-size:17px; font-weight:900;
+    color:#fff; cursor:pointer; letter-spacing:1px; transition:all 0.3s;
+    box-shadow:0 8px 30px rgba(0,200,200,0.35); font-family:'Baloo 2',sans-serif;
+    animation: gradMove 3s linear infinite;
+  }
+  .submit-btn:hover { transform:translateY(-2px) scale(1.03); box-shadow:0 12px 40px rgba(0,229,200,0.45); }
+
+  /* Result */
+  .result-modal {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(0,0,0,0.8); backdrop-filter:blur(10px);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .result-modal.show { display:flex; }
+  .result-box {
+    background: linear-gradient(135deg, #0d2030, #081420);
+    border:1.5px solid rgba(0,229,200,0.3); border-radius:24px; padding:40px 35px;
+    max-width:480px; width:100%; text-align:center;
+    box-shadow:0 20px 80px rgba(0,0,0,0.8), var(--glow);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+  .result-emoji { font-size:70px; margin-bottom:10px; }
+  .result-title { font-family:'Baloo 2',sans-serif; font-size:28px; font-weight:900; margin-bottom:8px; }
+  .result-score {
+    font-size:60px; font-weight:900; font-family:'Baloo 2',sans-serif;
+    background: var(--grad);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .result-max { color:var(--muted); font-size:18px; margin-bottom:16px; }
+  .result-msg { color:var(--text); font-size:15px; line-height:1.5; margin-bottom:24px; }
+  .result-breakdown { background:rgba(255,255,255,0.04); border-radius:14px; padding:16px; margin-bottom:20px; }
+  .rb-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; }
+  .rb-row:last-child { border-bottom:none; }
+  .rb-pts { font-weight:800; color:var(--accent1); }
+  .retry-btn {
+    background:transparent; border:1.5px solid var(--accent1); border-radius:30px;
+    padding:10px 30px; color:var(--accent1); font-size:15px; font-weight:800;
+    cursor:pointer; transition:all 0.2s; font-family:inherit;
+  }
+  .retry-btn:hover { background:rgba(0,229,200,0.1); }
+
+  /* Divider */
+  .section-divider {
+    display:flex; align-items:center; gap:12px; margin:10px 0 24px;
+  }
+  .section-divider::before, .section-divider::after {
+    content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(0,229,200,0.2),transparent);
+  }
+  .section-divider span { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; white-space:nowrap; }
+
+  /* Image choices */
+  .img-choices { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+  .img-choice {
+    background:rgba(255,255,255,0.03); border:1.5px solid rgba(255,255,255,0.08);
+    border-radius:14px; padding:14px; cursor:pointer; text-align:center;
+    transition:all 0.2s; font-size:12px; font-weight:700; color:var(--muted);
+  }
+  .img-choice:hover { border-color:var(--accent3); background:rgba(245,158,11,0.06); }
+  .img-choice.selected { border-color:var(--accent3); background:rgba(245,158,11,0.12); color:var(--accent3); }
+  .img-choice.correct { border-color:var(--accent4); background:rgba(0,229,200,0.1); color:var(--accent4); }
+  .img-choice.wrong { border-color:var(--accent5); background:rgba(255,95,126,0.1); color:var(--accent5); }
+  .img-choice svg { display:block; margin:0 auto 8px; }
+
+  @media(max-width:600px){
+    .match-grid{grid-template-columns:1fr}
+    .img-choices{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="wrapper">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-lens">🔭</div>
+  <div class="header-badge">Физика · 8-сынып</div>
+  <h1>Линзалар & Оптикалық Күш</h1>
+  <p>Формативтік тексеру жұмысы · Жарық пен линзалар әлемі</p>
+</div>
+
+<div class="meta-bar">
+  <div class="meta-chip">📋 <span>5 тапсырма</span></div>
+  <div class="meta-chip">⭐ <span>Жалпы: 10 балл</span></div>
+  <div class="meta-chip">⏱ <span>~15 минут</span></div>
+  <div class="meta-chip">🔬 <span>Интерактивті</span></div>
+</div>
+
+<div class="progress-label" id="progressLabel">Аяқталды: 0 / 5 тапсырма</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ===================== TASK 1 ===================== -->
+<div class="card q1" id="task1">
+  <div class="q-header">
+    <div class="q-num">1</div>
+    <div class="q-title">Линза түрлерін ажырат — дұрыс линзаны таңдаңыз</div>
+    <div class="q-score">2 балл</div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Әр сипаттамаға сәйкес линза суретін таңда:</p>
+
+  <div style="margin-bottom:20px;">
+    <p style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--accent1);">1а) Жинағыш линза (ортасы қалың) — Дөңес линза:</p>
+    <div class="img-choices" id="q1a">
+      <div class="img-choice" onclick="selectImgChoice('q1a',this,'correct')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00e5c8" stop-opacity="0.6"/><stop offset="100%" stop-color="#00a8cc" stop-opacity="0.6"/></linearGradient></defs>
+          <path d="M40 5 Q65 25 40 45 Q15 25 40 5 Z" fill="url(#g1)" stroke="#00d4ff" stroke-width="1.5"/>
+          <line x1="0" y1="15" x2="40" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="25" x2="55" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="35" x2="40" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="40" y1="25" x2="75" y2="25" stroke="#f59e0b" stroke-width="1.5"/>
+          <circle cx="75" cy="25" r="3" fill="#f59e0b"/>
+        </svg>
+        А
+      </div>
+      <div class="img-choice" onclick="selectImgChoice('q1a',this,'wrong')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <path d="M35 5 Q10 25 35 45 L45 45 Q70 25 45 5 Z" fill="rgba(100,120,160,0.3)" stroke="#64748b" stroke-width="1.5"/>
+          <line x1="0" y1="15" x2="80" y2="10" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="25" x2="80" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="35" x2="80" y2="40" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+        </svg>
+        Ә
+      </div>
+      <div class="img-choice" onclick="selectImgChoice('q1a',this,'wrong')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <rect x="35" y="5" width="10" height="40" fill="rgba(100,120,160,0.3)" stroke="#64748b" stroke-width="1.5"/>
+          <line x1="0" y1="15" x2="80" y2="15" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="25" x2="80" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="35" x2="80" y2="35" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+        </svg>
+        Б
+      </div>
+    </div>
+    <div class="feedback" id="fb_q1a"></div>
+  </div>
+
+  <div>
+    <p style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--accent5);">1ә) Шашыратқыш линза (ортасы жұқа) — Ойыс линза:</p>
+    <div class="img-choices" id="q1b">
+      <div class="img-choice" onclick="selectImgChoice('q1b',this,'wrong')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <path d="M40 5 Q65 25 40 45 Q15 25 40 5 Z" fill="rgba(100,120,160,0.3)" stroke="#64748b" stroke-width="1.5"/>
+          <line x1="0" y1="15" x2="80" y2="13" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="25" x2="80" y2="25" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="35" x2="80" y2="37" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+        </svg>
+        А
+      </div>
+      <div class="img-choice" onclick="selectImgChoice('q1b',this,'correct')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff5f7e" stop-opacity="0.5"/><stop offset="100%" stop-color="#00a8cc" stop-opacity="0.5"/></linearGradient></defs>
+          <path d="M35 5 Q10 25 35 45 L45 45 Q70 25 45 5 Z" fill="url(#g2)" stroke="#ff5f7e" stroke-width="1.5"/>
+          <!-- rays diverging -->
+          <line x1="0" y1="18" x2="40" y2="25" stroke="#00d4ff" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="25" x2="40" y2="25" stroke="#00d4ff" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="32" x2="40" y2="25" stroke="#00d4ff" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="40" y1="25" x2="80" y2="12" stroke="#00d4ff" stroke-width="1.5"/>
+          <line x1="40" y1="25" x2="80" y2="25" stroke="#00d4ff" stroke-width="1.5"/>
+          <line x1="40" y1="25" x2="80" y2="38" stroke="#00d4ff" stroke-width="1.5"/>
+        </svg>
+        Ә
+      </div>
+      <div class="img-choice" onclick="selectImgChoice('q1b',this,'wrong')">
+        <svg width="80" height="50" viewBox="0 0 80 50">
+          <ellipse cx="40" cy="25" rx="5" ry="20" fill="rgba(100,120,160,0.3)" stroke="#64748b" stroke-width="1.5"/>
+        </svg>
+        Б
+      </div>
+    </div>
+    <div class="feedback" id="fb_q1b"></div>
+  </div>
+</div>
+
+<!-- ===================== TASK 2 — TRUE/FALSE ===================== -->
+<div class="card q2" id="task2">
+  <div class="q-header">
+    <div class="q-num">2</div>
+    <div class="q-title">Дұрыс / Бұрыс — Линзалар туралы тұжырымдарды бағала</div>
+    <div class="q-score">2 балл</div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Әр тұжырым үшін «Дұрыс» немесе «Бұрыс» деп таңда:</p>
+  <div class="tf-grid" id="tfGrid">
+    <div class="tf-row">
+      <div class="tf-text">Жинағыш линза параллель сәулелерді бір нүктеге жинайды.</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" onclick="tfSelect(this,'true','true')">Дұрыс</button>
+        <button class="tf-btn false-btn" onclick="tfSelect(this,'false','true')">Бұрыс</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-text">Шашыратқыш линза нақты кескін береді.</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" onclick="tfSelect(this,'true','false')">Дұрыс</button>
+        <button class="tf-btn false-btn" onclick="tfSelect(this,'false','false')">Бұрыс</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-text">Оптикалық күш диоптриямен өлшенеді (Дптр).</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" onclick="tfSelect(this,'true','true')">Дұрыс</button>
+        <button class="tf-btn false-btn" onclick="tfSelect(this,'false','true')">Бұрыс</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-text">Фокустық қашықтық неғұрлым үлкен болса, оптикалық күш соғұрлым үлкен болады.</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" onclick="tfSelect(this,'true','false')">Дұрыс</button>
+        <button class="tf-btn false-btn" onclick="tfSelect(this,'false','false')">Бұрыс</button>
+      </div>
+    </div>
+  </div>
+  <div class="feedback" id="fb_q2"></div>
+</div>
+
+<!-- ===================== TASK 3 — DRAWING ===================== -->
+<div class="card q3" id="task3">
+  <div class="q-header">
+    <div class="q-num">3</div>
+    <div class="q-title">Сызба сал — Жинағыш линзадан өтетін сәулелер</div>
+    <div class="q-score">2 балл</div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:4px;">
+    Төмендегі сызбада жинағыш линзаны, оптикалық осьті, фокусты және объектінің кескінін сал. 
+    Оптикалық оське параллель сәуле фокустан өтеді. Фокустан өтетін сәуле параллель шығады. Оптикалық орталықтан өтетін сәуле бұрылмайды.
+  </p>
+  <div class="canvas-section">
+    <div class="drawing-tools">
+      <button class="draw-btn active" id="penBtn" onclick="setTool('pen')">✏️ Қалам</button>
+      <button class="draw-btn" id="lineBtn" onclick="setTool('line')">📏 Сызық</button>
+      <button class="draw-btn" id="eraseBtn" onclick="setTool('erase')">🧹 Өшіргіш</button>
+      <button class="draw-btn" onclick="clearCanvas()">🗑️ Тазалау</button>
+      <div class="color-pick">
+        <div class="color-dot active" style="background:#00d4ff" onclick="setColor('#00d4ff',this)"></div>
+        <div class="color-dot" style="background:#f59e0b" onclick="setColor('#f59e0b',this)"></div>
+        <div class="color-dot" style="background:#ff5f7e" onclick="setColor('#ff5f7e',this)"></div>
+        <div class="color-dot" style="background:#00e5c8" onclick="setColor('#00e5c8',this)"></div>
+        <div class="color-dot" style="background:#ffffff" onclick="setColor('#ffffff',this)"></div>
+      </div>
+    </div>
+    <canvas id="drawCanvas" height="220" style="background:#060d18;"></canvas>
+    <p class="canvas-hint">💡 Сурет сал: линза, фокус нүктелері (F, 2F), оптикалық ось және 3 сәуле (параллель → фокус арқылы; фокустан → параллель; орталықтан → тік)</p>
+  </div>
+  <div style="margin-top:14px;">
+    <button class="draw-btn" id="aiCheckBtn" onclick="aiCheckDrawing()" style="background:linear-gradient(135deg,rgba(0,168,204,0.3),rgba(0,229,200,0.2));border-color:rgba(0,229,200,0.4);color:var(--accent1);font-size:13px;padding:10px 20px;">
+      🤖 ЖИ арқылы тексеру
+    </button>
+    <div id="aiCheckResult" style="display:none;margin-top:12px;"></div>
+  </div>
+</div>
+
+<!-- ===================== TASK 4 — FORMULA / CALCULATION ===================== -->
+<div class="card q4" id="task4">
+  <div class="q-header">
+    <div class="q-num">4</div>
+    <div class="q-title">Есеп — Жұқа линза формуласы мен оптикалық күш</div>
+    <div class="q-score">2 балл</div>
+  </div>
+  <div style="background:rgba(0,229,200,0.06);border:1px solid rgba(0,229,200,0.2);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;">
+    <strong style="color:var(--accent4);">Берілген:</strong><br>
+    Дөңес линзаның фокустық қашықтығы <strong>f = 20 см</strong><br>
+    Денеден линзаға дейінгі қашықтық <strong>d = 60 см</strong>
+  </div>
+  <p style="font-size:13px;font-weight:700;margin-bottom:10px;">Жұқа линза формуласы:</p>
+  <div class="formula-box">1/f = 1/d + 1/v &nbsp;→&nbsp; 1/v = 1/f − 1/d</div>
+  <p style="font-size:13px;font-weight:700;margin-bottom:10px;">Оптикалық күш формуласы:</p>
+  <div class="formula-box">D = 1/f &nbsp;(Дптр) &nbsp;[f метрмен]</div>
+
+  <div class="calc-input-group">
+    <div class="calc-row">
+      <span>4а) Кескіннің қашықтығы: v =</span>
+      <input class="calc-inp" id="ans4a" type="number" placeholder="?" step="any">
+      <span class="unit">см</span>
+    </div>
+    <div class="calc-row">
+      <span>4ә) Оптикалық күш: D =</span>
+      <input class="calc-inp" id="ans4b" type="number" placeholder="?" step="any">
+      <span class="unit">Дптр</span>
+    </div>
+  </div>
+  <div style="margin-top:10px;">
+    <button class="draw-btn" onclick="checkCalc()">✔ Тексеру</button>
+  </div>
+  <div class="feedback" id="fb_q4"></div>
+</div>
+
+<!-- ===================== TASK 5 — MCQ ===================== -->
+<div class="card q5" id="task5">
+  <div class="q-header">
+    <div class="q-num">5</div>
+    <div class="q-title">Тест — Оптикалық күш және кескін түрлері</div>
+    <div class="q-score">2 балл</div>
+  </div>
+
+  <div style="margin-bottom:18px;">
+    <p style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--accent1);">5а) Фокустық қашықтығы 0,5 м линзаның оптикалық күші қандай?</p>
+    <div class="options" id="q5a">
+      <div class="option" onclick="mcqSelect('q5a',this,'wrong')"><div class="opt-letter">А</div> 0,5 Дптр</div>
+      <div class="option" onclick="mcqSelect('q5a',this,'correct')"><div class="opt-letter">Ә</div> 2 Дптр</div>
+      <div class="option" onclick="mcqSelect('q5a',this,'wrong')"><div class="opt-letter">Б</div> 5 Дптр</div>
+      <div class="option" onclick="mcqSelect('q5a',this,'wrong')"><div class="opt-letter">В</div> 0,2 Дптр</div>
+    </div>
+    <div class="feedback" id="fb_q5a"></div>
+  </div>
+
+  <div>
+    <p style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--accent5);">5ә) Зат фокустан алыс орналасқанда жинағыш линза қандай кескін береді?</p>
+    <div class="options" id="q5b">
+      <div class="option" onclick="mcqSelect('q5b',this,'wrong')"><div class="opt-letter">А</div> Тік, үлкейтілген, жалған</div>
+      <div class="option" onclick="mcqSelect('q5b',this,'wrong')"><div class="opt-letter">Ә</div> Тік, кішірейтілген, нақты</div>
+      <div class="option" onclick="mcqSelect('q5b',this,'correct')"><div class="opt-letter">Б</div> Төңкерілген, нақты кескін</div>
+      <div class="option" onclick="mcqSelect('q5b',this,'wrong')"><div class="opt-letter">В</div> Шашыраңқы, жалған кескін</div>
+    </div>
+    <div class="feedback" id="fb_q5b"></div>
+  </div>
+</div>
+
+<!-- ===================== LAB ===================== -->
+<div class="lab-card">
+  <div class="lab-badge">🔬 Мини-зертханалық жұмыс</div>
+  <div class="q-header" style="margin-bottom:14px">
+    <div class="q-title">Интерактивті линза симуляторы — Кескін қалай өзгереді?</div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+    Сырғытпаларды жылжытып, денені линзаға жақындат немесе алыстат. Кескіннің өзгерісін бақыла!
+  </p>
+
+  <div class="lab-controls">
+    <div class="lab-slider-group" style="flex:0 0 auto;">
+      <label>Линза түрі:</label>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button id="btnConverging" class="draw-btn active" onclick="setLensType('converging')" style="font-size:12px;padding:7px 14px;">🔵 Жинағыш</button>
+        <button id="btnDiverging" class="draw-btn" onclick="setLensType('diverging')" style="font-size:12px;padding:7px 14px;">🔴 Шашыратқыш</button>
+      </div>
+    </div>
+    <div class="lab-slider-group">
+      <label>Фокустық қашықтық (f):</label>
+      <div class="slider-row">
+        <input type="range" id="fSlider" min="30" max="120" value="60" oninput="updateLab()">
+        <div class="slider-val" id="fVal">60</div><span class="unit">мм</span>
+      </div>
+    </div>
+    <div class="lab-slider-group">
+      <label>Денеден линзаға (d):</label>
+      <div class="slider-row">
+        <input type="range" id="dSlider" min="40" max="250" value="120" oninput="updateLab()">
+        <div class="slider-val" id="dVal">120</div><span class="unit">мм</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-scene">
+    <canvas id="labCanvas" height="160" style="background:transparent"></canvas>
+  </div>
+
+  <div class="lab-result" id="labResult">
+    <div class="lab-val"><div class="lv-label">Кескін қашықтығы (v)</div><div class="lv-num" id="labV">—</div></div>
+    <div class="lab-val"><div class="lv-label">Үлкейту (m)</div><div class="lv-num" id="labM">—</div></div>
+    <div class="lab-val"><div class="lv-label">Кескін түрі</div><div class="lv-num" id="labType" style="font-size:14px;padding-top:5px">—</div></div>
+  </div>
+
+  <div style="margin-top:16px;background:rgba(0,229,200,0.04);border-radius:10px;padding:12px;font-size:13px;color:var(--muted);border:1px solid rgba(0,229,200,0.1);">
+    <strong style="color:var(--accent1);">🔍 Байқаулар (Жинағыш):</strong> d &gt; 2f — кішірейтілген нақты. d = 2f — шынайы өлшемде. f &lt; d &lt; 2f — үлкейтілген нақты. d &lt; f — жалған (виртуалды).<br>
+    <strong style="color:#ff5f7e;margin-top:4px;display:block;">🔍 Байқаулар (Шашыратқыш):</strong> Кез-келген d кезінде — жалған, тік, кішірейтілген кескін береді.
+  </div>
+
+  <!-- LAB QUESTIONS -->
+  <div style="margin-top:20px;border-top:1px solid rgba(0,229,200,0.2);padding-top:18px;">
+    <p style="font-size:14px;font-weight:800;color:var(--accent4);margin-bottom:14px;">📝 Зертхана сұрақтары — Байқауларыңды жаз:</p>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.07);">
+        <p style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text);">
+          З-1. d = f болғанда (зат фокуста тұрғанда) кескін қайда пайда болады? Сырғытпаны жылжытып тексер.
+        </p>
+        <div class="options" id="labQ1" style="flex-direction:row;flex-wrap:wrap;gap:8px;">
+          <div class="option" onclick="labMCQ('labQ1',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">А) Линза алдында</div>
+          <div class="option" onclick="labMCQ('labQ1',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">Ә) Линза артында, жақын</div>
+          <div class="option" onclick="labMCQ('labQ1',this,'correct')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">Б) Шексіз алыста (∞)</div>
+          <div class="option" onclick="labMCQ('labQ1',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">В) Линзада</div>
+        </div>
+        <div class="feedback" id="fb_labQ1"></div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.07);">
+        <p style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text);">
+          З-2. d &lt; f болғанда (зат фокустың ішінде) кескін қандай болады?
+        </p>
+        <div class="options" id="labQ2" style="flex-direction:row;flex-wrap:wrap;gap:8px;">
+          <div class="option" onclick="labMCQ('labQ2',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">А) Нақты, төңкерілген</div>
+          <div class="option" onclick="labMCQ('labQ2',this,'correct')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">Ә) Жалған, тік, үлкейтілген</div>
+          <div class="option" onclick="labMCQ('labQ2',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">Б) Нақты, кішірейтілген</div>
+          <div class="option" onclick="labMCQ('labQ2',this,'wrong')" style="flex:1;min-width:140px;font-size:12px;padding:9px 12px;">В) Кескін мүлдем жоқ</div>
+        </div>
+        <div class="feedback" id="fb_labQ2"></div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.07);">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">
+          З-3. Зат линзадан алыстаған сайын кескін қалай өзгереді? Симулятормен тексеріп, жауабыңды жаз:
+        </p>
+        <textarea id="labQ3text" placeholder="Мысалы: d үлкейген сайын v кішірейеді және кескін..." 
+          style="width:100%;background:rgba(0,229,200,0.05);border:1.5px solid rgba(0,229,200,0.15);border-radius:10px;padding:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;resize:vertical;min-height:70px;outline:none;margin-top:4px;"></textarea>
+        <button class="draw-btn" onclick="checkLabQ3()" style="margin-top:8px;">✔ Тексеру</button>
+        <div class="feedback" id="fb_labQ3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT -->
+<div class="submit-area">
+  <button class="submit-btn" onclick="submitAll()">🎯 Жұмысты аяқта & Балл есепте</button>
+</div>
+
+</div><!-- wrapper -->
+
+<!-- RESULT MODAL -->
+<div class="result-modal" id="resultModal">
+  <div class="result-box">
+    <div class="result-emoji" id="resEmoji">🎉</div>
+    <div class="result-title" id="resTitle">Нәтиже</div>
+    <div class="result-score" id="resScore">0</div>
+    <div class="result-max">/ 10 балл</div>
+    <div class="result-msg" id="resMsg"></div>
+    <div class="result-breakdown" id="resBreakdown"></div>
+    <button class="retry-btn" onclick="document.getElementById('resultModal').classList.remove('show')">✕ Жабу</button>
+  </div>
+</div>
+
+<script>
+// =================== STATE ===================
+let scores = {q1:0,q2:0,q3:0,q4:0,q5:0};
+let completed = {q1:false,q2:false,q3:false,q4:false,q5:false};
+let q1aAnswered=false, q1bAnswered=false;
+let tfAnswers = [{sel:null,correct:'true'},{sel:null,correct:'false'},{sel:null,correct:'true'},{sel:null,correct:'false'}];
+let q5aAnswered=false, q5bAnswered=false;
+
+function updateProgress(){
+  let done = Object.values(completed).filter(v=>v).length;
+  document.getElementById('progressFill').style.width=(done/5*100)+'%';
+  document.getElementById('progressLabel').textContent='Аяқталды: '+done+' / 5 тапсырма';
+}
+
+// =================== Q1: Image choices ===================
+let q1aOk=false,q1bOk=false;
+function selectImgChoice(groupId, el, type){
+  if(groupId==='q1a'&&q1aAnswered)return;
+  if(groupId==='q1b'&&q1bAnswered)return;
+  let siblings = el.parentElement.querySelectorAll('.img-choice');
+  siblings.forEach(s=>{s.classList.remove('selected','correct','wrong');});
+  el.classList.add(type==='correct'?'correct':'wrong');
+  let fb = document.getElementById('fb_'+groupId);
+  fb.classList.add('show');
+  if(type==='correct'){
+    fb.classList.add('ok'); fb.classList.remove('err');
+    fb.textContent='✅ Дұрыс! Керемет!';
+    if(groupId==='q1a')q1aOk=true;
+    if(groupId==='q1b')q1bOk=true;
+  }else{
+    fb.classList.add('err'); fb.classList.remove('ok');
+    fb.textContent='❌ Қате. Тағы бір рет ойлан.';
+  }
+  if(groupId==='q1a')q1aAnswered=true;
+  if(groupId==='q1b')q1bAnswered=true;
+  scores.q1=(q1aOk?1:0)+(q1bOk?1:0);
+  completed.q1=q1aAnswered&&q1bAnswered;
+  updateProgress();
+}
+
+// =================== Q2: True/False ===================
+let tfDone=[false,false,false,false];
+function tfSelect(btn, chosen, correct){
+  let row=btn.closest('.tf-row');
+  let idx=Array.from(document.querySelectorAll('.tf-row')).indexOf(row);
+  if(tfDone[idx])return;
+  let btns=row.querySelectorAll('.tf-btn');
+  btns.forEach(b=>b.classList.remove('selected','correct','wrong'));
+  btn.classList.add('selected');
+  tfDone[idx]=true;
+  tfAnswers[idx].sel=chosen;
+  if(chosen===correct){btn.classList.add('correct');}
+  else{btn.classList.add('wrong');}
+  // check if all done
+  if(tfDone.every(v=>v)){
+    let correct_count=tfAnswers.filter((a,i)=>a.sel===a.correct).length;
+    scores.q2=correct_count>=3?2:correct_count>=2?1:0;
+    completed.q2=true;
+    let fb=document.getElementById('fb_q2');
+    fb.classList.add('show');
+    if(scores.q2===2){fb.classList.add('ok');fb.classList.remove('err');fb.textContent='✅ Барлығы дұрыс! 2 балл алдың!';}
+    else if(scores.q2===1){fb.classList.add('ok');fb.classList.remove('err');fb.textContent='🔶 '+correct_count+'/4 дұрыс. 1 балл.';}
+    else{fb.classList.add('err');fb.classList.remove('ok');fb.textContent='❌ '+correct_count+'/4 дұрыс. Жауаптарды қайта қара.';}
+    updateProgress();
+  }
+}
+
+// =================== Q3: AI Drawing check ===================
+let aiChecked=false;
+async function aiCheckDrawing(){
+  if(aiChecked)return;
+  let btn=document.getElementById('aiCheckBtn');
+  let resultDiv=document.getElementById('aiCheckResult');
+  btn.textContent='⏳ Тексерілуде...'; btn.disabled=true;
+  resultDiv.style.display='block';
+  resultDiv.innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px;">🤖 ЖИ сурет талдауда...</div>';
+
+  // Get canvas as base64
+  const canvas=document.getElementById('drawCanvas');
+  const imageData=canvas.toDataURL('image/png').split(',')[1];
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:'image/png',data:imageData}},
+            {type:'text',text:`Сен физика пәнінің мұғалімісің. Оқушы жинағыш (дөңес) линза үшін сәулелер сызбасын салды. 
+Сызбаны бағала. Бағалау критерийлері:
+1. Линза салынған ба? (оптикалық ось бар ма?)
+2. F және 2F нүктелері белгіленген бе?
+3. Кем дегенде 2-3 сәуле дұрыс салынған ба? (параллель→фокус арқылы, фокустан→параллель, орталықтан→тік)
+4. Кескін нүктесі дұрыс ба?
+
+Жауапты тек JSON форматында бер, басқа ештеңе жазба:
+{"score":0, "comment":"қазақша түсіндірме", "details":["критерий 1","критерий 2"]}
+Балл: 0=салынбаған немесе мүлдем дұрыс емес, 1=жартылай дұрыс, 2=толық дұрыс`}
+          ]
+        }]
+      })
+    });
+    const data=await resp.json();
+    let text=data.content.map(i=>i.text||'').join('');
+    let clean=text.replace(/```json|```/g,'').trim();
+    let parsed=JSON.parse(clean);
+    scores.q3=parsed.score||0;
+    completed.q3=true;
+    updateProgress();
+    let color=parsed.score===2?'var(--accent4)':parsed.score===1?'var(--accent3)':'var(--accent5)';
+    let emoji=parsed.score===2?'✅':parsed.score===1?'🔶':'❌';
+    resultDiv.innerHTML=`
+      <div style="background:rgba(0,0,0,0.2);border:1.5px solid ${color};border-radius:12px;padding:14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-size:22px;">${emoji}</span>
+          <span style="font-size:16px;font-weight:900;color:${color};">Балл: ${parsed.score}/2</span>
+        </div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:8px;">${parsed.comment||''}</p>
+        ${parsed.details?'<ul style="padding-left:16px;font-size:12px;color:var(--muted);">'+parsed.details.map(d=>`<li>${d}</li>`).join('')+'</ul>':''}
+      </div>`;
+    aiChecked=true;
+    btn.textContent='✅ Тексерілді';
+  }catch(e){
+    resultDiv.innerHTML='<div style="color:var(--accent5);font-size:13px;padding:10px;">⚠️ Қате орын алды. Қайта көріңіз.</div>';
+    btn.textContent='🤖 ЖИ арқылы тексеру'; btn.disabled=false;
+  }
+}
+
+// =================== Q4: Calculation ===================
+function checkCalc(){
+  let a=parseFloat(document.getElementById('ans4a').value);
+  let b=parseFloat(document.getElementById('ans4b').value);
+  // 1/v = 1/20 - 1/60 = 3/60-1/60=2/60 → v=30 cm
+  // D = 1/0.20 = 5 Dptr
+  let fb=document.getElementById('fb_q4');
+  fb.classList.add('show');
+  let ok4a=Math.abs(a-30)<1;
+  let ok4b=Math.abs(b-5)<0.2;
+  document.getElementById('ans4a').classList.toggle('correct',ok4a);
+  document.getElementById('ans4a').classList.toggle('wrong',!ok4a);
+  document.getElementById('ans4b').classList.toggle('correct',ok4b);
+  document.getElementById('ans4b').classList.toggle('wrong',!ok4b);
+  scores.q4=(ok4a?1:0)+(ok4b?1:0);
+  completed.q4=true;
+  if(ok4a&&ok4b){
+    fb.className='feedback show ok';
+    fb.textContent='✅ Екеуі де дұрыс! v = 30 см, D = 5 Дптр. Жарайсың!';
+  } else {
+    fb.className='feedback show err';
+    fb.innerHTML='❌ Жауаптарды тексер:<br>v = 30 см &nbsp;|&nbsp; D = 5 Дптр';
+  }
+  updateProgress();
+}
+
+// =================== LAB Questions ===================
+let labQ1done=false,labQ2done=false,labQ3done=false;
+function labMCQ(groupId, el, type){
+  if(groupId==='labQ1'&&labQ1done)return;
+  if(groupId==='labQ2'&&labQ2done)return;
+  let siblings=el.parentElement.querySelectorAll('.option');
+  siblings.forEach(s=>s.classList.remove('selected','correct','wrong'));
+  el.classList.add(type==='correct'?'correct':'wrong');
+  let fb=document.getElementById('fb_'+groupId);
+  fb.classList.add('show');
+  if(type==='correct'){
+    fb.className='feedback show ok';
+    if(groupId==='labQ1')fb.textContent='✅ Дұрыс! d = f болғанда сәулелер параллель шығады — кескін шексіз алыста!';
+    else fb.textContent='✅ Дұрыс! d < f — линза үлкейткіш ретінде жұмыс істейді, жалған тік кескін береді.';
+  }else{
+    fb.className='feedback show err';
+    if(groupId==='labQ1')fb.textContent='❌ Қате. Сырғытпаны f мәніне қой да нәтижені қара — v → ∞';
+    else fb.textContent='❌ Қате. Сырғытпаны f-тен кіші мәнге қой. Кескін виртуалды болады.';
+  }
+  if(groupId==='labQ1')labQ1done=true;
+  if(groupId==='labQ2')labQ2done=true;
+}
+
+function checkLabQ3(){
+  let txt=document.getElementById('labQ3text').value.trim();
+  let fb=document.getElementById('fb_labQ3');
+  fb.classList.add('show');
+  if(txt.length<20){
+    fb.className='feedback show err';
+    fb.textContent='❌ Толығырақ жауап жаз (кем дегенде бір сөйлем).';
+    return;
+  }
+  if(labQ3done)return;
+  labQ3done=true;
+  fb.className='feedback show ok';
+  fb.innerHTML='✅ Жауабың қабылданды! <br><span style="font-size:12px;opacity:0.8;">Дұрыс жауап: d үлкейген сайын v кішірейеді (кескін линзаға жақындайды). d → ∞ болса, v → f (кескін фокусқа жақындайды).</span>';
+}
+function mcqSelect(groupId, el, type){
+  if(groupId==='q5a'&&q5aAnswered)return;
+  if(groupId==='q5b'&&q5bAnswered)return;
+  let siblings=el.parentElement.querySelectorAll('.option');
+  siblings.forEach(s=>s.classList.remove('selected','correct','wrong'));
+  el.classList.add(type==='correct'?'correct':'wrong');
+  let fb=document.getElementById('fb_'+groupId);
+  fb.classList.add('show');
+  if(type==='correct'){
+    fb.className='feedback show ok';
+    if(groupId==='q5a')fb.textContent='✅ Дұрыс! D = 1/f = 1/0.5 = 2 Дптр';
+    else fb.textContent='✅ Дұрыс! Фокустан алыс — төңкерілген нақты кескін береді.';
+    if(groupId==='q5a')scores.q5+=1;
+    else scores.q5+=1;
+  }else{
+    fb.className='feedback show err';
+    if(groupId==='q5a')fb.textContent='❌ Қате. D = 1/f = 1/0.5 = 2 Дптр болады.';
+    else fb.textContent='❌ Қате. Зат 2f-тан алыс болса — төңкерілген, кішірейтілген, нақты кескін.';
+  }
+  if(groupId==='q5a')q5aAnswered=true;
+  if(groupId==='q5b')q5bAnswered=true;
+  completed.q5=q5aAnswered&&q5bAnswered;
+  updateProgress();
+}
+
+// =================== SUBMIT ===================
+function submitAll(){
+  let total=scores.q1+scores.q2+scores.q3+scores.q4+scores.q5;
+  let modal=document.getElementById('resultModal');
+  document.getElementById('resScore').textContent=total;
+  let emoji,title,msg;
+  if(total>=9){emoji='🏆';title='Керемет нәтиже!';msg='Сен линзалар тақырыбын өте жақсы меңгердің! Физик болу жолындасың!';}
+  else if(total>=7){emoji='⭐';title='Жақсы жұмыс!';msg='Негізгі түсініктерді меңгердің. Бірнеше жерді қайтадан қара.';}
+  else if(total>=5){emoji='🔶';title='Орташа нәтиже';msg='Тақырыпты қайта оқу керек. Формула мен линза түрлерін жаттап ал.';}
+  else{emoji='📚';title='Тырыс!';msg='Линзалар тақырыбын тереңірек оқу қажет. Бас тартпа!';}
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resTitle').textContent=title;
+  document.getElementById('resMsg').textContent=msg;
+  document.getElementById('resBreakdown').innerHTML=`
+    <div class="rb-row"><span>1-тапсырма: Линза түрлері</span><span class="rb-pts">${scores.q1}/2</span></div>
+    <div class="rb-row"><span>2-тапсырма: Дұрыс/Бұрыс</span><span class="rb-pts">${scores.q2}/2</span></div>
+    <div class="rb-row"><span>3-тапсырма: Сызба</span><span class="rb-pts">${scores.q3}/2</span></div>
+    <div class="rb-row"><span>4-тапсырма: Есеп</span><span class="rb-pts">${scores.q4}/2</span></div>
+    <div class="rb-row"><span>5-тапсырма: Тест</span><span class="rb-pts">${scores.q5}/2</span></div>
+    <div class="rb-row" style="font-weight:900;color:var(--accent1)"><span>Жалпы</span><span class="rb-pts">${total}/10</span></div>
+  `;
+  modal.classList.add('show');
+}
+
+// =================== CANVAS DRAWING ===================
+const canvas=document.getElementById('drawCanvas');
+const ctx=canvas.getContext('2d');
+let tool='pen', color='#00d4ff', drawing=false, lastX=0, lastY=0;
+let lineStart=null;
+let snapshot=null;
+
+function resizeCanvas(){
+  let w=canvas.parentElement.offsetWidth;
+  canvas.width=w; canvas.height=220;
+  drawGrid();
+}
+
+function drawGrid(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Background
+  ctx.fillStyle='#060d18'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Grid
+  ctx.strokeStyle='rgba(0,229,200,0.06)'; ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+  for(let y=0;y<canvas.height;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+  // Main optical axis
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1.5;
+  ctx.setLineDash([]);
+  let mid=canvas.height/2;
+  ctx.beginPath(); ctx.moveTo(0,mid); ctx.lineTo(canvas.width,mid); ctx.stroke();
+  // Lens
+  let lx=canvas.width/2;
+  ctx.strokeStyle='rgba(0,229,200,0.7)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(lx,mid-70); ctx.lineTo(lx,mid+70); ctx.stroke();
+  // Lens arrows
+  ctx.fillStyle='rgba(0,229,200,0.7)';
+  drawArrowHead(ctx,lx,mid-70,90);
+  drawArrowHead(ctx,lx,mid+70,-90);
+  // Focus points F
+  let f=60;
+  ctx.fillStyle='rgba(245,158,11,0.9)'; ctx.font='bold 11px Nunito'; ctx.textAlign='center';
+  ctx.fillText('F',lx-f,mid+16); ctx.fillText('F',lx+f,mid+16);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(lx-f,mid,4,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(lx+f,mid,4,0,Math.PI*2); ctx.fill();
+  // 2F points
+  ctx.fillStyle='rgba(255,95,126,0.85)'; ctx.font='bold 10px Nunito';
+  ctx.fillText('2F',lx-f*2,mid+16); ctx.fillText('2F',lx+f*2,mid+16);
+  ctx.fillStyle='#ff5f7e';
+  ctx.beginPath(); ctx.arc(lx-f*2,mid,3.5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(lx+f*2,mid,3.5,0,Math.PI*2); ctx.fill();
+  // Object arrow
+  ctx.strokeStyle='rgba(0,229,200,0.8)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(lx-110,mid); ctx.lineTo(lx-110,mid-50); ctx.stroke();
+  drawArrowHead(ctx,lx-110,mid-50,90);
+  ctx.fillStyle='rgba(0,229,200,0.7)'; ctx.font='bold 11px Nunito'; ctx.textAlign='center';
+  ctx.fillText('OX',lx-110,mid+14);
+  // Hint text
+  ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='10px Nunito'; ctx.textAlign='left';
+  ctx.fillText('Осыған сәулелер сал →',8,18);
+}
+
+function drawArrowHead(c,x,y,angle){
+  c.save(); c.translate(x,y); c.rotate(angle*Math.PI/180);
+  c.beginPath(); c.moveTo(0,-8); c.lineTo(5,0); c.lineTo(-5,0); c.closePath(); c.fill();
+  c.restore();
+}
+
+function setTool(t){
+  tool=t;
+  document.querySelectorAll('.draw-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(t+'Btn').classList.add('active');
+}
+
+function setColor(c, dot){
+  color=c;
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  dot.classList.add('active');
+}
+
+function clearCanvas(){ drawGrid(); }
+
+canvas.addEventListener('mousedown',e=>{
+  drawing=true;
+  let r=canvas.getBoundingClientRect();
+  let scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  lastX=(e.clientX-r.left)*scaleX; lastY=(e.clientY-r.top)*scaleY;
+  if(tool==='line'){lineStart={x:lastX,y:lastY}; snapshot=ctx.getImageData(0,0,canvas.width,canvas.height);}
+});
+canvas.addEventListener('mousemove',e=>{
+  if(!drawing)return;
+  let r=canvas.getBoundingClientRect();
+  let scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  let cx=(e.clientX-r.left)*scaleX, cy=(e.clientY-r.top)*scaleY;
+  if(tool==='pen'){
+    ctx.strokeStyle=color; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(cx,cy); ctx.stroke();
+  } else if(tool==='erase'){
+    ctx.strokeStyle='#060d18'; ctx.lineWidth=14; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(cx,cy); ctx.stroke();
+  } else if(tool==='line'&&lineStart){
+    ctx.putImageData(snapshot,0,0);
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(lineStart.x,lineStart.y); ctx.lineTo(cx,cy); ctx.stroke();
+    // Arrow
+    let angle=Math.atan2(cy-lineStart.y,cx-lineStart.x);
+    ctx.fillStyle=color;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-10,-5); ctx.lineTo(-10,5); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  lastX=cx; lastY=cy;
+});
+canvas.addEventListener('mouseup',()=>{drawing=false;lineStart=null;});
+canvas.addEventListener('mouseleave',()=>{drawing=false;lineStart=null;});
+
+// Touch support
+canvas.addEventListener('touchstart',e=>{e.preventDefault();let t=e.touches[0];canvas.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY}));});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();let t=e.touches[0];canvas.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX,clientY:t.clientY}));});
+canvas.addEventListener('touchend',e=>{e.preventDefault();canvas.dispatchEvent(new MouseEvent('mouseup'));});
+
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();
+
+// =================== LAB SIMULATOR ===================
+const labCanvas=document.getElementById('labCanvas');
+const lctx=labCanvas.getContext('2d');
+let lensType='converging';
+
+function setLensType(type){
+  lensType=type;
+  document.getElementById('btnConverging').classList.toggle('active',type==='converging');
+  document.getElementById('btnDiverging').classList.toggle('active',type==='diverging');
+  updateLab();
+}
+
+function updateLab(){
+  let f=parseInt(document.getElementById('fSlider').value);
+  let d=parseInt(document.getElementById('dSlider').value);
+  document.getElementById('fVal').textContent=f;
+  document.getElementById('dVal').textContent=d;
+
+  let v, m, typeStr;
+  if(lensType==='diverging'){
+    // Diverging: f is negative, 1/v = 1/(-f) - 1/d  → always virtual
+    v = 1/(-1/f - 1/d);  // v is always negative (virtual)
+    m = Math.abs(v/d);
+    typeStr='Жалған (виртуалды), тік, кішірейтілген';
+  } else {
+    if(d===f){v=Infinity; m=Infinity; typeStr='Фокуста (∞)'}
+    else{
+      v=1/(1/f-1/d);
+      if(!isFinite(v)||v<=0){
+        v=1/(1/f-1/d);
+        m=Math.abs(v/d);
+        typeStr='Жалған (виртуалды)';
+      } else {
+        m=v/d;
+        if(m>1.05) typeStr='Нақты, үлкейтілген, төңкерілген';
+        else if(m<0.95) typeStr='Нақты, кішірейтілген, төңкерілген';
+        else typeStr='Нақты, шынайы өлшемде';
+      }
+    }
+  }
+
+  document.getElementById('labV').textContent=isFinite(v)?Math.abs(v).toFixed(0)+' мм':'∞';
+  document.getElementById('labM').textContent=isFinite(m)?m.toFixed(2):'∞';
+  document.getElementById('labType').textContent=typeStr;
+  drawLab(f,d,v,m);
+}
+
+function drawLab(f,d,v,m){
+  let W=labCanvas.width, H=labCanvas.height;
+  lctx.clearRect(0,0,W,H);
+  lctx.fillStyle='#060d18'; lctx.fillRect(0,0,W,H);
+
+  // Grid
+  lctx.strokeStyle='rgba(0,229,200,0.04)'; lctx.lineWidth=1;
+  for(let x=0;x<W;x+=20){lctx.beginPath();lctx.moveTo(x,0);lctx.lineTo(x,H);lctx.stroke();}
+  for(let y=0;y<H;y+=20){lctx.beginPath();lctx.moveTo(0,y);lctx.lineTo(W,y);lctx.stroke();}
+
+  let cx=W*0.5, cy=H*0.5;
+  let scale=W/600;
+
+  // Axis
+  lctx.strokeStyle='rgba(255,255,255,0.25)'; lctx.lineWidth=1.5; lctx.setLineDash([]);
+  lctx.beginPath(); lctx.moveTo(0,cy); lctx.lineTo(W,cy); lctx.stroke();
+
+  // Lens — converging: double arrows outward; diverging: arrows inward
+  let isDiverging=lensType==='diverging';
+  let lensColor=isDiverging?'#ff5f7e':'#00e5c8';
+  lctx.strokeStyle=lensColor; lctx.lineWidth=2.5;
+  lctx.beginPath(); lctx.moveTo(cx,cy-65); lctx.lineTo(cx,cy+65); lctx.stroke();
+  lctx.fillStyle=lensColor;
+  if(isDiverging){
+    // inward arrows = diverging lens symbol
+    drawLabArrow(cx,cy-65,-90); drawLabArrow(cx,cy+65,90);
+  } else {
+    drawLabArrow(cx,cy-65,90); drawLabArrow(cx,cy+65,-90);
+  }
+
+  // F and 2F points
+  let fPx=f*scale;
+  lctx.font='bold 11px Nunito'; lctx.textAlign='center';
+  lctx.fillStyle='#f59e0b';
+  [cx-fPx,cx+fPx].forEach(fx=>{
+    lctx.beginPath(); lctx.arc(fx,cy,4,0,Math.PI*2); lctx.fill();
+    lctx.fillText('F',fx,cy+16);
+  });
+  if(!isDiverging){
+    lctx.fillStyle='#ff5f7e';
+    [cx-fPx*2,cx+fPx*2].forEach(fx=>{
+      if(fx>5&&fx<W-5){
+        lctx.beginPath(); lctx.arc(fx,cy,3.5,0,Math.PI*2); lctx.fill();
+        lctx.fillText('2F',fx,cy+16);
+      }
+    });
+  }
+
+  // Object
+  let dPx=Math.min(d*scale,cx-20);
+  let objH=40;
+  lctx.strokeStyle='#26d98a'; lctx.lineWidth=2; lctx.setLineDash([]);
+  lctx.beginPath(); lctx.moveTo(cx-dPx,cy); lctx.lineTo(cx-dPx,cy-objH); lctx.stroke();
+  drawLabArrowColor(cx-dPx,cy-objH,90,'#26d98a');
+
+  // Image
+  if(isFinite(v)&&Math.abs(v)<1200){
+    let vPx=Math.abs(v)*scale;
+    let imgH=isFinite(m)?objH*m:objH;
+    imgH=Math.min(Math.abs(imgH),70)*0.8+5;
+    let isReal=v>0;
+    let imgX;
+    if(isDiverging){
+      // virtual image always on same side as object
+      imgX=cx-vPx;
+    } else {
+      imgX=cx+(isReal?1:-1)*vPx;
+    }
+    imgX=Math.max(10,Math.min(W-10,imgX));
+    lctx.strokeStyle=isReal?'#ff5f7e':'rgba(255,95,126,0.5)';
+    lctx.lineWidth=2;
+    lctx.setLineDash(isReal?[]:[5,3]);
+    lctx.beginPath(); lctx.moveTo(imgX,cy); lctx.lineTo(imgX,cy+(isReal?1:-1)*imgH); lctx.stroke();
+    lctx.setLineDash([]);
+
+    // Rays
+    lctx.strokeStyle='rgba(245,200,50,0.55)'; lctx.lineWidth=1.2; lctx.setLineDash([4,3]);
+    if(isDiverging){
+      // Ray 1: parallel to axis → diverges as if from -F
+      lctx.beginPath(); lctx.moveTo(cx-dPx,cy-objH); lctx.lineTo(cx,cy-objH);
+      // After lens diverges away from F on same side
+      let slope=(cy-objH - cy)/(cx - (cx-fPx));
+      lctx.lineTo(W, cy-objH+(W-cx)*Math.abs(cy-objH-cy)/fPx*0.6); lctx.stroke();
+      // Ray 2: through center straight
+      lctx.beginPath(); lctx.moveTo(cx-dPx,cy-objH); lctx.lineTo(W,cy-objH+(W-(cx-dPx))*(cy-objH-cy)/(cx-(cx-dPx))*-0.3); lctx.stroke();
+      // virtual image dashes backward
+      lctx.strokeStyle='rgba(255,95,126,0.35)';
+      lctx.beginPath(); lctx.moveTo(cx,cy-objH); lctx.lineTo(imgX, cy+imgH); lctx.stroke();
+    } else {
+      lctx.beginPath(); lctx.moveTo(cx-dPx,cy-objH); lctx.lineTo(cx,cy-objH); lctx.lineTo(cx+fPx,cy); lctx.stroke();
+      lctx.beginPath(); lctx.moveTo(cx-dPx,cy-objH); lctx.lineTo(cx,cy); lctx.lineTo(imgX,cy+(isReal?1:-1)*imgH); lctx.stroke();
+    }
+    lctx.setLineDash([]);
+  }
+}
+
+function drawLabArrow(x,y,angle){
+  lctx.save(); lctx.translate(x,y); lctx.rotate(angle*Math.PI/180);
+  lctx.beginPath(); lctx.moveTo(0,-8); lctx.lineTo(5,0); lctx.lineTo(-5,0); lctx.closePath(); lctx.fill();
+  lctx.restore();
+}
+function drawLabArrowColor(x,y,angle,c){
+  lctx.fillStyle=c;
+  lctx.save(); lctx.translate(x,y); lctx.rotate(angle*Math.PI/180);
+  lctx.beginPath(); lctx.moveTo(0,-8); lctx.lineTo(5,0); lctx.lineTo(-5,0); lctx.closePath(); lctx.fill();
+  lctx.restore();
+}
+
+function resizeLab(){
+  labCanvas.width=labCanvas.parentElement.offsetWidth;
+  labCanvas.height=160;
+  updateLab();
+}
+window.addEventListener('resize',resizeLab);
+resizeLab();
+</script>
+</body>
+</html>
