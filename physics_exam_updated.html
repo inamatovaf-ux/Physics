@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>БЖБ: Жарық құбылыстары | 8-сынып</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c1: #F0EEFF;
+    --c2: #B8C8FF;
+    --c3: #FF79C6;
+    --c4: #BD93F9;
+    --c5: #6272A4;
+    --white: #F8F8FF;
+    --dark: #12111F;
+    --laser1: #00F5FF;
+    --laser2: #FF00FF;
+    --laser3: #39FF14;
+    --laser4: #FF6B00;
+    --laser5: #FFFF00;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Raleway', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated starfield background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(0,245,255,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(189,147,249,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, rgba(98,114,164,0.2) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--c1);
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--dur, 4s) var(--delay, 0s) infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* HEADER */
+  .header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid rgba(220,214,247,0.2);
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #BD93F9, #FF79C6);
+    color: white;
+    padding: 0.4rem 1.5rem;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    animation: fadeDown 0.8s ease forwards;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--c1), var(--c2), var(--c3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    animation: fadeDown 0.9s ease 0.2s both;
+  }
+
+  .header-sub {
+    color: var(--c2);
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    animation: fadeDown 1s ease 0.4s both;
+  }
+
+  /* Light beam decoration */
+  .light-beam {
+    position: absolute;
+    top: 0; left: 50%;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(220,214,247,0.4), transparent);
+    transform: translateX(-50%) rotate(-15deg);
+    pointer-events: none;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(42,40,64,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(166,177,225,0.3);
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: 700;
+    color: var(--c1);
+  }
+
+  .score-num {
+    font-size: 1.5rem;
+    color: var(--c3);
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    min-width: 150px;
+    height: 6px;
+    background: rgba(166,177,225,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--c4), var(--c2));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .q-counter {
+    color: var(--c2);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    position: relative;
+    z-index: 5;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* QUESTION CARDS */
+  .q-card {
+    background: rgba(78,76,103,0.25);
+    border: 1px solid rgba(220,214,247,0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    animation: cardIn 0.6s ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-card:hover {
+    border-color: rgba(180,134,159,0.4);
+    box-shadow: 0 8px 40px rgba(152,95,111,0.15);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .q-num {
+    min-width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--c4), var(--c5));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .q-points {
+    margin-left: auto;
+    background: rgba(166,177,225,0.2);
+    border: 1px solid rgba(166,177,225,0.3);
+    color: var(--c2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .q-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--c1);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .q-sub {
+    font-size: 0.9rem;
+    color: var(--c2);
+    margin-top: 0.3rem;
+    font-weight: 400;
+  }
+
+  /* SVG diagrams */
+  .diagram-wrap {
+    background: rgba(10,10,25,0.8);
+    border: 1px solid rgba(0,245,255,0.25);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  svg text {
+    font-family: 'Raleway', sans-serif;
+  }
+
+  /* OPTIONS */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .option-btn {
+    background: rgba(78,76,103,0.4);
+    border: 1.5px solid rgba(166,177,225,0.2);
+    border-radius: 12px;
+    padding: 0.9rem 1.2rem;
+    color: var(--c1);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: rgba(152,95,111,0.3);
+    border-color: var(--c3);
+    transform: translateY(-2px);
+  }
+
+  .option-btn .opt-letter {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(166,177,225,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    color: var(--c2);
+  }
+
+  .option-btn.selected {
+    background: rgba(152,95,111,0.4);
+    border-color: var(--c4);
+  }
+
+  .option-btn.selected .opt-letter {
+    background: var(--c4);
+    color: white;
+  }
+
+  .option-btn.correct {
+    background: rgba(100,200,120,0.2);
+    border-color: #6dc47e;
+  }
+
+  .option-btn.wrong {
+    background: rgba(220,80,80,0.2);
+    border-color: #e07070;
+  }
+
+  /* Checkbox style */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 1rem;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(78,76,103,0.4);
+    border: 1.5px solid rgba(166,177,225,0.2);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .check-item:hover {
+    border-color: var(--c3);
+    background: rgba(152,95,111,0.2);
+  }
+
+  .check-item input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: var(--c4);
+    cursor: pointer;
+  }
+
+  .check-item label {
+    color: var(--c1);
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  /* TABLE */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .styled-table th {
+    background: rgba(189,147,249,0.35);
+    color: #FFFF00;
+    padding: 0.8rem 1rem;
+    text-align: center;
+    font-weight: 700;
+    border: 1px solid rgba(0,245,255,0.4);
+  }
+
+  .styled-table td {
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(0,245,255,0.2);
+    text-align: center;
+    color: #B8C8FF;
+  }
+
+  .styled-table tr:nth-child(even) td {
+    background: rgba(98,114,164,0.2);
+  }
+
+  .styled-table input[type="number"],
+  .styled-table input[type="text"] {
+    width: 80px;
+    background: rgba(220,214,247,0.1);
+    border: 1px solid rgba(166,177,225,0.4);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    color: var(--c1);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .styled-table input:focus {
+    outline: none;
+    border-color: var(--c3);
+    background: rgba(220,214,247,0.15);
+  }
+
+  /* Text input */
+  .text-input-area {
+    margin-top: 1rem;
+  }
+
+  .text-input-area input,
+  .text-input-area textarea {
+    width: 100%;
+    background: rgba(78,76,103,0.4);
+    border: 1.5px solid rgba(166,177,225,0.25);
+    border-radius: 12px;
+    padding: 0.9rem 1.2rem;
+    color: var(--c1);
+    font-family: 'Raleway', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+
+  .text-input-area input:focus,
+  .text-input-area textarea:focus {
+    outline: none;
+    border-color: var(--c3);
+    background: rgba(78,76,103,0.6);
+  }
+
+  .text-input-area input::placeholder,
+  .text-input-area textarea::placeholder {
+    color: rgba(166,177,225,0.5);
+  }
+
+  /* Matching */
+  .match-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .match-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .match-col h4 {
+    color: var(--c3);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .match-item {
+    background: rgba(78,76,103,0.4);
+    border: 1px solid rgba(166,177,225,0.2);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: var(--c1);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .match-item select {
+    background: rgba(42,40,64,0.8);
+    border: 1px solid rgba(166,177,225,0.4);
+    border-radius: 8px;
+    color: var(--c1);
+    padding: 0.3rem 0.5rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .match-item select option {
+    background: var(--dark);
+  }
+
+  /* SUBMIT */
+  .submit-section {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(78,76,103,0.2);
+    border: 1px solid rgba(220,214,247,0.1);
+    border-radius: 20px;
+  }
+
+  .submit-btn {
+    background: linear-gradient(135deg, var(--c4), var(--c5));
+    color: white;
+    border: none;
+    padding: 1.1rem 3rem;
+    border-radius: 50px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    box-shadow: 0 8px 30px rgba(152,95,111,0.4);
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(152,95,111,0.6);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  /* RESULTS */
+  #results {
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .result-card {
+    background: rgba(78,76,103,0.3);
+    border: 1px solid rgba(220,214,247,0.2);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--c1), var(--c3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .result-score {
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--c2);
+    line-height: 1;
+    margin: 1rem 0;
+  }
+
+  .result-grade {
+    font-size: 1.3rem;
+    color: var(--c3);
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .breakdown-item {
+    background: rgba(42,40,64,0.5);
+    border-radius: 12px;
+    padding: 1rem;
+    border-left: 3px solid var(--c4);
+  }
+
+  .breakdown-item .b-label {
+    font-size: 0.8rem;
+    color: var(--c2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .breakdown-item .b-val {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--c1);
+  }
+
+  /* Self assessment */
+  .self-assess {
+    background: rgba(78,76,103,0.25);
+    border: 1px solid rgba(220,214,247,0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .self-assess h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--c1);
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+  }
+
+  .assess-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .assess-btn {
+    padding: 1.2rem 1rem;
+    border-radius: 16px;
+    border: 1.5px solid rgba(166,177,225,0.25);
+    background: rgba(78,76,103,0.4);
+    color: var(--c1);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .assess-btn .emoji {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .assess-btn:hover {
+    transform: translateY(-4px);
+    border-color: var(--c3);
+    box-shadow: 0 8px 20px rgba(152,95,111,0.3);
+  }
+
+  .assess-btn.selected-assess {
+    background: rgba(152,95,111,0.4);
+    border-color: var(--c4);
+  }
+
+  /* DESCRIPTOR */
+  .descriptor-section {
+    background: rgba(78,76,103,0.2);
+    border: 1px solid rgba(166,177,225,0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .descriptor-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--c1);
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .descriptor-grid {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .desc-row {
+    display: grid;
+    grid-template-columns: 2fr 3fr 80px;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: rgba(42,40,64,0.4);
+    border-radius: 10px;
+    border-left: 3px solid var(--c5);
+    font-size: 0.9rem;
+  }
+
+  .desc-row .d-task { color: var(--c2); }
+  .desc-row .d-criterion { color: var(--c1); }
+  .desc-row .d-pts {
+    text-align: center;
+    font-weight: 700;
+    color: var(--c3);
+    background: rgba(152,95,111,0.2);
+    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .desc-header {
+    display: grid;
+    grid-template-columns: 2fr 3fr 80px;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    color: var(--c3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Feedback messages */
+  .feedback-msg {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .feedback-correct {
+    background: rgba(100,200,120,0.15);
+    border: 1px solid rgba(100,200,120,0.4);
+    color: #8fe09a;
+  }
+
+  .feedback-wrong {
+    background: rgba(220,80,80,0.15);
+    border: 1px solid rgba(220,80,80,0.4);
+    color: #e09090;
+  }
+
+  /* Decorative elements */
+  .section-divider {
+    text-align: center;
+    color: rgba(166,177,225,0.3);
+    font-size: 1.5rem;
+    letter-spacing: 8px;
+    margin: 1rem 0;
+  }
+
+  .prism-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 20px solid var(--c3);
+    margin: 0 4px;
+    opacity: 0.6;
+  }
+
+  /* Lens formula display */
+  .formula-display {
+    background: rgba(42,40,64,0.6);
+    border: 1px solid rgba(166,177,225,0.2);
+    border-radius: 10px;
+    padding: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    text-align: center;
+    color: var(--c2);
+    margin: 0.8rem 0;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .match-container { grid-template-columns: 1fr; }
+    .desc-row, .desc-header { grid-template-columns: 1fr 2fr 60px; }
+    .result-score { font-size: 3.5rem; }
+  }
+
+  .highlight-box {
+    background: rgba(166,177,225,0.08);
+    border-left: 3px solid var(--c3);
+    border-radius: 0 10px 10px 0;
+    padding: 0.8rem 1rem;
+    margin: 0.8rem 0;
+    font-size: 0.9rem;
+    color: var(--c2);
+  }
+
+  /* Ray diagram labels */
+  .ray-label {
+    font-size: 11px;
+    fill: var(--c2);
+  }
+
+  /* image options grid */
+  .img-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .img-opt-btn {
+    background: rgba(78,76,103,0.4);
+    border: 2px solid rgba(166,177,225,0.2);
+    border-radius: 14px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--c1);
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .img-opt-btn:hover:not(:disabled) {
+    border-color: var(--c3);
+    background: rgba(152,95,111,0.2);
+    transform: translateY(-2px);
+  }
+
+  .img-opt-btn.selected {
+    border-color: var(--c4);
+    background: rgba(152,95,111,0.3);
+  }
+
+  .img-opt-btn svg {
+    display: block;
+    margin: 0 auto 0.5rem;
+  }
+
+  .opt-label-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--c2);
+  }
+
+  .correct-answer-reveal {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(100,180,255,0.08);
+    border: 1px solid rgba(100,180,255,0.2);
+    border-radius: 10px;
+    color: var(--c2);
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="starsContainer"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="light-beam"></div>
+  <div class="header-badge">8-сынып • Физика • 4-тоқсан</div>
+  <h1>Жарық құбылыстары</h1>
+  <p class="header-sub">Бөлім бойынша жиынтық бағалау (БЖБ) &nbsp;|&nbsp; Жалпы балл: 25</p>
+</header>
+
+<!-- Оқу мақсаттары + Бағалау критерийлері -->
+<div class="main" style="padding-bottom:0">
+  <div class="q-card" style="background:rgba(0,245,255,0.04);border-color:rgba(0,245,255,0.2)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#00F5FF;margin-bottom:1rem;letter-spacing:1px">📚 Оқу мақсаттары</div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:0.6rem">
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(0,245,255,0.07);border-radius:8px;border-left:3px solid #00F5FF"><strong style="color:#00F5FF">8.5.1.4</strong> – жазық айнада дененің кескінін алу және оны сипаттау</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(0,245,255,0.07);border-radius:8px;border-left:3px solid #00F5FF"><strong style="color:#00F5FF">8.5.1.7</strong> – жарықтың сыну заңын пайдаланып есептер шығару</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(0,245,255,0.07);border-radius:8px;border-left:3px solid #00F5FF"><strong style="color:#00F5FF">8.5.1.8</strong> – тәжірибеге сүйене отырып толық ішкі шағылу құбылысын түсіндіру</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(0,245,255,0.07);border-radius:8px;border-left:3px solid #00F5FF"><strong style="color:#00F5FF">8.5.1.13</strong> – жұқа линзада сәуленің жолын салу және кескінге сипаттама беру</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#FF79C6;margin-bottom:1rem;letter-spacing:1px">✅ Бағалау критерийлері</div>
+        <div style="font-size:0.8rem;color:#FF79C6;font-weight:600;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px">Білім алушы:</div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:0.6rem">
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(255,121,198,0.07);border-radius:8px;border-left:3px solid #FF79C6">• Жазық айнада дененің кескінін бейнелейді және оны сипаттайды</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(255,121,198,0.07);border-radius:8px;border-left:3px solid #FF79C6">• Тәжірибеге талдау жүргізіп, толық ішкі шағылу құбылысын анықтайды</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(255,121,198,0.07);border-radius:8px;border-left:3px solid #FF79C6">• Жұқа линза формуласын есептер шығару үшін қолданады</li>
+          <li style="font-size:0.85rem;color:var(--c1);padding:0.5rem 0.8rem;background:rgba(255,121,198,0.07);border-radius:8px;border-left:3px solid #FF79C6">• Жұқа линзада сәуленің жолын салады және кескінге сипаттама береді</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:2rem;font-size:0.85rem;color:var(--c2)">
+      <span>🎯 <strong style="color:var(--c1)">Ойлау дағдыларының деңгейі:</strong> Қолдану</span>
+      <span>⏱️ <strong style="color:var(--c1)">Орындау уақыты:</strong> 20 минут</span>
+    </div>
+  </div>
+</div>
+
+<!-- Score Bar -->
+<div class="score-bar">
+  <div class="score-display">
+    <span>Балл:</span>
+    <span class="score-num" id="liveScore">—</span>
+    <span style="color:var(--c2)">/25</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="q-counter" id="qCounter">6 тапсырма</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══════════════════════════════════ Q1 ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.1s">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div style="flex:1">
+        <div class="q-text">Жарық сәулесі шынының ауаға 40° түсу бұрышымен өтіп жатыр. Шыны–ауа шекарасы үшін шекті бұрыш 42°. Қай суретте жарық сәулесінің таралу жолы дұрыс көрсетілген?</div>
+      </div>
+      <div class="q-points">3 балл</div>
+    </div>
+
+    <div class="img-options" id="q1-options">
+      <!-- A -->
+      <button class="img-opt-btn" onclick="selectImgOption('q1', 'A', this, false)">
+        <svg width="130" height="110" viewBox="0 0 130 110">
+          <line x1="65" y1="0" x2="65" y2="110" stroke="rgba(220,214,247,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="0" y1="55" x2="130" y2="55" stroke="rgba(166,177,225,0.5)" stroke-width="1.5"/>
+          <text x="10" y="30" fill="#A6B1E1" font-size="11">ауа</text>
+          <text x="10" y="80" fill="#A6B1E1" font-size="11">шыны</text>
+          <!-- incident ray from glass at 40° -->
+          <line x1="65" y1="55" x2="30" y2="95" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <!-- reflected -->
+          <line x1="65" y1="55" x2="100" y2="95" stroke="#B4869F" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <!-- refracted (less than 40 in air - WRONG, should be >40°) -->
+          <line x1="65" y1="55" x2="40" y2="15" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <text x="55" y="75" fill="#A6B1E1" font-size="10">40°</text>
+          <text x="48" y="45" fill="#A6B1E1" font-size="10">30°</text>
+          <text x="98" y="45" fill="#DCD6F7" font-size="13" font-weight="bold">A</text>
+        </svg>
+        <div class="opt-label-text">Нұсқа A</div>
+      </button>
+
+      <!-- B - CORRECT: ray going from glass to air bends away from normal (angle > 40°) -->
+      <button class="img-opt-btn" onclick="selectImgOption('q1', 'B', this, true)">
+        <svg width="130" height="110" viewBox="0 0 130 110">
+          <line x1="65" y1="0" x2="65" y2="110" stroke="rgba(220,214,247,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="0" y1="55" x2="130" y2="55" stroke="rgba(166,177,225,0.5)" stroke-width="1.5"/>
+          <text x="10" y="30" fill="#A6B1E1" font-size="11">ауа</text>
+          <text x="10" y="80" fill="#A6B1E1" font-size="11">шыны</text>
+          <!-- from glass (bottom) 40° -->
+          <line x1="65" y1="55" x2="30" y2="95" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <!-- refracted in air, angle > 40 (away from normal) -->
+          <line x1="65" y1="55" x2="25" y2="10" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <!-- partial reflection -->
+          <line x1="65" y1="55" x2="100" y2="95" stroke="#B4869F" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="52" y="75" fill="#A6B1E1" font-size="10">40°</text>
+          <text x="42" y="43" fill="#A6B1E1" font-size="10">55°</text>
+          <text x="98" y="45" fill="#DCD6F7" font-size="13" font-weight="bold">B</text>
+        </svg>
+        <div class="opt-label-text">Нұсқа B</div>
+      </button>
+
+      <!-- C -->
+      <button class="img-opt-btn" onclick="selectImgOption('q1', 'C', this, false)">
+        <svg width="130" height="110" viewBox="0 0 130 110">
+          <line x1="65" y1="0" x2="65" y2="110" stroke="rgba(220,214,247,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="0" y1="55" x2="130" y2="55" stroke="rgba(166,177,225,0.5)" stroke-width="1.5"/>
+          <text x="10" y="30" fill="#A6B1E1" font-size="11">ауа</text>
+          <text x="10" y="80" fill="#A6B1E1" font-size="11">шыны</text>
+          <!-- incident from glass at 40° -->
+          <line x1="65" y1="55" x2="30" y2="95" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <!-- Total internal reflection only (correct for >42° but wrong for 40°) -->
+          <line x1="65" y1="55" x2="100" y2="95" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <text x="52" y="75" fill="#A6B1E1" font-size="10">40°</text>
+          <text x="98" y="45" fill="#DCD6F7" font-size="13" font-weight="bold">C</text>
+        </svg>
+        <div class="opt-label-text">Нұсқа C</div>
+      </button>
+
+      <!-- D -->
+      <button class="img-opt-btn" onclick="selectImgOption('q1', 'D', this, false)">
+        <svg width="130" height="110" viewBox="0 0 130 110">
+          <line x1="65" y1="0" x2="65" y2="110" stroke="rgba(220,214,247,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="0" y1="55" x2="130" y2="55" stroke="rgba(166,177,225,0.5)" stroke-width="1.5"/>
+          <text x="10" y="30" fill="#A6B1E1" font-size="11">ауа</text>
+          <text x="10" y="80" fill="#A6B1E1" font-size="11">шыны</text>
+          <!-- incident vertical -->
+          <line x1="65" y1="55" x2="65" y2="95" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <!-- refracted wrong direction -->
+          <line x1="65" y1="55" x2="95" y2="15" stroke="#DCD6F7" stroke-width="2" marker-end="url(#arrow1)"/>
+          <text x="98" y="45" fill="#DCD6F7" font-size="13" font-weight="bold">D</text>
+        </svg>
+        <div class="opt-label-text">Нұсқа D</div>
+      </button>
+    </div>
+
+    <div id="q1-fb" class="feedback-msg"></div>
+
+    <defs>
+      <marker id="arrow1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L6,3 z" fill="#DCD6F7"/>
+      </marker>
+    </defs>
+  </div>
+
+  <!-- ═══════════════════════════════════ Q2 ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.2s">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div style="flex:1">
+        <div class="q-text">Жарықтың сыну заңы және айна кескіндері</div>
+      </div>
+      <div class="q-points">6 балл</div>
+    </div>
+
+    <div style="margin-bottom:1rem;padding:0.5rem 1rem;background:rgba(0,245,255,0.08);border-radius:10px;border-left:3px solid #00F5FF">
+      <span style="font-size:0.9rem;font-weight:700;color:#00F5FF">а) Сыну көрсеткішін анықтаңыз. Кестені толтырыңыз.</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">n = sin i / sin r &nbsp;|&nbsp; 4 балл</span>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>i (°)</th>
+          <th>r (°)</th>
+          <th>sin i</th>
+          <th>sin r</th>
+          <th>n (есептеңіз)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td><td>10</td><td>6.5</td><td>0.17</td><td>0.11</td>
+          <td><input type="text" id="n1" placeholder="n=?" oninput="checkTable()"></td>
+        </tr>
+        <tr>
+          <td>2</td><td>20</td><td>13</td><td>0.34</td><td>0.22</td>
+          <td><input type="text" id="n2" placeholder="n=?" oninput="checkTable()"></td>
+        </tr>
+        <tr>
+          <td>3</td><td>30</td><td>19.5</td><td>0.5</td><td>0.33</td>
+          <td><input type="text" id="n3" placeholder="n=?" oninput="checkTable()"></td>
+        </tr>
+        <tr>
+          <td>4</td><td>40</td><td>25</td><td>0.64</td><td>0.42</td>
+          <td><input type="text" id="n4" placeholder="n=?" oninput="checkTable()"></td>
+        </tr>
+        <tr style="background:rgba(152,95,111,0.15)">
+          <td colspan="5" style="text-align:right;font-weight:700;color:var(--c1)">Орташа мән (n̄):</td>
+          <td><input type="text" id="navg" placeholder="орташа" oninput="checkTable()"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="q2-fb" class="feedback-msg"></div>
+
+    <!-- б) Айна уақыты -->
+    <div style="margin:1.5rem 0 1rem;padding:0.5rem 1rem;background:rgba(255,121,198,0.08);border-radius:10px;border-left:3px solid #FF79C6">
+      <span style="font-size:0.9rem;font-weight:700;color:#FF79C6">б) Айнадағы уақыт қандай?</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">Суреттегі айнадағы бейнені анықтаңыз. &nbsp;|&nbsp; 2 балл</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+      <!-- a) digital clock -->
+      <div>
+        <div class="highlight-box" style="text-align:center;margin-bottom:0.8rem;font-size:0.85rem;color:var(--c3)">а) Цифрлық сағат</div>
+        <div class="diagram-wrap">
+          <svg width="200" height="80" viewBox="0 0 200 80">
+            <!-- Clock display -->
+            <rect x="10" y="15" width="80" height="50" rx="8" fill="rgba(10,10,25,0.95)" stroke="#00F5FF" stroke-width="2"/>
+            <text x="50" y="48" fill="#39FF14" font-size="18" font-weight="bold" text-anchor="middle" font-family="monospace">15:21</text>
+            <!-- Mirror -->
+            <rect x="105" y="5" width="8" height="70" rx="3" fill="rgba(0,245,255,0.5)" stroke="#00F5FF" stroke-width="1.5"/>
+            <!-- Arrow showing reflection -->
+            <line x1="95" y1="40" x2="115" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="3,2"/>
+            <text x="150" y="22" fill="#FF79C6" font-size="11" text-anchor="middle">Айна</text>
+          </svg>
+        </div>
+        <div class="text-input-area">
+          <input type="text" id="q3a" placeholder="Айнадағы уақытты жазыңыз..." oninput="checkQ3()">
+        </div>
+      </div>
+
+      <!-- b) analog clock -->
+      <div>
+        <div class="highlight-box" style="text-align:center;margin-bottom:0.8rem;font-size:0.85rem;color:var(--c3)">б) Аналогтық сағат</div>
+        <div class="diagram-wrap">
+          <svg width="200" height="90" viewBox="0 0 200 90">
+            <!-- Clock face -->
+            <circle cx="70" cy="45" r="35" fill="rgba(10,10,25,0.9)" stroke="#00F5FF" stroke-width="2"/>
+            <!-- Hour markers -->
+            <line x1="70" y1="13" x2="70" y2="18" stroke="#B8C8FF" stroke-width="1.5"/>
+            <line x1="102" y1="45" x2="97" y2="45" stroke="#B8C8FF" stroke-width="1.5"/>
+            <line x1="70" y1="77" x2="70" y2="72" stroke="#B8C8FF" stroke-width="1.5"/>
+            <line x1="38" y1="45" x2="43" y2="45" stroke="#B8C8FF" stroke-width="1.5"/>
+            <!-- Minute hand pointing ~12 (roughly 12:00 area) -->
+            <line x1="70" y1="45" x2="70" y2="17" stroke="#F0EEFF" stroke-width="2"/>
+            <!-- Hour hand pointing ~1 o'clock direction -->
+            <line x1="70" y1="45" x2="84" y2="35" stroke="#FF6B00" stroke-width="3"/>
+            <!-- Center dot -->
+            <circle cx="70" cy="45" r="3" fill="#FF79C6"/>
+            <!-- Mirror -->
+            <rect x="118" y="8" width="7" height="70" rx="3" fill="rgba(0,245,255,0.5)" stroke="#00F5FF" stroke-width="1.5"/>
+            <text x="148" y="22" fill="#FF79C6" font-size="11" text-anchor="middle">Айна</text>
+          </svg>
+        </div>
+        <div class="text-input-area">
+          <input type="text" id="q3b" placeholder="Айнадағы уақытты жазыңыз..." oninput="checkQ3()">
+        </div>
+      </div>
+    </div>
+    <div id="q3-fb" class="feedback-msg"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════ Q3 (was Q4) ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.4s">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div style="flex:1">
+        <div class="q-text">OX өсі жинағыш линзаның алдында орналасқан нәрсе. Линза IY кескінін береді.</div>
+        <div class="q-sub">3.1-суретте нәрседен кескінге дейін екі сәуле көрсетілген.</div>
+      </div>
+      <div class="q-points">5 балл</div>
+    </div>
+
+    <!-- Lens diagram from Q4 image -->
+    <div class="diagram-wrap">
+      <svg width="520" height="200" viewBox="0 0 520 200" id="lensDiagram">
+        <!-- Principal axis -->
+        <line x1="20" y1="100" x2="500" y2="100" stroke="#B8C8FF" stroke-width="1.5"/>
+        <!-- Lens -->
+        <ellipse cx="300" cy="100" rx="8" ry="65" fill="rgba(0,245,255,0.1)" stroke="#00F5FF" stroke-width="2"/>
+        <!-- Arrow tips for lens -->
+        <path d="M296,35 Q300,30 304,35" fill="none" stroke="#00F5FF" stroke-width="2"/>
+        <path d="M296,165 Q300,170 304,165" fill="none" stroke="#00F5FF" stroke-width="2"/>
+
+        <!-- Object X (top of arrow) -->
+        <line x1="120" y1="100" x2="120" y2="40" stroke="#FFFF00" stroke-width="2"/>
+        <polygon points="120,40 116,52 124,52" fill="#FFFF00"/>
+        <text x="108" y="35" fill="#FFFF00" font-size="13" font-weight="bold">X</text>
+        <text x="108" y="115" fill="#B8C8FF" font-size="12">O</text>
+
+        <!-- Ray 1: parallel to axis → through F' -->
+        <line x1="120" y1="40" x2="300" y2="40" stroke="#FF6B00" stroke-width="2"/>
+        <line x1="300" y1="40" x2="430" y2="145" stroke="#FF6B00" stroke-width="2" stroke-dasharray="5,3"/>
+
+        <!-- Ray 2: through center of lens -->
+        <line x1="120" y1="40" x2="430" y2="145" stroke="#FF79C6" stroke-width="2"/>
+
+        <!-- Image I (inverted) -->
+        <line x1="430" y1="100" x2="430" y2="145" stroke="#00F5FF" stroke-width="2"/>
+        <polygon points="430,145 426,133 434,133" fill="#00F5FF"/>
+        <text x="432" y="115" fill="#00F5FF" font-size="12">I</text>
+        <text x="432" y="155" fill="#FFFF00" font-size="13" font-weight="bold">Y</text>
+
+        <!-- F labels to be identified -->
+        <circle cx="370" cy="100" r="4" fill="#39FF14"/>
+        <text x="368" y="120" fill="#39FF14" font-size="12" font-weight="bold">F'?</text>
+        <circle cx="230" cy="100" r="4" fill="#39FF14"/>
+        <text x="228" y="120" fill="#39FF14" font-size="12" font-weight="bold">F?</text>
+
+        <!-- Axis label -->
+        <text x="490" y="95" fill="#B8C8FF" font-size="12">X</text>
+        <!-- Arrow on axis -->
+        <polygon points="500,100 490,96 490,104" fill="#B8C8FF"/>
+      </svg>
+    </div>
+
+    <div class="q-sub" style="margin:0.5rem 0 1rem">а) 3.1-суретте линзаның бас фокусын және фокустық қашықтығын мұқият белгілеңіз:</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="text-input-area">
+        <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Фокус нүктесі қайда орналасқан?</label>
+        <input type="text" id="q4a_focus" placeholder="Мысалы: линза мен кескін арасында...">
+      </div>
+      <div class="text-input-area">
+        <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Фокус қашықтығы дегеніміз не?</label>
+        <input type="text" id="q4a_dist" placeholder="Фокус қашықтығын сипаттаңыз...">
+      </div>
+    </div>
+
+    <div class="q-sub" style="margin:1rem 0 0.5rem">б) X-тан Y-ке үшінші сәулені сызыңыз (фокус арқылы өтетін сәуле):</div>
+    <div class="checkbox-group">
+      <label class="check-item">
+        <input type="checkbox" id="q4b1" name="q4b">
+        <label for="q4b1">Фокус арқылы сынып, линзадан кейін оптикалық өске параллель шығатын сәуле</label>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="q4b2" name="q4b">
+        <label for="q4b2">Нәседен тікелей кескінге дейін созылатын сәуле</label>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="q4b3" name="q4b">
+        <label for="q4b3">Линзаның оптикалық орталығы арқылы өтетін үшінші сәуле</label>
+      </label>
+    </div>
+
+    <div class="q-sub" style="margin:1rem 0 0.5rem">в) Кескінді сипаттайтын сөздерді белгілеңіз (V белгісімен):</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
+      <label class="check-item"><input type="checkbox" id="img_shyn"><label for="img_shyn">Шын</label></label>
+      <label class="check-item"><input type="checkbox" id="img_jalg"><label for="img_jalg">Жалған</label></label>
+      <label class="check-item"><input type="checkbox" id="img_ulk"><label for="img_ulk">Үлкейтілген</label></label>
+      <label class="check-item"><input type="checkbox" id="img_kis"><label for="img_kis">Кішірейтілген</label></label>
+      <label class="check-item"><input type="checkbox" id="img_tonk"><label for="img_tonk">Төңкерілген</label></label>
+      <label class="check-item"><input type="checkbox" id="img_tura"><label for="img_tura">Тура</label></label>
+    </div>
+    <div id="q4-fb" class="feedback-msg"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════ Q4 (was Q5) ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.5s">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div style="flex:1">
+        <div class="q-text">Нәрседен жұқа линзаға дейінгі қашықтық 60 см, ал линзадан кескінге дейінгі қашықтық 30 см. Жинағыш линзаның фокустық қашықтығын анықтаңыз.</div>
+        <div class="q-sub">Сызбасын сызыңыз. [5 балл]</div>
+      </div>
+      <div class="q-points">5 балл</div>
+    </div>
+
+    <div class="highlight-box">
+      📐 Берілгені: нәрседен линзаға — <strong style="color:var(--c1)">d = 60 см</strong>, линзадан кескінге — <strong style="color:var(--c1)">f' = 30 см</strong>
+    </div>
+
+    <div class="text-input-area" style="margin-top:1rem">
+      <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Шешімін жазыңыз (формула, есептеу, жауап):</label>
+      <textarea id="q5_solution" rows="5" placeholder="Шешімін жазыңыз:&#10;Формула: 1/F = 1/d + 1/f'&#10;Есептеу:&#10;Жауап: F = ... см"></textarea>
+    </div>
+
+    <div class="text-input-area" style="margin-top:0.8rem">
+      <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Жауап (санмен, см):</label>
+      <input type="text" id="q5_answer" placeholder="F = ... см" oninput="checkQ5()">
+    </div>
+    <div id="q5-fb" class="feedback-msg"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════ Q5 (was Q6+Q7) ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.55s">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div style="flex:1">
+        <div class="q-text">Жарықтың шағылу заңы және ойыс айна кескіндері</div>
+      </div>
+      <div class="q-points">6 балл</div>
+    </div>
+
+    <div style="margin-bottom:1rem;padding:0.5rem 1rem;background:rgba(0,245,255,0.08);border-radius:10px;border-left:3px solid #00F5FF">
+      <span style="font-size:0.9rem;font-weight:700;color:#00F5FF">а) Түсу бұрышы мен шағылу бұрышы қандай?</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">Суреттегі 70° бұрыш көрсетілген. Бұрыштарды анықтаңыз. &nbsp;|&nbsp; 2 балл</span>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="260" height="200" viewBox="0 0 260 200">
+        <!-- Mirror -->
+        <rect x="128" y="20" width="10" height="160" rx="4" fill="rgba(0,245,255,0.4)" stroke="#00F5FF" stroke-width="2"/>
+        <!-- Normal line (dashed) -->
+        <line x1="133" y1="10" x2="133" y2="190" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <!-- Incident ray -->
+        <line x1="50" y1="40" x2="133" y2="100" stroke="#FFFF00" stroke-width="2.5"/>
+        <polygon points="133,100 120,90 118,104" fill="#FFFF00"/>
+        <!-- Reflected ray -->
+        <line x1="133" y1="100" x2="50" y2="160" stroke="#39FF14" stroke-width="2.5"/>
+        <polygon points="50,160 63,150 58,165" fill="#39FF14"/>
+        <!-- Angle arc 70° total between the two rays -->
+        <path d="M90,88 A50,50 0 0,1 90,112" fill="none" stroke="#FF79C6" stroke-width="2"/>
+        <text x="60" y="105" fill="#FF6B00" font-size="14" font-weight="bold">70°</text>
+        <!-- Labels -->
+        <text x="25" y="38" fill="#FFFF00" font-size="11">Түсетін сәуле</text>
+        <text x="18" y="175" fill="#39FF14" font-size="11">Шағылған сәуле</text>
+        <text x="140" y="25" fill="rgba(0,245,255,0.8)" font-size="11">Нормаль</text>
+      </svg>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+      <div class="text-input-area">
+        <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Түсу бұрышы (α):</label>
+        <input type="text" id="q6a" placeholder="α = ...°" oninput="checkQ6()">
+      </div>
+      <div class="text-input-area">
+        <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Шағылу бұрышы (β):</label>
+        <input type="text" id="q6b" placeholder="β = ...°" oninput="checkQ6()">
+      </div>
+    </div>
+    <div id="q6-fb" class="feedback-msg"></div>
+
+    <!-- б) Ойыс айна -->
+    <div style="margin:1.5rem 0 1rem;padding:0.5rem 1rem;background:rgba(255,121,198,0.08);border-radius:10px;border-left:3px solid #FF79C6">
+      <span style="font-size:0.9rem;font-weight:700;color:#FF79C6">б) Ойыс айнада нәрсе фокустан алыста орналасқан.</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">Бөтелке ойыс айнаның алдында 1.5 м қашықтықта тұр. Фокустық қашықтық 50 см. Кескіннің қасиеттерін жазыңыз. &nbsp;|&nbsp; 2 балл</span>
+    </div>
+
+    <div class="options-grid" id="q7-type">
+      <button class="option-btn" onclick="selectOption('q7', 'A', this, false)">
+        <span class="opt-letter">A</span>
+        Шын, тік, кішірейтілген
+      </button>
+      <button class="option-btn" onclick="selectOption('q7', 'B', this, true)">
+        <span class="opt-letter">B</span>
+        Шын, төңкерілген, кішірейтілген
+      </button>
+      <button class="option-btn" onclick="selectOption('q7', 'C', this, false)">
+        <span class="opt-letter">C</span>
+        Жалған (виртуал), тік, үлкейтілген
+      </button>
+      <button class="option-btn" onclick="selectOption('q7', 'D', this, false)">
+        <span class="opt-letter">D</span>
+        Шын, төңкерілген, үлкейтілген
+      </button>
+    </div>
+
+    <div style="margin:1.5rem 0 0.8rem;padding:0.5rem 1rem;background:rgba(57,255,20,0.07);border-radius:10px;border-left:3px solid #39FF14">
+      <span style="font-size:0.9rem;font-weight:700;color:#39FF14">в) Үлкейтілген кескін алу үшін нәрсені қайда орналастырады?</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">2 балл</span>
+    </div>
+    <div class="options-grid" id="q7b">
+      <button class="option-btn" onclick="selectOption('q7b', 'A', this, false)">
+        <span class="opt-letter">A</span>
+        Кез келген жерге
+      </button>
+      <button class="option-btn" onclick="selectOption('q7b', 'B', this, false)">
+        <span class="opt-letter">B</span>
+        Фокустан тыс жерге
+      </button>
+      <button class="option-btn" onclick="selectOption('q7b', 'C', this, true)">
+        <span class="opt-letter">C</span>
+        Фокус пен айна арасына (F мен айна арасына)
+      </button>
+      <button class="option-btn" onclick="selectOption('q7b', 'D', this, false)">
+        <span class="opt-letter">D</span>
+        Қисықтық орталығынан тыс жерге
+      </button>
+    </div>
+    <div id="q7-fb" class="feedback-msg"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════ Q6 (was Q8) + new mirror number task ═══════════════════════════════════ -->
+  <div class="q-card" style="animation-delay:0.65s">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div style="flex:1">
+        <div class="q-text">Жарық сәулелерінің жолдарын талдаңыз және айнадағы санды анықтаңыз</div>
+      </div>
+      <div class="q-points">5 балл</div>
+    </div>
+
+    <div style="margin-bottom:1rem;padding:0.5rem 1rem;background:rgba(0,245,255,0.08);border-radius:10px;border-left:3px solid #00F5FF">
+      <span style="font-size:0.9rem;font-weight:700;color:#00F5FF">а) Қай сәулелер дұрыс сызылған? Линзадан өткен сәулелерді талдаңыз.</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">Төмендегі суреттерде 1, 2, 3, 4 сәулелер берілген. Қайсысы дұрыс емес? &nbsp;|&nbsp; 3 балл</span>
+    </div>
+
+    <!-- Lens ray diagrams -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+      <!-- Converging lens rays 1&2 -->
+      <div class="diagram-wrap" style="flex-direction:column;gap:0.5rem">
+        <svg width="220" height="130" viewBox="0 0 220 130">
+          <!-- axis -->
+          <line x1="10" y1="65" x2="210" y2="65" stroke="#B8C8FF" stroke-width="1.2"/>
+          <!-- lens -->
+          <ellipse cx="130" cy="65" rx="6" ry="50" fill="rgba(0,245,255,0.08)" stroke="#00F5FF" stroke-width="2"/>
+          <!-- F points -->
+          <circle cx="80" cy="65" r="3" fill="#FF79C6"/>
+          <text x="78" y="80" fill="#FF79C6" font-size="10">F</text>
+          <circle cx="180" cy="65" r="3" fill="#FF79C6"/>
+          <text x="178" y="80" fill="#FF79C6" font-size="10">F</text>
+          <!-- Ray 1: from top-left obliquely, hits lens off-center - WRONG (should refract through F') -->
+          <line x1="10" y1="20" x2="130" y2="40" stroke="#FFFF00" stroke-width="1.8"/>
+          <!-- Ray 1 refracted going UP (wrong) -->
+          <line x1="130" y1="40" x2="200" y2="10" stroke="#FFFF00" stroke-width="1.8" stroke-dasharray="4,2"/>
+          <text x="5" y="18" fill="#FFFF00" font-size="11" font-weight="bold">2</text>
+          <!-- Ray 2: parallel to axis → should go through F' -->
+          <line x1="10" y1="30" x2="130" y2="30" stroke="#39FF14" stroke-width="1.8"/>
+          <line x1="130" y1="30" x2="180" y2="65" stroke="#39FF14" stroke-width="1.8"/>
+          <line x1="180" y1="65" x2="210" y2="85" stroke="#39FF14" stroke-width="1.8"/>
+          <text x="5" y="28" fill="#39FF14" font-size="11" font-weight="bold">—</text>
+          <!-- F label bottom-left -->
+          <text x="10" y="125" fill="#B8C8FF" font-size="10">Жинағыш линза</text>
+        </svg>
+        <div style="font-size:0.8rem;color:var(--c2);text-align:center">Жинағыш линза (1-2 сәулелер)</div>
+      </div>
+
+      <!-- Converging lens rays 3&4 -->
+      <div class="diagram-wrap" style="flex-direction:column;gap:0.5rem">
+        <svg width="220" height="130" viewBox="0 0 220 130">
+          <line x1="10" y1="65" x2="210" y2="65" stroke="#B8C8FF" stroke-width="1.2"/>
+          <ellipse cx="110" cy="65" rx="6" ry="50" fill="rgba(0,245,255,0.08)" stroke="#00F5FF" stroke-width="2"/>
+          <circle cx="60" cy="65" r="3" fill="#FF79C6"/>
+          <text x="58" y="80" fill="#FF79C6" font-size="10">F</text>
+          <circle cx="160" cy="65" r="3" fill="#FF79C6"/>
+          <text x="158" y="80" fill="#FF79C6" font-size="10">F</text>
+          <!-- Ray 3: going UP toward lens from left (oblique) - exits parallel to axis (WRONG direction) -->
+          <line x1="20" y1="20" x2="110" y2="55" stroke="#FF6B00" stroke-width="1.8"/>
+          <line x1="110" y1="55" x2="200" y2="55" stroke="#FF6B00" stroke-width="1.8" stroke-dasharray="4,2"/>
+          <text x="15" y="18" fill="#FF6B00" font-size="11" font-weight="bold">3</text>
+          <!-- Ray 4: through center, continues straight - CORRECT -->
+          <line x1="20" y1="95" x2="110" y2="65" stroke="#00F5FF" stroke-width="1.8"/>
+          <line x1="110" y1="65" x2="200" y2="35" stroke="#00F5FF" stroke-width="1.8"/>
+          <text x="15" y="110" fill="#00F5FF" font-size="11" font-weight="bold">4</text>
+          <text x="10" y="125" fill="#B8C8FF" font-size="10">Жинағыш линза</text>
+        </svg>
+        <div style="font-size:0.8rem;color:var(--c2);text-align:center">Жинағыш линза (3-4 сәулелер)</div>
+      </div>
+    </div>
+
+    <div class="q-sub" style="margin:1rem 0 0.5rem">Қай сәулелер дұрыс емес сызылған?</div>
+    <div class="options-grid" id="q8-opts">
+      <button class="option-btn" onclick="selectOption('q8', 'A', this, false)">
+        <span class="opt-letter">A</span>
+        1 және 3 сәулелер
+      </button>
+      <button class="option-btn" onclick="selectOption('q8', 'B', this, true)">
+        <span class="opt-letter">B</span>
+        2 және 3 сәулелер
+      </button>
+      <button class="option-btn" onclick="selectOption('q8', 'C', this, false)">
+        <span class="opt-letter">C</span>
+        1 және 4 сәулелер
+      </button>
+      <button class="option-btn" onclick="selectOption('q8', 'D', this, false)">
+        <span class="opt-letter">D</span>
+        Барлығы дұрыс
+      </button>
+    </div>
+    <div id="q8-fb" class="feedback-msg"></div>
+
+    <!-- б) Mirror number task (new) -->
+    <div style="margin:1.5rem 0 1rem;padding:0.5rem 1rem;background:rgba(255,121,198,0.08);border-radius:10px;border-left:3px solid #FF79C6">
+      <span style="font-size:0.9rem;font-weight:700;color:#FF79C6">б) Айнадағы санның кескіні қандай болады?</span>
+      <span style="font-size:0.85rem;color:var(--c2);margin-left:0.5rem">Жазық айна заңын қолданыңыз. &nbsp;|&nbsp; 2 балл</span>
+    </div>
+
+    <div class="diagram-wrap" style="position:relative">
+      <div style="display:flex;align-items:center;gap:0;position:relative">
+        <!-- LCD number display -->
+        <div style="background:rgba(10,10,25,0.95);border:2px solid #39FF14;border-radius:8px;padding:0.6rem 1.2rem;font-family:monospace;font-size:2.8rem;font-weight:900;color:#39FF14;letter-spacing:0.15em;text-shadow:0 0 12px #39FF14,0 0 24px rgba(57,255,20,0.5);min-width:160px;text-align:center">1580</div>
+        <!-- Mirror line (drawable canvas) -->
+        <div style="position:relative;width:16px;height:80px;margin:0 4px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="width:8px;height:80px;background:linear-gradient(to bottom,rgba(0,245,255,0.2),#00F5FF,rgba(0,245,255,0.2));border-radius:4px;box-shadow:0 0 10px #00F5FF"></div>
+          <div style="position:absolute;top:-18px;font-size:0.72rem;color:#00F5FF;white-space:nowrap;font-weight:700">Айна</div>
+        </div>
+        <!-- Drawing canvas area for student -->
+        <div style="position:relative">
+          <canvas id="mirrorCanvas" width="180" height="90" style="border:1.5px dashed rgba(0,245,255,0.4);border-radius:8px;background:rgba(10,10,25,0.7);cursor:crosshair;display:block"></canvas>
+          <div style="position:absolute;top:4px;left:6px;font-size:0.72rem;color:rgba(0,245,255,0.5);pointer-events:none">Мұнда сызыңыз →</div>
+          <button onclick="clearMirrorCanvas()" style="position:absolute;bottom:4px;right:4px;background:rgba(255,107,0,0.3);border:1px solid #FF6B00;border-radius:6px;color:#FF6B00;padding:2px 8px;font-size:0.7rem;cursor:pointer;font-family:Raleway,sans-serif">Тазарту</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-input-area" style="margin-top:0.8rem">
+      <label style="font-size:0.85rem;color:var(--c3);display:block;margin-bottom:0.4rem">Айнадағы сан қандай? Жазыңыз:</label>
+      <input type="text" id="q_mirror_num" placeholder="Айнадағы кескін: ..." oninput="checkMirrorNum()">
+    </div>
+    <div id="qmn-fb" class="feedback-msg"></div>
+  </div>
+
+  <!-- ═══════════ SUBMIT ═══════════ -->
+  <div class="submit-section">
+    <p style="color:var(--c2);margin-bottom:1.5rem;font-size:1rem">Барлық сұрақтарға жауап бердіңіз бе? Жіберу үшін батырманы басыңыз.</p>
+    <button class="submit-btn" onclick="submitExam()">✦ ЖІБЕРУ ✦</button>
+  </div>
+
+  <!-- ═══════════ RESULTS ═══════════ -->
+  <div id="results">
+    <div class="result-card">
+      <div class="result-title">Нәтиже</div>
+      <div style="color:var(--c2);font-size:1rem;margin-bottom:0.5rem">Жалпы балл</div>
+      <div class="result-score" id="finalScore">0</div>
+      <div style="color:var(--c2);font-size:1.1rem">/25 балл</div>
+      <div class="result-grade" id="gradeText"></div>
+
+      <div class="result-breakdown" id="breakdownGrid"></div>
+    </div>
+
+    <!-- Self assessment -->
+    <div class="self-assess">
+      <h3>🔍 Өзін-өзі бағалау</h3>
+      <p style="color:var(--c2);margin-bottom:1.5rem;font-size:0.95rem">«Жарық құбылыстары» тақырыбын қаншалықты түсіндіңіз?</p>
+      <div class="assess-options">
+        <button class="assess-btn" onclick="selectAssess(this,'full')">
+          <span class="emoji">🌟</span>
+          Өте жақсы түсіндім
+        </button>
+        <button class="assess-btn" onclick="selectAssess(this,'good')">
+          <span class="emoji">😊</span>
+          Жақсы түсіндім
+        </button>
+        <button class="assess-btn" onclick="selectAssess(this,'ok')">
+          <span class="emoji">🤔</span>
+          Орташа түсіндім
+        </button>
+        <button class="assess-btn" onclick="selectAssess(this,'low')">
+          <span class="emoji">📚</span>
+          Қайта оқу керек
+        </button>
+      </div>
+      <div id="assessFeedback" style="margin-top:1.5rem;display:none;padding:1rem;background:rgba(78,76,103,0.4);border-radius:12px;color:var(--c1);font-size:0.95rem;line-height:1.6"></div>
+    </div>
+
+    <!-- DESCRIPTOR -->
+    <div class="descriptor-section">
+      <div class="descriptor-title">
+        <span style="font-size:1.5rem">📋</span>
+        Дескриптор
+      </div>
+      <div class="desc-header">
+        <span>Тапсырма</span>
+        <span>Бағалау критерийі</span>
+        <span style="text-align:center">Балл</span>
+      </div>
+      <div class="descriptor-grid">
+        <div class="desc-row">
+          <div class="d-task">1-тапсырма<br><small>Жарықтың сынуы (толық ішкі шағылу)</small></div>
+          <div class="d-criterion">Шыны–ауа шекарасында жарық сәулесінің дұрыс бағытын таңдайды (40° &lt; 42° болғандықтан жарық өтеді, бірақ нормальдан алыстайды)</div>
+          <div class="d-pts">3</div>
+        </div>
+        <div class="desc-row">
+          <div class="d-task">2-тапсырма<br><small>а) Сыну көрсеткіші; б) Айна кескіні</small></div>
+          <div class="d-criterion">а) Снелл заңын қолданып n = sin i / sin r формуласымен 4 тәжірибе үшін n мәнін дұрыс есептейді; орташа мәнді табады (~1.54) — 4 балл. б) Цифрлық және аналогтық сағаттардың айнадағы кескіндерін дұрыс анықтайды — 2 балл</div>
+          <div class="d-pts">6</div>
+        </div>
+        <div class="desc-row">
+          <div class="d-task">3-тапсырма<br><small>Жинағыш линза</small></div>
+          <div class="d-criterion">Бас фокусты дұрыс белгілейді; үшінші сәулені (фокустан өтіп параллель шығатын) дұрыс сызады; кескінді шын, төңкерілген, кішірейтілген деп дұрыс сипаттайды</div>
+          <div class="d-pts">5</div>
+        </div>
+        <div class="desc-row">
+          <div class="d-task">4-тапсырма<br><small>Жұқа линза формуласы</small></div>
+          <div class="d-criterion">1/F = 1/d + 1/f' формуласын дұрыс қолданады; d=60 см, f'=30 см мәндерін қоя отырып F=20 см жауабын алады; сызбасын сызады</div>
+          <div class="d-pts">5</div>
+        </div>
+        <div class="desc-row">
+          <div class="d-task">5-тапсырма<br><small>а) Шағылу заңы; б) Ойыс айна; в) Орналасу</small></div>
+          <div class="d-criterion">а) 70° бұрышты 2-ге бөліп, түсу = шағылу = 35° — 2 балл. б) u &gt; 2F болғанда шын, төңкерілген, кішірейтілген — 2 балл. в) Үлкейтілген кескін үшін F мен айна арасы — 2 балл</div>
+          <div class="d-pts">6</div>
+        </div>
+        <div class="desc-row">
+          <div class="d-task">6-тапсырма<br><small>а) Сәуле сызбасы; б) Айнадағы сан</small></div>
+          <div class="d-criterion">а) Линза арқылы өтетін сәулелердің 3 ережесін біледі; дұрыс емес сызылған сәулелерді (2 және 3) анықтайды — 3 балл. б) Жазық айнадағы 1580 санының кескінін дұрыс анықтайды (0851) — 2 балл</div>
+          <div class="d-pts">5</div>
+        </div>
+        <div class="desc-row" style="background:rgba(0,245,255,0.1);border-left-color:#00F5FF">
+          <div class="d-task" style="font-weight:700;color:var(--c1)">ЖАЛПЫ</div>
+          <div class="d-criterion" style="color:var(--c1)">Барлық тапсырмалар бойынша жиынтық</div>
+          <div class="d-pts" style="font-size:1.1rem;color:#00F5FF">25</div>
+        </div>
+      </div>
+
+      <!-- Grade scale -->
+      <div style="margin-top:1.5rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem">
+        <div style="text-align:center;padding:0.8rem;background:rgba(220,80,80,0.15);border-radius:10px;border:1px solid rgba(220,80,80,0.3)">
+          <div style="font-size:1.2rem;font-weight:700;color:#e07070">«2»</div>
+          <div style="font-size:0.8rem;color:var(--c2)">0 – 12 балл</div>
+        </div>
+        <div style="text-align:center;padding:0.8rem;background:rgba(220,160,80,0.15);border-radius:10px;border:1px solid rgba(220,160,80,0.3)">
+          <div style="font-size:1.2rem;font-weight:700;color:#e0b870">«3»</div>
+          <div style="font-size:0.8rem;color:var(--c2)">13 – 17 балл</div>
+        </div>
+        <div style="text-align:center;padding:0.8rem;background:rgba(100,180,220,0.15);border-radius:10px;border:1px solid rgba(100,180,220,0.3)">
+          <div style="font-size:1.2rem;font-weight:700;color:#7ac0e0">«4»</div>
+          <div style="font-size:0.8rem;color:var(--c2)">18 – 22 балл</div>
+        </div>
+        <div style="text-align:center;padding:0.8rem;background:rgba(100,200,120,0.15);border-radius:10px;border:1px solid rgba(100,200,120,0.3)">
+          <div style="font-size:1.2rem;font-weight:700;color:#7ec47e">«5»</div>
+          <div style="font-size:0.8rem;color:var(--c2)">23 – 25 балл</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Stars
+const starsEl = document.getElementById('starsContainer');
+for (let i = 0; i < 80; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${3+Math.random()*5}s;--delay:${Math.random()*5}s`;
+  starsEl.appendChild(star);
+}
+
+// State
+const scores = {
+  q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: 0, q7: 0, q7b: 0, q8: 0, qmn: 0
+};
+const maxScores = { q1: 3, q2: 4, q3: 2, q4: 5, q5: 5, q6: 2, q7: 2, q7b: 2, q8: 3, qmn: 2 };
+const answered = {};
+let submitted = false;
+
+// Mirror canvas drawing
+const canvas = document.getElementById('mirrorCanvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+let drawing = false;
+if (canvas && ctx) {
+  ctx.strokeStyle = '#39FF14';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  canvas.addEventListener('mousedown', e => { drawing = true; const r=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX-r.left, e.clientY-r.top); });
+  canvas.addEventListener('mousemove', e => { if (!drawing) return; const r=canvas.getBoundingClientRect(); ctx.lineTo(e.clientX-r.left, e.clientY-r.top); ctx.stroke(); });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+  // Touch support
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const r=canvas.getBoundingClientRect(); const t=e.touches[0]; ctx.beginPath(); ctx.moveTo(t.clientX-r.left, t.clientY-r.top); });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const r=canvas.getBoundingClientRect(); const t=e.touches[0]; ctx.lineTo(t.clientX-r.left, t.clientY-r.top); ctx.stroke(); });
+  canvas.addEventListener('touchend', () => drawing = false);
+}
+function clearMirrorCanvas() {
+  if (ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+function checkMirrorNum() {
+  if (!submitted) return;
+  const ans = document.getElementById('q_mirror_num').value.trim().replace(/\s/g, '');
+  // Mirror of 1580 (LCD digits): 1→1, 5→5, 8→8, 0→0, mirrored horizontally: 0851
+  if (ans.includes('0851') || ans.includes('08S1') || ans.includes('0ВS1')) {
+    scores.qmn = 2;
+    showFeedback('qmn', true, '✓ Дұрыс! 1580 санының жазық айнадағы кескіні: 0851');
+  } else {
+    scores.qmn = 0;
+    showFeedback('qmn', false, '✗ Дұрыс жауап: 0851. Жазық айна кескіні сол-оң жақ алмасады.');
+  }
+}
+
+function updateLiveScore() {
+  if (!submitted) return;
+  const total = scores.q1 + scores.q2 + scores.q3 + scores.q4 +
+                scores.q5 + scores.q6 + scores.q7 + scores.q7b + scores.q8 + scores.qmn;
+  document.getElementById('liveScore').textContent = total;
+  document.getElementById('progressFill').style.width = (total / 25 * 100) + '%';
+}
+
+function showFeedback(id, correct, msg) {
+  const el = document.getElementById(id + '-fb');
+  if (!el) return;
+  el.style.display = 'block';
+  el.className = 'feedback-msg ' + (correct ? 'feedback-correct' : 'feedback-wrong');
+  el.innerHTML = (correct ? '✓ ' : '✗ ') + msg;
+}
+
+// Q1 - image options
+function selectImgOption(qid, opt, btn, isCorrect) {
+  if (!submitted) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.img-opt-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answered[qid] = { opt, isCorrect };
+  }
+}
+
+// Q4 checkbox image properties for keski
+function checkQ4ImageProps() {
+  const correct = { img_shyn: true, img_tonk: true, img_kis: true };
+  let pts = 0;
+  if (document.getElementById('img_shyn').checked) pts++;
+  if (document.getElementById('img_tonk').checked) pts++;
+  if (document.getElementById('img_kis').checked) pts++;
+  if (document.getElementById('img_jalg').checked) pts--;
+  if (document.getElementById('img_ulk').checked) pts--;
+  if (document.getElementById('img_tura').checked) pts--;
+  return Math.max(0, Math.min(2, pts));
+}
+
+// Q4 third ray checkbox
+function checkQ4ThirdRay() {
+  const cb1 = document.getElementById('q4b1').checked;
+  const cb2 = document.getElementById('q4b2').checked;
+  const cb3 = document.getElementById('q4b3').checked;
+  return (cb1 && !cb2 && !cb3) ? 1 : 0;
+}
+
+// Generic option selector
+function selectOption(qid, opt, btn, isCorrect) {
+  if (!submitted) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answered[qid] = { opt, isCorrect };
+  }
+}
+
+// Q2 table check
+function checkTable() {
+  if (!submitted) return;
+  const expected = [1.55, 1.55, 1.52, 1.52];
+  let pts = 0;
+  ['n1','n2','n3','n4'].forEach((id, i) => {
+    const val = parseFloat(document.getElementById(id).value);
+    if (!isNaN(val) && Math.abs(val - expected[i]) < 0.08) pts++;
+  });
+  const avgEl = document.getElementById('navg');
+  const avg = parseFloat(avgEl.value);
+  if (!isNaN(avg) && Math.abs(avg - 1.535) < 0.1) pts++;
+  scores.q2 = Math.min(4, pts);
+}
+
+// Q3 check
+function checkQ3() {
+  if (!submitted) return;
+  const a = document.getElementById('q3a').value.trim();
+  const b = document.getElementById('q3b').value.trim();
+  let pts = 0;
+  // 15:21 mirrored → 12:51
+  if (a.includes('12:51') || a.includes('12 51')) pts++;
+  // analog clock ~1:00 → mirror ~11:00
+  if (b.includes('11') || b.includes('11:00')) pts++;
+  scores.q3 = pts;
+}
+
+// Q5 check
+function checkQ5() {
+  if (!submitted) return;
+  const ans = document.getElementById('q5_answer').value.trim();
+  // 1/F = 1/60 + 1/30 = 1/60 + 2/60 = 3/60 → F = 20 cm
+  if (ans.includes('20')) {
+    scores.q5 = 5;
+    showFeedback('q5', true, 'Дұрыс! F = 20 см');
+  } else {
+    scores.q5 = 0;
+  }
+}
+
+// Q6 check
+function checkQ6() {
+  if (!submitted) return;
+  const a = document.getElementById('q6a').value.trim();
+  const b = document.getElementById('q6b').value.trim();
+  // 70° total between rays, angle between each ray and mirror = 70/2 = 35°
+  // But angle of incidence is measured from normal: 90-35 = ... wait
+  // The 70° shown is between the two rays. Each makes 35° with mirror = 55° with normal
+  // Actually looking at diagram: 70° is the angle between incident and reflected rays together
+  // so angle of incidence = angle of reflection = 35°
+  let pts = 0;
+  if (a.includes('35')) pts++;
+  if (b.includes('35')) pts++;
+  scores.q6 = pts;
+}
+
+function gradeLabel(score) {
+  if (score >= 23) return { txt: '«5» Үздік!', color: '#7ec47e' };
+  if (score >= 18) return { txt: '«4» Жақсы', color: '#7ac0e0' };
+  if (score >= 13) return { txt: '«3» Қанағаттанарлық', color: '#e0b870' };
+  return { txt: '«2» Қанағаттанарлықсыз', color: '#e07070' };
+}
+
+function submitExam() {
+  submitted = true;
+  document.querySelector('.submit-btn').disabled = true;
+  document.querySelector('.submit-btn').textContent = '✓ Жіберілді';
+  document.querySelector('.submit-btn').style.background = 'linear-gradient(135deg,#4a8a5a,#2d5e3a)';
+
+  // Score Q1
+  const q1ans = answered['q1'];
+  if (q1ans && q1ans.isCorrect) {
+    scores.q1 = 3;
+    document.querySelectorAll('#q1-options .img-opt-btn').forEach(b => {
+      if (b.classList.contains('selected')) b.style.borderColor = '#6dc47e';
+    });
+    showFeedback('q1', true, 'Дұрыс! Жарық сәулесі нормальдан алыстайды, өйткені 40° < 42° (шекті бұрыш).');
+  } else {
+    scores.q1 = 0;
+    showFeedback('q1', false, 'Қате. Дұрыс жауап: B. Жарық шыны→ауа өткенде нормальдан алыстайды (бұрыш үлкейеді). 40° < 42° болғандықтан толық ішкі шағылыс болмайды.');
+  }
+
+  // Score Q2 (table)
+  const expected = [1.55, 1.55, 1.52, 1.52];
+  let q2pts = 0;
+  ['n1','n2','n3','n4'].forEach((id, i) => {
+    const val = parseFloat(document.getElementById(id).value);
+    const input = document.getElementById(id);
+    if (!isNaN(val) && Math.abs(val - expected[i]) < 0.12) {
+      q2pts++;
+      input.style.borderColor = '#6dc47e';
+    } else {
+      input.style.borderColor = '#e07070';
+    }
+  });
+  const avgVal = parseFloat(document.getElementById('navg').value);
+  if (!isNaN(avgVal) && Math.abs(avgVal - 1.535) < 0.1) q2pts++;
+  scores.q2 = Math.min(4, q2pts);
+  showFeedback('q2', scores.q2 >= 3,
+    `n мәндері: 1.55, 1.55, 1.52, 1.52 болуы керек. Орташа мән ≈ 1.54. Сіз ${scores.q2}/4 балл алдыңыз.`);
+
+  // Score Q3
+  const a3 = document.getElementById('q3a').value.trim();
+  const b3 = document.getElementById('q3b').value.trim();
+  let q3pts = 0;
+  if (a3.includes('12:51') || a3.includes('12 51') || a3.replace(/\D/g,'').includes('1251')) q3pts++;
+  if (b3.includes('11') || b3.replace(/\D/g,'').startsWith('11')) q3pts++;
+  scores.q3 = q3pts;
+  showFeedback('q3', q3pts > 0,
+    'а) 15:21 → айнада 12:51 болады. б) Сағат тілі 1:00-ді көрсетсе, айнада 11:00 болады.');
+
+  // Score Q4
+  let q4pts = 0;
+  const focus1 = document.getElementById('q4a_focus').value.toLowerCase();
+  const focus2 = document.getElementById('q4a_dist').value.toLowerCase();
+  if (focus1.includes('линза') && (focus1.includes('кескін') || focus1.includes('арасын'))) q4pts++;
+  if (focus2.includes('линза') || focus2.includes('ара') || focus2.includes('нүкте')) q4pts++;
+  q4pts += checkQ4ThirdRay();
+  q4pts += checkQ4ImageProps();
+  scores.q4 = Math.min(5, q4pts);
+  showFeedback('q4', scores.q4 >= 3,
+    `Фокус — параллель сәуле линзадан өткеннен кейін кесіскен нүкте. Үшінші сәуле: фокус арқылы өтіп параллель шығады. Кескін: шын, төңкерілген, кішірейтілген. Сіз ${scores.q4}/5 балл алдыңыз.`);
+
+  // Score Q5
+  const ans5 = document.getElementById('q5_answer').value.trim();
+  if (ans5.includes('20')) {
+    scores.q5 = 5;
+    showFeedback('q5', true, '✓ Дұрыс! 1/F = 1/60 + 1/30 = 3/60 → F = 20 см');
+  } else {
+    scores.q5 = document.getElementById('q5_solution').value.length > 20 ? 2 : 0;
+    showFeedback('q5', false, '1/F = 1/d + 1/f\' = 1/60 + 1/30 = 1/60 + 2/60 = 3/60 → F = 60/3 = 20 см');
+  }
+
+  // Score Q6
+  const a6 = document.getElementById('q6a').value.trim();
+  const b6 = document.getElementById('q6b').value.trim();
+  let q6pts = 0;
+  if (a6.includes('35')) q6pts++;
+  if (b6.includes('35')) q6pts++;
+  scores.q6 = q6pts;
+  showFeedback('q6', q6pts === 2, 'Екі сәуле арасындағы 70° бұрышты 2-ге бөлеміз: түсу бұрышы = шағылу бұрышы = 35°');
+
+  // Score Q7 (a+b combined)
+  const q7a = answered['q7'];
+  const q7b_ans = answered['q7b'];
+  if (q7a && q7a.isCorrect) scores.q7 = 2;
+  if (q7b_ans && q7b_ans.isCorrect) scores.q7b = 2;
+  showFeedback('q7', (scores.q7 + scores.q7b) >= 3,
+    'а) u=150>2F=100 болғандықтан: шын, төңкерілген, кішірейтілген. б) Үлкейтілген кескін үшін F < u < 2F болуы керек, яғни нәсені фокус пен айна арасына орналастыру керек.');
+
+  // Score Q8 (was q8, now part of Q6а)
+  const q8ans = answered['q8'];
+  if (q8ans && q8ans.isCorrect) scores.q8 = 3;
+  showFeedback('q8', scores.q8 === 3,
+    'Дұрыс! 2-сәуле (параллель сәуле фокустан тыс шығады — дұрыс емес) және 3-сәуле (оптикалық орталықтан өткен сәуле бұрылмауы керек — дұрыс емес) қате сызылған.');
+
+  // Score mirror number (Q6б)
+  const mnAns = document.getElementById('q_mirror_num').value.trim().replace(/\s/g, '');
+  if (mnAns.includes('0851')) {
+    scores.qmn = 2;
+    showFeedback('qmn', true, '✓ Дұрыс! 1580 санының жазық айнадағы кескіні: 0851');
+  } else {
+    scores.qmn = 0;
+    showFeedback('qmn', false, '✗ Дұрыс жауап: 0851. Жазық айна сол мен оңды айналдырады.');
+  }
+
+  // Disable all inputs
+  document.querySelectorAll('input, textarea, select, button.option-btn, button.img-opt-btn').forEach(el => {
+    el.disabled = true;
+  });
+  if (canvas) canvas.style.pointerEvents = 'none';
+
+  // Show results
+  const total = scores.q1 + scores.q2 + scores.q3 + scores.q4 +
+                scores.q5 + scores.q6 + scores.q7 + scores.q7b + scores.q8 + scores.qmn;
+
+  document.getElementById('finalScore').textContent = total;
+  document.getElementById('liveScore').textContent = total;
+  document.getElementById('progressFill').style.width = (total / 25 * 100) + '%';
+
+  const grade = gradeLabel(total);
+  document.getElementById('gradeText').textContent = grade.txt;
+  document.getElementById('gradeText').style.color = grade.color;
+
+  // Breakdown
+  const breakdown = [
+    { label: '1-тапсырма (Жарықтың сынуы)', pts: scores.q1, max: 3 },
+    { label: '2-тапсырма (Сыну көрсеткіші + Айна уақыты)', pts: scores.q2 + scores.q3, max: 6 },
+    { label: '3-тапсырма (Жинағыш линза)', pts: scores.q4, max: 5 },
+    { label: '4-тапсырма (Линза формуласы)', pts: scores.q5, max: 5 },
+    { label: '5-тапсырма (Шағылу + Ойыс айна)', pts: scores.q6 + scores.q7 + scores.q7b, max: 6 },
+    { label: '6-тапсырма (Сәуле сызбасы + Айна саны)', pts: scores.q8 + scores.qmn, max: 5 },
+  ];
+
+  const grid = document.getElementById('breakdownGrid');
+  grid.innerHTML = breakdown.map(b => `
+    <div class="breakdown-item" style="border-left-color:${b.pts===b.max?'#6dc47e':b.pts>0?'#e0b870':'#e07070'}">
+      <div class="b-label">${b.label}</div>
+      <div class="b-val">${b.pts} / ${b.max}</div>
+    </div>
+  `).join('');
+
+  // Scroll to results
+  document.getElementById('results').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  }, 300);
+}
+
+// Self assess
+function selectAssess(btn, level) {
+  document.querySelectorAll('.assess-btn').forEach(b => b.classList.remove('selected-assess'));
+  btn.classList.add('selected-assess');
+  const msgs = {
+    full: '🌟 Керемет! Сіз жарық физикасының барлық бөлімдерін өте жақсы меңгердіңіз. Осы білімді практикада қолдана беріңіз!',
+    good: '😊 Жақсы нәтиже! Кейбір тақырыптарды (мысалы, линза формуласы) тереңірек оқып, жаттықтыра аласыз.',
+    ok: '🤔 Орташа деңгей. Сыну заңдары, линза формуласы және сәуле сызбасы тақырыптарына қайта оралып, жаттығулар орындаңыз.',
+    low: '📚 Уайымдамаңыз! Оқулықты қайта оқып, мұғалімге сұрақ қойыңыз. Жарық құбылыстарын кунделікті өмірде байқап жүріңіз — шыны, су, айна арқылы!'
+  };
+  const fb = document.getElementById('assessFeedback');
+  fb.style.display = 'block';
+  fb.textContent = msgs[level];
+}
+
+// Animate card delays
+document.querySelectorAll('.q-card').forEach((card, i) => {
+  card.style.animationDelay = (i * 0.1 + 0.1) + 's';
+});
+</script>
+</body>
+</html>
