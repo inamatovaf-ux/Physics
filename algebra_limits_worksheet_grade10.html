@@ -1,0 +1,484 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .ws { padding: 1.5rem 0; max-width: 780px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .header p { font-size: 14px; color: var(--color-text-secondary); margin-top: 6px; }
+  .progress-bar { display: flex; gap: 8px; justify-content: center; margin: 1rem 0 0; }
+  .prog-dot { width: 28px; height: 6px; border-radius: 3px; background: var(--color-border-tertiary); transition: background 0.3s; }
+  .prog-dot.done { background: #1D9E75; }
+  .prog-dot.active { background: #378ADD; }
+
+  .task { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .task-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .n1 { background: #E1F5EE; color: #0F6E56; }
+  .n2 { background: #E6F1FB; color: #185FA5; }
+  .n3 { background: #FAEEDA; color: #854F0B; }
+  .n4 { background: #EEEDFE; color: #534AB7; }
+  .n5 { background: #FAECE7; color: #993C1D; }
+  .task-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; margin-left: auto; font-weight: 400; }
+  .b-easy { background: #E1F5EE; color: #0F6E56; }
+  .b-med { background: #FAEEDA; color: #854F0B; }
+  .b-hard { background: #FAECE7; color: #993C1D; }
+
+  .theory-box { background: var(--color-background-secondary); border-left: 3px solid #378ADD; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; }
+  .theory-box strong { color: var(--color-text-primary); font-weight: 500; }
+  .formula { font-family: var(--font-mono); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.6rem 1rem; font-size: 14px; margin: 0.5rem 0; color: var(--color-text-primary); text-align: center; }
+
+  .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.75rem; }
+  .opt { padding: 8px 16px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; color: var(--color-text-primary); background: transparent; transition: all 0.15s; }
+  .opt:hover { background: var(--color-background-secondary); }
+  .opt.selected { border-color: #378ADD; background: #E6F1FB; color: #185FA5; }
+  .opt.correct { border-color: #1D9E75; background: #E1F5EE; color: #0F6E56; }
+  .opt.wrong { border-color: #E24B4A; background: #FCEBEB; color: #A32D2D; }
+
+  .input-row { display: flex; gap: 8px; margin-top: 0.75rem; align-items: center; }
+  .answer-input { flex: 1; padding: 8px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 15px; background: transparent; color: var(--color-text-primary); font-family: var(--font-mono); }
+  .answer-input:focus { outline: none; border-color: #378ADD; }
+  .check-btn { padding: 8px 18px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; background: transparent; color: var(--color-text-primary); transition: all 0.15s; }
+  .check-btn:hover { background: var(--color-background-secondary); }
+  .check-btn:active { transform: scale(0.98); }
+
+  .feedback { font-size: 13px; margin-top: 0.6rem; padding: 6px 10px; border-radius: var(--border-radius-md); }
+  .fb-ok { background: #E1F5EE; color: #0F6E56; }
+  .fb-err { background: #FCEBEB; color: #A32D2D; }
+  .fb-hint { background: #E6F1FB; color: #185FA5; }
+
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.75rem; }
+  .match-item { padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer; background: transparent; color: var(--color-text-primary); transition: all 0.15s; }
+  .match-item:hover { background: var(--color-background-secondary); }
+  .match-item.selected-left { border-color: #378ADD; background: #E6F1FB; color: #185FA5; }
+  .match-item.matched { border-color: #1D9E75; background: #E1F5EE; color: #0F6E56; }
+  .match-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  .chart-wrap { position: relative; width: 100%; height: 220px; margin: 1rem 0 0.5rem; }
+
+  .score-card { text-align: center; padding: 2rem 1rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); display: none; }
+  .score-num { font-size: 48px; font-weight: 500; color: #1D9E75; }
+  .score-label { font-size: 15px; color: var(--color-text-secondary); margin-top: 4px; }
+
+  .nav-btn { padding: 10px 22px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; background: transparent; color: var(--color-text-primary); transition: all 0.15s; }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn.primary { background: #185FA5; border-color: #185FA5; color: #fff; }
+  .nav-btn.primary:hover { background: #0C447C; }
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1rem; gap: 8px; }
+
+  .task-panel { display: none; }
+  .task-panel.active { display: block; }
+  .step-label { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 0.25rem; }
+
+  .graph-q { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 0.5rem; line-height: 1.6; }
+  .graph-q strong { color: var(--color-text-primary); font-weight: 500; }
+</style>
+
+<div class="ws">
+  <div class="header">
+    <h1>Шек және үздіксіздік — жұмыс парағы</h1>
+    <p>10-сынып алгебра · 5 тапсырма · өсу реті бойынша</p>
+    <div class="progress-bar" id="progress">
+      <div class="prog-dot active" id="pd0"></div>
+      <div class="prog-dot" id="pd1"></div>
+      <div class="prog-dot" id="pd2"></div>
+      <div class="prog-dot" id="pd3"></div>
+      <div class="prog-dot" id="pd4"></div>
+    </div>
+  </div>
+
+  <!-- TASK 1: Theory match -->
+  <div class="task-panel active" id="panel-0">
+    <div class="task">
+      <div class="task-header">
+        <div class="task-num n1">1</div>
+        <div class="task-title">Анықтама — сәйкестік тапсырмасы</div>
+        <span class="badge b-easy">Жеңіл</span>
+      </div>
+      <div class="theory-box">
+        <strong>Есіңе сал:</strong> Функцияның шегі — бұл аргумент белгілі бір мәнге жақындаған сайын функция мәнінің жақындайтын саны.
+        <div class="formula">lim f(x) = L  (x → a)</div>
+      </div>
+      <p class="graph-q">Сол жақтағы анықтамаларды оң жақтағы белгілерімен сәйкестендір:</p>
+      <div class="match-grid">
+        <div id="L" style="font-size:13px;font-weight:500;color:var(--color-text-secondary);padding:4px 0;">Анықтамалар</div>
+        <div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);padding:4px 0;">Белгілер</div>
+        <button class="match-item" id="ml0" onclick="selectLeft(0)"><span class="match-dot"></span>Сол жақтық шек</button>
+        <button class="match-item" id="mr0" onclick="selectRight(0)"><span class="match-dot"></span>lim f(x), x→a⁺</button>
+        <button class="match-item" id="ml1" onclick="selectLeft(1)"><span class="match-dot"></span>Оң жақтық шек</button>
+        <button class="match-item" id="mr1" onclick="selectRight(1)"><span class="match-dot"></span>lim f(x), x→a⁻</button>
+        <button class="match-item" id="ml2" onclick="selectLeft(2)"><span class="match-dot"></span>Екіжақты шек бар</button>
+        <button class="match-item" id="mr2" onclick="selectRight(2)"><span class="match-dot"></span>Сол = Оң</button>
+        <button class="match-item" id="ml3" onclick="selectLeft(3)"><span class="match-dot"></span>Үздіксіздік шарты</button>
+        <button class="match-item" id="mr3" onclick="selectRight(3)"><span class="match-dot"></span>lim f(x) = f(a)</button>
+      </div>
+      <div class="feedback" id="fb0" style="display:none"></div>
+      <div class="nav-row">
+        <button class="nav-btn primary" onclick="checkMatch()">Тексеру</button>
+        <button class="nav-btn" onclick="goNext(0)">Келесі →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK 2: MCQ limits -->
+  <div class="task-panel" id="panel-1">
+    <div class="task">
+      <div class="task-header">
+        <div class="task-num n2">2</div>
+        <div class="task-title">Тест — шекті есептеу</div>
+        <span class="badge b-easy">Орташа</span>
+      </div>
+      <div class="theory-box">
+        <strong>Ереже:</strong> Бөлшекті шектерді есептегенде алдымен жеңілдету немесе алмастыру тәсілін қолдан.
+      </div>
+      <p class="graph-q">Мына шекті тап:</p>
+      <div class="formula">lim (x² − 4) / (x − 2),  x → 2</div>
+      <div class="options" id="opts1">
+        <button class="opt" onclick="selectOpt(1,this,false)">0</button>
+        <button class="opt" onclick="selectOpt(1,this,true)">4</button>
+        <button class="opt" onclick="selectOpt(1,this,false)">∞</button>
+        <button class="opt" onclick="selectOpt(1,this,false)">2</button>
+      </div>
+      <div class="feedback" id="fb1" style="display:none"></div>
+
+      <p class="graph-q" style="margin-top:1.25rem;">Мына шекті тап:</p>
+      <div class="formula">lim sin(3x) / x,  x → 0</div>
+      <div class="options" id="opts2">
+        <button class="opt" onclick="selectOpt(2,this,false)">0</button>
+        <button class="opt" onclick="selectOpt(2,this,false)">1</button>
+        <button class="opt" onclick="selectOpt(2,this,true)">3</button>
+        <button class="opt" onclick="selectOpt(2,this,false)">∞</button>
+      </div>
+      <div class="feedback" id="fb2" style="display:none"></div>
+      <div class="nav-row">
+        <button class="nav-btn" onclick="goNext(1)">Келесі →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK 3: Graph reading -->
+  <div class="task-panel" id="panel-2">
+    <div class="task">
+      <div class="task-header">
+        <div class="task-num n3">3</div>
+        <div class="task-title">График бойынша шекті оқу</div>
+        <span class="badge b-med">Орташа</span>
+      </div>
+      <p class="graph-q">Төмендегі функция графигін қарап, сұрақтарға жауап бер.</p>
+      <div class="chart-wrap"><canvas id="graphChart" role="img" aria-label="Piecewise function graph with discontinuity at x=2">Function graph showing a piecewise function.</canvas></div>
+      <div style="margin-top:0.5rem;">
+        <p class="graph-q"><strong>3а)</strong> x → 2 болғанда сол жақтан шек неге тең?</p>
+        <div class="options" id="opts3">
+          <button class="opt" onclick="selectOpt(3,this,false)">1</button>
+          <button class="opt" onclick="selectOpt(3,this,true)">3</button>
+          <button class="opt" onclick="selectOpt(3,this,false)">4</button>
+          <button class="opt" onclick="selectOpt(3,this,false)">5</button>
+        </div>
+        <div class="feedback" id="fb3" style="display:none"></div>
+        <p class="graph-q" style="margin-top:1rem;"><strong>3б)</strong> x = 2 нүктесінде функция үздіксіз бе?</p>
+        <div class="options" id="opts4">
+          <button class="opt" onclick="selectOpt(4,this,false)">Иә, үздіксіз</button>
+          <button class="opt" onclick="selectOpt(4,this,true)">Жоқ, үзіліс бар</button>
+        </div>
+        <div class="feedback" id="fb4" style="display:none"></div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" onclick="goNext(2)">Келесі →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK 4: Free input -->
+  <div class="task-panel" id="panel-3">
+    <div class="task">
+      <div class="task-header">
+        <div class="task-num n4">4</div>
+        <div class="task-title">Жауапты өзің жаз</div>
+        <span class="badge b-hard">Күрделі</span>
+      </div>
+      <div class="theory-box">
+        <strong>Жол:</strong> Алдымен 0/0 түрі шығатынын тексер. Содан кейін алымды және бөлімді жіктеп, қысқарт.
+      </div>
+      <p class="graph-q"><strong>4а)</strong> Шекті есепте:</p>
+      <div class="formula">lim (x² − 5x + 6) / (x − 3),  x → 3</div>
+      <div class="input-row">
+        <input class="answer-input" id="ans4a" type="text" placeholder="Жауабыңды жаз...">
+        <button class="check-btn" onclick="checkInput('ans4a','1',['1','one'])">Тексеру</button>
+      </div>
+      <div class="feedback" id="fb_ans4a" style="display:none"></div>
+
+      <p class="graph-q" style="margin-top:1.25rem;"><strong>4б)</strong> Мына шекті есепте:</p>
+      <div class="formula">lim (√x − 2) / (x − 4),  x → 4</div>
+      <div class="input-row">
+        <input class="answer-input" id="ans4b" type="text" placeholder="Жауабыңды жаз...">
+        <button class="check-btn" onclick="checkInputFrac('ans4b')">Тексеру</button>
+      </div>
+      <div class="feedback" id="fb_ans4b" style="display:none"></div>
+
+      <p class="graph-q" style="margin-top:1.25rem;"><strong>4в)</strong> f(x) = x² + 1 функциясы x = 3 нүктесінде үздіксіз бе? Неге? Жазба жаз.</p>
+      <textarea id="ans4c" style="width:100%;margin-top:0.5rem;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:transparent;color:var(--color-text-primary);resize:vertical;min-height:70px;font-family:var(--font-sans);" placeholder="Ойыңды жаз: шек мәнін есептеп, f(3) мәнімен салысыр..."></textarea>
+      <div class="nav-row">
+        <button class="nav-btn" onclick="mark4c()">Жауапты сақтау</button>
+        <button class="nav-btn" onclick="goNext(3)">Келесі →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK 5: Hard challenge -->
+  <div class="task-panel" id="panel-4">
+    <div class="task">
+      <div class="task-header">
+        <div class="task-num n5">5</div>
+        <div class="task-title">Күрделі есеп — комплексті тапсырма</div>
+        <span class="badge b-hard">Қиын</span>
+      </div>
+      <div class="theory-box">
+        <strong>Есіңе сал:</strong> Үзілістің 3 түрі бар: <em>алынатын, секірмелі, бесшекті.</em>
+      </div>
+
+      <p class="graph-q"><strong>5а)</strong> Мынаны есепте (ескерту: x → ∞):</p>
+      <div class="formula">lim (3x² + 2x) / (x² − 5),  x → ∞</div>
+      <div class="options" id="opts5">
+        <button class="opt" onclick="selectOpt(5,this,false)">0</button>
+        <button class="opt" onclick="selectOpt(5,this,true)">3</button>
+        <button class="opt" onclick="selectOpt(5,this,false)">∞</button>
+        <button class="opt" onclick="selectOpt(5,this,false)">−5</button>
+      </div>
+      <div class="feedback" id="fb5" style="display:none"></div>
+
+      <p class="graph-q" style="margin-top:1.25rem;"><strong>5б)</strong> f(x) = (x² − 1)/(x − 1) функциясының x = 1 нүктесіндегі үзіліс түрін анықта:</p>
+      <div class="options" id="opts6">
+        <button class="opt" onclick="selectOpt(6,this,true)">Алынатын үзіліс (устранимый)</button>
+        <button class="opt" onclick="selectOpt(6,this,false)">Секірмелі үзіліс (скачок)</button>
+        <button class="opt" onclick="selectOpt(6,this,false)">Бесшекті үзіліс</button>
+        <button class="opt" onclick="selectOpt(6,this,false)">Үзіліс жоқ</button>
+      </div>
+      <div class="feedback" id="fb6" style="display:none"></div>
+
+      <p class="graph-q" style="margin-top:1.25rem;"><strong>5в)</strong> Үздіксіз болу үшін a мәнін тап:</p>
+      <div class="formula">f(x) = { x² − 1, x ≠ 2; a, x = 2 }</div>
+      <div class="input-row">
+        <input class="answer-input" id="ans5c" type="text" placeholder="a = ?">
+        <button class="check-btn" onclick="checkInput('ans5c','3',['3'])">Тексеру</button>
+      </div>
+      <div class="feedback" id="fb_ans5c" style="display:none"></div>
+
+      <div class="nav-row">
+        <button class="nav-btn primary" onclick="showScore()">Нәтижені көру ↗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div class="score-card" id="scoreCard">
+    <div class="score-num" id="scoreNum">0/10</div>
+    <div class="score-label" id="scoreLbl">Тамаша! Барлық тапсырма орындалды.</div>
+    <div style="margin-top:1.5rem;">
+      <button class="nav-btn" onclick="sendPrompt('Шек және үздіксіздік тақырыбында қосымша қиын есептер бер')">Қосымша есептер сұра ↗</button>
+      <button class="nav-btn" onclick="resetAll()" style="margin-left:8px;">Қайтадан бастау</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let scores = {};
+let currentPanel = 0;
+let matchLeft = -1;
+let matchPairs = {};
+const correctPairs = {0:1, 1:0, 2:2, 3:3};
+
+function updateProgress(p) {
+  for (let i = 0; i < 5; i++) {
+    const d = document.getElementById('pd'+i);
+    d.className = 'prog-dot' + (i < p ? ' done' : (i === p ? ' active' : ''));
+  }
+}
+
+function goNext(from) {
+  document.getElementById('panel-'+from).classList.remove('active');
+  currentPanel = from + 1;
+  const next = document.getElementById('panel-'+currentPanel);
+  if (next) { next.classList.add('active'); updateProgress(currentPanel); }
+  if (currentPanel === 2) { setTimeout(drawGraph, 100); }
+}
+
+function selectOpt(id, btn, correct) {
+  const container = document.getElementById('opts'+id);
+  container.querySelectorAll('.opt').forEach(b => { b.className = 'opt'; });
+  const fb = document.getElementById('fb'+id);
+  if (correct) {
+    btn.classList.add('correct');
+    fb.className = 'feedback fb-ok';
+    fb.textContent = '✓ Дұрыс!';
+    scores['q'+id] = 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback fb-err';
+    fb.textContent = '✗ Қате. Тағы байқап көр.';
+    scores['q'+id] = 0;
+  }
+  fb.style.display = 'block';
+}
+
+function selectLeft(i) {
+  document.querySelectorAll('.match-item[id^="ml"]').forEach(el => el.classList.remove('selected-left'));
+  if (matchLeft === i) { matchLeft = -1; return; }
+  matchLeft = i;
+  document.getElementById('ml'+i).classList.add('selected-left');
+}
+
+function selectRight(j) {
+  if (matchLeft < 0) return;
+  const l = matchLeft;
+  matchPairs[l] = j;
+  matchLeft = -1;
+  document.querySelectorAll('.match-item[id^="ml"]').forEach(el => el.classList.remove('selected-left'));
+  renderMatchState();
+}
+
+function renderMatchState() {
+  for (let i = 0; i < 4; i++) {
+    const lEl = document.getElementById('ml'+i);
+    const correct = matchPairs[i] === correctPairs[i];
+    if (matchPairs[i] !== undefined) {
+      lEl.className = 'match-item matched';
+      const rEl = document.getElementById('mr'+correctPairs[i]);
+      if (rEl) rEl.className = 'match-item matched';
+    }
+  }
+}
+
+function checkMatch() {
+  let ok = 0;
+  for (let i = 0; i < 4; i++) {
+    if (matchPairs[i] === correctPairs[i]) ok++;
+  }
+  const fb = document.getElementById('fb0');
+  fb.style.display = 'block';
+  if (ok === 4) {
+    fb.className = 'feedback fb-ok';
+    fb.textContent = '✓ Керемет! Барлық 4 сәйкестік дұрыс.';
+    scores['match'] = 2;
+  } else {
+    fb.className = 'feedback fb-err';
+    fb.textContent = '✗ ' + ok + '/4 дұрыс. Қайта байқа — дұрыс емес жұптарды тағы таңда.';
+    scores['match'] = 0;
+  }
+}
+
+function checkInput(inputId, answer, aliases) {
+  const val = document.getElementById(inputId).value.trim().replace(',','.');
+  const fbId = 'fb_' + inputId;
+  const fb = document.getElementById(fbId);
+  fb.style.display = 'block';
+  const ok = val === answer || aliases.includes(val.toLowerCase());
+  if (ok) {
+    fb.className = 'feedback fb-ok';
+    fb.textContent = '✓ Дұрыс! Жауап: ' + answer;
+    scores[inputId] = 1;
+  } else {
+    fb.className = 'feedback fb-err';
+    if (inputId === 'ans4a') {
+      fb.textContent = '✗ Қате. Жіктеп көр: x²−5x+6 = (x−2)(x−3), содан бөл (x−3).';
+    } else {
+      fb.textContent = '✗ Қате. Тағы байқа.';
+    }
+    scores[inputId] = 0;
+  }
+}
+
+function checkInputFrac(inputId) {
+  const val = document.getElementById(inputId).value.trim().replace(' ','');
+  const fb = document.getElementById('fb_ans4b');
+  fb.style.display = 'block';
+  const accepted = ['1/4','0.25','0,25'];
+  if (accepted.includes(val)) {
+    fb.className = 'feedback fb-ok';
+    fb.textContent = '✓ Дұрыс! Жауап: 1/4. Алымды конъюгатпен көбейтіп қысқарттың!';
+    scores[inputId] = 1;
+  } else {
+    fb.className = 'feedback fb-hint';
+    fb.textContent = '💡 Кеңес: (√x−2)·(√x+2) = x−4. Алым мен бөлімді (√x+2)-ге көбейт.';
+    scores[inputId] = 0;
+  }
+}
+
+function mark4c() {
+  const val = document.getElementById('ans4c').value.trim();
+  if (val.length > 10) {
+    scores['4c'] = 1;
+    const d = document.createElement('div');
+    d.className = 'feedback fb-ok';
+    d.textContent = '✓ Жауап сақталды. f(3)=10, lim x→3 (x²+1)=10, тең — үздіксіз!';
+    d.style.marginTop = '0.5rem';
+    document.getElementById('ans4c').after(d);
+  }
+}
+
+function showScore() {
+  let total = 0;
+  const keys = ['match','q1','q2','q3','q4','ans4a','ans4b','q5','q6','ans5c'];
+  keys.forEach(k => { if (scores[k]) total += scores[k]; });
+  const max = 10;
+  const pct = Math.round((total/max)*100);
+  document.getElementById('scoreNum').textContent = total + '/' + max;
+  const lbl = document.getElementById('scoreLbl');
+  if (pct >= 80) lbl.textContent = 'Тамаша нәтиже! Шекті жақсы меңгердің.';
+  else if (pct >= 50) lbl.textContent = 'Жақсы! Кейбір тақырыптарды қайталап көр.';
+  else lbl.textContent = 'Тыңгырақ болу керек. Теорияны қайтадан оқы.';
+  document.getElementById('scoreCard').style.display = 'block';
+  document.getElementById('panel-4').style.display = 'none';
+  updateProgress(5);
+}
+
+function resetAll() {
+  scores = {}; currentPanel = 0; matchLeft = -1; matchPairs = {};
+  document.querySelectorAll('.task-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-0').classList.add('active');
+  document.getElementById('scoreCard').style.display = 'none';
+  document.getElementById('panel-4').style.display = 'block';
+  document.querySelectorAll('.feedback').forEach(f => f.style.display = 'none');
+  document.querySelectorAll('.opt').forEach(o => o.className = 'opt');
+  document.querySelectorAll('.match-item').forEach(m => m.className = 'match-item');
+  document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+  updateProgress(0);
+}
+
+function drawGraph() {
+  const canvas = document.getElementById('graphChart');
+  if (!canvas || canvas._drawn) return;
+  canvas._drawn = true;
+  const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const textColor = isDark ? '#aaa' : '#555';
+  const lineColor = '#378ADD';
+  const holeColor = isDark ? '#222' : '#fff';
+
+  const seg1X = [], seg1Y = [];
+  for (let x = -1; x < 2; x += 0.05) { seg1X.push(parseFloat(x.toFixed(2))); seg1Y.push(parseFloat((x+1).toFixed(2))); }
+  const seg2X = [], seg2Y = [];
+  for (let x = 2; x <= 5; x += 0.05) { seg2X.push(parseFloat(x.toFixed(2))); seg2Y.push(parseFloat((0.5*x+1).toFixed(2))); }
+
+  new Chart(canvas, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'f(x), x<2', data: seg1X.map((x,i)=>({x,y:seg1Y[i]})), showLine:true, borderColor:lineColor, backgroundColor:'transparent', pointRadius:0, borderWidth:2 },
+        { label: 'f(x), x≥2', data: seg2X.map((x,i)=>({x,y:seg2Y[i]})), showLine:true, borderColor:'#E24B4A', backgroundColor:'transparent', pointRadius:0, borderWidth:2 },
+        { label: 'Үзіліс', data: [{x:2,y:3}], pointRadius:6, pointBackgroundColor:holeColor, pointBorderColor:lineColor, pointBorderWidth:2, showLine:false },
+        { label: 'f(2)=2', data: [{x:2,y:2}], pointRadius:6, pointBackgroundColor:'#E24B4A', pointBorderColor:'#E24B4A', pointBorderWidth:2, showLine:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ display:true, labels:{ color:textColor, boxWidth:12, font:{size:11} } } },
+      scales: {
+        x: { min:-1, max:5, grid:{color:gridColor}, ticks:{color:textColor,stepSize:1} },
+        y: { min:0, max:5, grid:{color:gridColor}, ticks:{color:textColor,stepSize:1} }
+      }
+    }
+  });
+}
+</script>
