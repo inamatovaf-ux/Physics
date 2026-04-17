@@ -1,0 +1,237 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.ws{max-width:800px;margin:0 auto;padding:1.5rem 1rem;font-family:var(--font-sans)}
+.hdr{border-bottom:1px solid var(--color-border-secondary);padding-bottom:1rem;margin-bottom:1.5rem}
+.hdr h1{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.hdr p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.task{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.th{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.b1{background:#E1F5EE;color:#085041}.b2{background:#E6F1FB;color:#0C447C}.b3{background:#EEEDFE;color:#3C3489}.b4{background:#FAEEDA;color:#633806}.b5{background:#FCEBEB;color:#791F1F}
+.ttl{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.stars{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.body{font-size:14px;color:var(--color-text-primary);line-height:1.7}
+.fbox{margin-top:10px;font-size:14px;padding:10px;background:var(--color-background-secondary);border-radius:8px;font-family:monospace;text-align:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.opt{padding:10px 14px;border:0.5px solid var(--color-border-secondary);border-radius:8px;font-size:13px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-primary);text-align:left}
+.opt:hover{background:var(--color-background-tertiary)}
+.opt.ok{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+.opt.er{background:#FCEBEB;border-color:#A32D2D;color:#791F1F}
+.fb{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:8px;display:none}
+.fb.show{display:block}
+.fbok{background:#E1F5EE;color:#085041}
+.fber{background:#FCEBEB;color:#791F1F}
+.slrow{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.slrow label{font-size:13px;color:var(--color-text-secondary);min-width:22px}
+.slrow input[type=range]{flex:1;min-width:100px}
+.slval{font-size:14px;font-weight:500;min-width:28px;color:var(--color-text-primary)}
+canvas{border:0.5px solid var(--color-border-tertiary);border-radius:8px;margin-top:10px;max-width:100%}
+.irow{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.irow span{font-size:13px;color:var(--color-text-secondary)}
+.irow input[type=text]{width:80px;height:34px;border-radius:8px;border:0.5px solid var(--color-border-secondary);padding:0 8px;font-size:14px;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.btn{height:34px;padding:0 14px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-size:13px;cursor:pointer}
+.btn:hover{background:var(--color-background-secondary)}
+.mg{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:12px}
+.ml{font-size:13px;padding:8px 10px;border:0.5px solid var(--color-border-secondary);border-radius:8px;background:var(--color-background-secondary);text-align:center;font-family:monospace}
+.ma{font-size:16px;color:var(--color-text-tertiary);text-align:center}
+.ms{height:34px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;padding:0 6px;width:100%}
+.hint{font-size:12px;color:var(--color-text-secondary);font-style:italic;margin-top:6px}
+.scorebar{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;display:flex;justify-content:space-between;align-items:center}
+.snum{font-size:24px;font-weight:500;color:var(--color-text-primary)}
+.slbl{font-size:13px;color:var(--color-text-secondary)}
+</style>
+<div class="ws">
+<div class="hdr">
+  <h1>10-сынып · Алгебра — Функция, оның қасиеттері мен графигі</h1>
+  <p>5 тапсырма · Күрделілігі өсу ретімен · Жауаптарыңызды тексеріңіз</p>
+</div>
+
+<div class="task">
+  <div class="th"><span class="badge b1">1</span><div><div class="ttl">Анықтамалық жиынды табу</div><div class="stars">★☆☆☆☆ · Деңгей 1</div></div></div>
+  <div class="body">f(x) = √(x − 3) функциясының анықтамалық жиынын анықтаңыз.<div class="fbox">f(x) = √(x − 3)</div></div>
+  <div class="opts" id="o1">
+    <button class="opt" onclick="mc('o1','fb1','b','a')">A) x ∈ (−∞, 3)</button>
+    <button class="opt" onclick="mc('o1','fb1','b','b')">B) x ∈ [3, +∞)</button>
+    <button class="opt" onclick="mc('o1','fb1','b','c')">C) x ∈ ℝ</button>
+    <button class="opt" onclick="mc('o1','fb1','b','d')">D) x ∈ (3, +∞)</button>
+  </div>
+  <div class="fb" id="fb1"></div>
+</div>
+
+<div class="task">
+  <div class="th"><span class="badge b2">2</span><div><div class="ttl">Сызықтық функцияны зерттеу</div><div class="stars">★★☆☆☆ · Деңгей 2</div></div></div>
+  <div class="body">f(x) = ax + b функциясын интерактивті зерттеңіз. a және b мәндерін өзгертіңіз.</div>
+  <div class="slrow">
+    <label>a =</label><input type="range" min="-3" max="3" value="1" step="0.5" id="sa" oninput="upd()"><span class="slval" id="va">1</span>
+    <label style="margin-left:12px">b =</label><input type="range" min="-4" max="4" value="0" step="1" id="sb" oninput="upd()"><span class="slval" id="vb">0</span>
+  </div>
+  <canvas id="c2" width="500" height="200" role="img" aria-label="Сызықтық функция графигі">Сызықтық функция графигі</canvas>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-top:6px" id="linfo"></div>
+  <div style="margin-top:12px;font-size:14px;font-weight:500">Сұрақ: a &gt; 0 болғанда функция қандай болады?</div>
+  <div class="opts" id="o2">
+    <button class="opt" onclick="mc('o2','fb2','b','a')">A) Кемімелі</button>
+    <button class="opt" onclick="mc('o2','fb2','b','b')">B) Өсімді</button>
+    <button class="opt" onclick="mc('o2','fb2','b','c')">C) Тұрақты</button>
+    <button class="opt" onclick="mc('o2','fb2','b','d')">D) Жұп функция</button>
+  </div>
+  <div class="fb" id="fb2"></div>
+</div>
+
+<div class="task">
+  <div class="th"><span class="badge b3">3</span><div><div class="ttl">Функцияларды сәйкестендіру</div><div class="stars">★★★☆☆ · Деңгей 3</div></div></div>
+  <div class="body">Функцияларды олардың сипаттамаларымен сәйкестендіріңіз.</div>
+  <div class="mg">
+    <div class="ml">f(x) = x²</div><div class="ma">→</div>
+    <select class="ms" id="m1"><option value="">Таңдаңыз...</option><option value="b">Жұп, жоғарыға ашық парабола</option><option value="c">Тақ, өсімді функция</option><option value="a">Жұп, төменге ашық парабола</option><option value="d">Тақ, периодты функция</option></select>
+    <div class="ml">f(x) = x³</div><div class="ma">→</div>
+    <select class="ms" id="m2"><option value="">Таңдаңыз...</option><option value="b">Жұп, жоғарыға ашық парабола</option><option value="c">Тақ, өсімді функция</option><option value="a">Жұп, төменге ашық парабола</option><option value="d">Тақ, периодты функция</option></select>
+    <div class="ml">f(x) = −x²</div><div class="ma">→</div>
+    <select class="ms" id="m3"><option value="">Таңдаңыз...</option><option value="b">Жұп, жоғарыға ашық парабола</option><option value="c">Тақ, өсімді функция</option><option value="a">Жұп, төменге ашық парабола</option><option value="d">Тақ, периодты функция</option></select>
+    <div class="ml">f(x) = sin(x)</div><div class="ma">→</div>
+    <select class="ms" id="m4"><option value="">Таңдаңыз...</option><option value="b">Жұп, жоғарыға ашық парабола</option><option value="c">Тақ, өсімді функция</option><option value="a">Жұп, төменге ашық парабола</option><option value="d">Тақ, периодты функция</option></select>
+  </div>
+  <div style="margin-top:10px"><button class="btn" onclick="chkMatch()">Тексеру</button></div>
+  <div class="fb" id="fb3"></div>
+</div>
+
+<div class="task">
+  <div class="th"><span class="badge b4">4</span><div><div class="ttl">Квадраттық функция: шыңы мен нөлдері</div><div class="stars">★★★★☆ · Деңгей 4</div></div></div>
+  <div class="body">f(x) = x² − 4x + 3 функциясының шыңын, нөлдерін және монотондылық аралықтарын табыңыз.<div class="fbox">f(x) = x² − 4x + 3</div></div>
+  <canvas id="c4" width="500" height="200" role="img" aria-label="Квадраттық функция графигі">Квадраттық функция графигі</canvas>
+  <div style="margin-top:12px;font-size:14px;font-weight:500">Шыңын енгізіңіз:</div>
+  <div class="irow">
+    <span>Шыңы: (</span><input type="text" id="px" placeholder="x₀"><span>,</span><input type="text" id="py" placeholder="y₀"><span>)</span>
+    <button class="btn" onclick="chkPeak()">Тексеру</button>
+  </div>
+  <div class="hint">Кеңес: x₀ = −b/(2a), мұндағы a=1, b=−4</div>
+  <div class="fb" id="fb4p"></div>
+  <div style="margin-top:12px;font-size:14px;font-weight:500">Функцияның нөлдері:</div>
+  <div class="opts" id="o4">
+    <button class="opt" onclick="mc('o4','fb4','a','a')">A) x = 1 және x = 3</button>
+    <button class="opt" onclick="mc('o4','fb4','a','b')">B) x = −1 және x = −3</button>
+    <button class="opt" onclick="mc('o4','fb4','a','c')">C) x = 0 және x = 4</button>
+    <button class="opt" onclick="mc('o4','fb4','a','d')">D) x = 2 ғана</button>
+  </div>
+  <div class="fb" id="fb4"></div>
+</div>
+
+<div class="task">
+  <div class="th"><span class="badge b5">5</span><div><div class="ttl">Рационал функцияны талдау</div><div class="stars">★★★★★ · Деңгей 5</div></div></div>
+  <div class="body">f(x) = (x² − 1)/(x − 1) функциясын зерттеңіз.<div class="fbox">f(x) = (x² − 1) / (x − 1)</div></div>
+  <canvas id="c5" width="500" height="200" role="img" aria-label="Рационал функция графигі">Рационал функция графигі</canvas>
+  <div style="margin-top:12px;font-size:14px;font-weight:500">1) Анықтамалық жиыны:</div>
+  <div class="opts" id="o5">
+    <button class="opt" onclick="mc('o5','fb5','b','a')">A) x ∈ ℝ</button>
+    <button class="opt" onclick="mc('o5','fb5','b','b')">B) x ∈ ℝ, x ≠ 1</button>
+    <button class="opt" onclick="mc('o5','fb5','b','c')">C) x ∈ [1, +∞)</button>
+    <button class="opt" onclick="mc('o5','fb5','b','d')">D) x ∈ (0, +∞)</button>
+  </div>
+  <div class="fb" id="fb5"></div>
+  <div style="margin-top:12px;font-size:14px;font-weight:500">2) x ≠ 1 болса, f(x) неге тең?</div>
+  <div class="irow">
+    <span>f(x) =</span><input type="text" id="t5" placeholder="жауап">
+    <button class="btn" onclick="chkSimp()">Тексеру</button>
+  </div>
+  <div class="hint">Кеңес: x²−1 = (x−1)(x+1) деп факторлаңыз</div>
+  <div class="fb" id="fb5b"></div>
+</div>
+
+<div class="scorebar">
+  <div><div class="slbl">Жалпы нәтиже</div><div class="snum" id="sc">0 / 7</div></div>
+  <div style="font-size:13px;color:var(--color-text-secondary);text-align:right">Барлық тапсырманы<br>орындап тексеріңіз</div>
+</div>
+</div>
+<script>
+const done={};
+const pts={q1:false,q2:false,q3:false,q4:false,q4p:false,q5:false,q5b:false};
+function updScore(){document.getElementById('sc').textContent=Object.values(pts).filter(Boolean).length+' / 7';}
+const fbOk={'o1':'✓ Дұрыс! x−3 ≥ 0 → x ≥ 3. Жиын: [3, +∞)','o2':'✓ Дұрыс! a > 0 болғанда еңіс оң → функция өсімді.','o4':'✓ Дұрыс! x²−4x+3=(x−1)(x−3)=0 → x=1 және x=3','o5':'✓ Дұрыс! Бөлгіш x−1≠0 болуы керек → x≠1'};
+const fbEr={'o1':'✗ Қате. x−3 ≥ 0 теңсіздігін шешіңіз: x ≥ 3. Жауабы B.','o2':'✗ Қате. Сызықтық функцияда a — бұрыш коэффициенті: a>0 → өсімді.','o4':'✗ Қате. x²−4x+3=(x−1)(x−3) деп жіктеңіз, сонда нөлдер x=1 және x=3.','o5':'✗ Қате. Бөлшектің бөлгіші нөлге тең болмауы керек: x−1≠0 → x≠1.'};
+const ptKey={'o1':'q1','o2':'q2','o4':'q4','o5':'q5'};
+function mc(oid,fid,ans,chosen){
+  if(done[oid])return;done[oid]=1;
+  const btns=document.getElementById(oid).querySelectorAll('.opt');
+  btns.forEach(b=>{const v=b.getAttribute('onclick').match(/'([a-z])'\)$/)[1];if(v===ans)b.classList.add('ok');else if(v===chosen&&chosen!==ans)b.classList.add('er');b.disabled=true;});
+  const ok=chosen===ans;
+  const fb=document.getElementById(fid);
+  fb.textContent=ok?fbOk[oid]:fbEr[oid];
+  fb.className='fb show '+(ok?'fbok':'fber');
+  if(ok){pts[ptKey[oid]]=true;updScore();}
+}
+function chkMatch(){
+  const ans={m1:'b',m2:'c',m3:'a',m4:'d'};
+  let ok=0;['m1','m2','m3','m4'].forEach(id=>{if(document.getElementById(id).value===ans[id])ok++;});
+  const all=ok===4;
+  if(all&&!pts.q3){pts.q3=true;updScore();}
+  const fb=document.getElementById('fb3');
+  fb.textContent=all?'✓ Бәрі дұрыс! x²→жоғарыға ашық жұп парабола; x³→тақ өсімді; −x²→төменге ашық жұп парабола; sin(x)→тақ периодты функция.':'✗ '+ok+'/4 дұрыс. Жауаптар: x²→жоғарыға ашық; x³→тақ өсімді; −x²→төменге ашық; sin(x)→тақ периодты.';
+  fb.className='fb show '+(all?'fbok':'fber');
+}
+function chkPeak(){
+  const x=document.getElementById('px').value.trim();
+  const y=document.getElementById('py').value.trim();
+  const ok=(x==='2')&&(y==='-1'||y==='−1');
+  if(ok&&!pts.q4p){pts.q4p=true;updScore();}
+  const fb=document.getElementById('fb4p');
+  fb.textContent=ok?'✓ Дұрыс! x₀=−(−4)/(2·1)=2, f(2)=4−8+3=−1. Шың: (2,−1)':'✗ Қате. x₀=2, y₀=f(2)=−1 болуы керек.';
+  fb.className='fb show '+(ok?'fbok':'fber');
+}
+function chkSimp(){
+  const v=document.getElementById('t5').value.trim().replace(/\s/g,'').toLowerCase().replace('−','-');
+  const ok=v==='x+1'||v==='(x+1)';
+  if(ok&&!pts.q5b){pts.q5b=true;updScore();}
+  const fb=document.getElementById('fb5b');
+  fb.textContent=ok?'✓ Дұрыс! (x²−1)/(x−1)=(x−1)(x+1)/(x−1)=x+1, x≠1':'✗ Қате. x²−1=(x−1)(x+1) деп факторлаңыз, сосын x−1-ге қысқартыңыз.';
+  fb.className='fb show '+(ok?'fbok':'fber');
+}
+function dark(){return matchMedia('(prefers-color-scheme:dark)').matches;}
+function gc(){return{grid:dark()?'rgba(255,255,255,.07)':'rgba(0,0,0,.07)',ax:dark()?'rgba(255,255,255,.3)':'rgba(0,0,0,.3)',txt:dark()?'#999':'#666',ln:'#1D9E75',ln2:'#7F77DD',ln3:'#D85A30'};}
+function drawAxes(ctx,w,h,xl,xr,yb,yt){
+  const c=gc();const sx=w/(xr-xl);const sy=h/(yt-yb);
+  const ox=-xl*sx;const oy=yt*sy;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle=c.ax;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(w,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,h);ctx.stroke();
+  ctx.fillStyle=c.txt;ctx.font='10px sans-serif';
+  for(let x=Math.ceil(xl);x<=xr;x++){if(!x)continue;const px=ox+x*sx;ctx.strokeStyle=c.grid||'rgba(0,0,0,.05)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();if(x%2===0)ctx.fillText(x,px-4,oy+13);}
+  for(let y=Math.ceil(yb);y<=yt;y++){if(!y)continue;const py=oy-y*sy;ctx.strokeStyle=c.grid||'rgba(0,0,0,.05)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke();if(y%2===0)ctx.fillText(y,ox+3,py+4);}
+  return{sx,sy,ox,oy};
+}
+function plot(ctx,fn,d,w,xl,xr,col,skip){
+  const{sx,sy,ox,oy}=d;ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.beginPath();let first=true;
+  for(let px=0;px<=w;px++){const x=xl+px/sx;if(skip&&skip(x)){first=true;continue;}const y=fn(x);if(!isFinite(y)||Math.abs(y)>500){first=true;continue;}const py=oy-y*sy;first?(ctx.moveTo(px,py),first=false):ctx.lineTo(px,py);}ctx.stroke();
+}
+function upd(){
+  const a=parseFloat(document.getElementById('sa').value);
+  const b=parseFloat(document.getElementById('sb').value);
+  document.getElementById('va').textContent=a;document.getElementById('vb').textContent=b;
+  const info=a>0?'Өсімді':a<0?'Кемімелі':'Тұрақты';
+  document.getElementById('linfo').textContent='f(x)='+a+'x'+(b>=0?'+':'')+b+' — '+info+' функция. OY кесу нүктесі: (0,'+b+')';
+  const cv=document.getElementById('c2');const ctx=cv.getContext('2d');const w=cv.width;const h=cv.height;
+  const d=drawAxes(ctx,w,h,-6,6,-6,6);
+  plot(ctx,x=>a*x+b,d,w,-6,6,gc().ln);
+}
+function drawQ4(){
+  const cv=document.getElementById('c4');const ctx=cv.getContext('2d');const w=cv.width;const h=cv.height;
+  const d=drawAxes(ctx,w,h,-1,5,-3,5);const c=gc();
+  plot(ctx,x=>x*x-4*x+3,d,w,-1,5,c.ln2);
+  const{sx,sy,ox,oy}=d;
+  [[1,0],[3,0],[2,-1]].forEach(([x,y])=>{const px=ox+x*sx;const py=oy-y*sy;ctx.fillStyle=c.ln3;ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();});
+  ctx.fillStyle=c.txt;ctx.font='11px sans-serif';
+  ctx.fillText('(1,0)',ox+sx+3,oy-7);ctx.fillText('(3,0)',ox+3*sx+3,oy-7);ctx.fillText('Шыңы(2,−1)',ox+2*sx+4,oy+sy+14);
+}
+function drawQ5(){
+  const cv=document.getElementById('c5');const ctx=cv.getContext('2d');const w=cv.width;const h=cv.height;
+  const d=drawAxes(ctx,w,h,-4,6,-2,8);const c=gc();
+  plot(ctx,x=>(x*x-1)/(x-1),d,w,-4,6,c.ln2,x=>Math.abs(x-1)<0.09);
+  const{sx,sy,ox,oy}=d;
+  ctx.strokeStyle='#E24B4A';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+  const vx=ox+1*sx;ctx.beginPath();ctx.moveTo(vx,0);ctx.lineTo(vx,h);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=c.txt;ctx.font='11px sans-serif';ctx.fillText('x=1',vx+4,14);
+  ctx.strokeStyle='#E24B4A';ctx.fillStyle=dark()?'#1a1a1a':'#fff';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(vx,oy-2*sy,5,0,Math.PI*2);ctx.fill();ctx.stroke();
+}
+upd();drawQ4();drawQ5();
+</script>
