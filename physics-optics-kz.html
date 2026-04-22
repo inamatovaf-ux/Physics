@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Толқын Оптикасы — Физика</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a14;
+    --surface: #0d1628;
+    --surface2: #111f3a;
+    --accent: #4fc3f7;
+    --accent2: #81d4fa;
+    --gold: #ffd54f;
+    --violet: #ce93d8;
+    --green: #a5d6a7;
+    --text: #e8f4fd;
+    --muted: #7ca4c0;
+    --border: rgba(79, 195, 247, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── STARFIELD ── */
+  #stars {
+    position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 20% 20%, #0a1628 0%, #050a14 70%);
+    overflow: hidden;
+  }
+  #stars::before, #stars::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(79,195,247,.6) 0%, transparent 0%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.4) 0%, transparent 0%),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(206,147,216,.5) 0%, transparent 0%),
+      radial-gradient(1px 1px at 55% 65%, rgba(79,195,247,.3) 0%, transparent 0%),
+      radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,.5) 0%, transparent 0%),
+      radial-gradient(1.5px 1.5px at 85% 50%, rgba(255,213,79,.4) 0%, transparent 0%),
+      radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,.3) 0%, transparent 0%),
+      radial-gradient(1px 1px at 90% 80%, rgba(79,195,247,.4) 0%, transparent 0%),
+      radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,.3) 0%, transparent 0%),
+      radial-gradient(1px 1px at 35% 55%, rgba(206,147,216,.4) 0%, transparent 0%);
+    background-size: 400px 300px;
+    animation: twinkle 8s ease-in-out infinite alternate;
+  }
+  #stars::after {
+    background-size: 600px 500px;
+    animation-delay: 3s; animation-duration: 12s;
+  }
+  @keyframes twinkle {
+    0% { opacity: .6; }
+    100% { opacity: 1; }
+  }
+
+  /* ── LAYOUT ── */
+  #app { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+  .hero-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: .4rem 1.2rem;
+    border-radius: 2rem;
+    margin-bottom: 2rem;
+    background: rgba(79,195,247,.06);
+    animation: fadeUp .8s ease both;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #e8f4fd 30%, var(--accent) 70%, var(--violet) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeUp .8s .2s ease both;
+    margin-bottom: 1.5rem;
+  }
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 600px;
+    animation: fadeUp .8s .4s ease both;
+    margin-bottom: 3rem;
+  }
+  .hero-nav {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    justify-content: center;
+    animation: fadeUp .8s .6s ease both;
+  }
+  .hero-nav a {
+    padding: .7rem 1.8rem;
+    border: 1px solid var(--border);
+    border-radius: .5rem;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    background: rgba(79,195,247,.05);
+    transition: all .3s;
+    letter-spacing: .02em;
+  }
+  .hero-nav a:hover {
+    background: rgba(79,195,247,.15);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79,195,247,.2);
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    animation: bounce 2s infinite;
+    opacity: .5;
+    font-size: .8rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(5,10,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transform: translateY(-100%);
+    transition: transform .4s ease;
+  }
+  nav.visible { transform: translateY(0); }
+  .nav-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .85rem;
+    color: var(--accent);
+    letter-spacing: .1em;
+  }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: .85rem; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    opacity: 0; transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .section.revealed { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+  .section h2 span { color: var(--accent); }
+
+  .lead {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 720px;
+    margin-bottom: 3rem;
+    border-left: 3px solid var(--accent);
+    padding-left: 1.5rem;
+  }
+
+  /* ── CARDS ── */
+  .cards { display: grid; gap: 1.5rem; }
+  .cards.cols2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .cards.cols3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--violet));
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: rgba(79,195,247,.3); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+  .card:hover::before { opacity: 1; }
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: .75rem;
+    color: var(--accent2);
+  }
+  .card p { font-size: .95rem; color: var(--muted); }
+
+  /* ── FORMULA BLOCK ── */
+  .formula-block {
+    background: var(--surface2);
+    border: 1px solid rgba(255,213,79,.2);
+    border-radius: .75rem;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--gold);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .formula-block::before {
+    content: 'ФОРМУЛА';
+    position: absolute; top: .5rem; right: 1rem;
+    font-size: .65rem;
+    letter-spacing: .15em;
+    color: rgba(255,213,79,.4);
+  }
+  .formula-desc {
+    margin-top: 1rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: .85rem;
+    color: var(--muted);
+    text-align: left;
+  }
+  .formula-desc span { color: var(--gold); font-weight: 600; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1rem 0;
+  }
+
+  /* ── CANVAS DEMOS ── */
+  .demo-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    overflow: hidden;
+    margin: 2.5rem 0;
+  }
+  .demo-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: .75rem;
+    background: rgba(79,195,247,.04);
+  }
+  .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .demo-dot.r { background: #ff5f57; }
+  .demo-dot.y { background: #febc2e; }
+  .demo-dot.g { background: #28c840; }
+  .demo-title { font-size: .8rem; color: var(--muted); letter-spacing: .1em; margin-left: .5rem; font-family: 'IBM Plex Mono', monospace; }
+  canvas { display: block; width: 100%; }
+
+  .controls {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+  }
+  .ctrl-group { display: flex; align-items: center; gap: .75rem; }
+  .ctrl-group label { font-size: .8rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; letter-spacing: .05em; min-width: 90px; }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 140px; height: 4px;
+    background: var(--surface2);
+    border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    transition: transform .2s;
+  }
+  input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
+  .val-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    color: var(--gold);
+    min-width: 40px;
+  }
+  .btn {
+    padding: .5rem 1.2rem;
+    background: rgba(79,195,247,.1);
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: .8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all .2s;
+    letter-spacing: .05em;
+  }
+  .btn:hover { background: rgba(79,195,247,.2); border-color: var(--accent); }
+
+  /* ── ZONE TABLE ── */
+  .zone-table {
+    width: 100%; border-collapse: collapse; margin: 2rem 0;
+    font-size: .9rem;
+  }
+  .zone-table th {
+    background: var(--surface2);
+    padding: .75rem 1rem;
+    text-align: left;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: .05em;
+    border-bottom: 2px solid var(--border);
+  }
+  .zone-table td {
+    padding: .65rem 1rem;
+    border-bottom: 1px solid rgba(79,195,247,.06);
+    color: var(--muted);
+  }
+  .zone-table tr:hover td { background: rgba(79,195,247,.03); color: var(--text); }
+  .zone-num { color: var(--gold); font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+
+  /* ── DISPERSION STRIP ── */
+  .spectrum-strip {
+    height: 40px;
+    border-radius: .5rem;
+    background: linear-gradient(90deg,
+      #7b00d4,#4400ff,#0033ff,#00aaff,#00cc44,#aadd00,#ffee00,#ff8800,#ff2200);
+    margin: 1.5rem 0;
+    box-shadow: 0 0 24px rgba(170,255,0,.2), 0 0 48px rgba(0,170,255,.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .spectrum-strip::after {
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(255,255,255,.15),transparent 60%);
+    border-radius:.5rem;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight {
+    background: linear-gradient(135deg, rgba(79,195,247,.07), rgba(206,147,216,.07));
+    border: 1px solid rgba(206,147,216,.2);
+    border-radius: .75rem;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+  .highlight h4 {
+    color: var(--violet);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: .75rem;
+  }
+  .highlight p { font-size: .95rem; color: var(--muted); }
+
+  /* ── POLARIZATION VISUAL ── */
+  .polar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .polar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .polar-card canvas { margin: 0 auto 1rem; display: block; }
+  .polar-card h4 { font-size: .9rem; color: var(--accent2); margin-bottom: .5rem; }
+  .polar-card p { font-size: .8rem; color: var(--muted); }
+
+  /* ── QUOTE ── */
+  blockquote {
+    border-left: 4px solid var(--violet);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--muted);
+    background: rgba(206,147,216,.04);
+    border-radius: 0 .5rem .5rem 0;
+  }
+  blockquote cite { display: block; margin-top: .5rem; font-size: .8rem; color: rgba(206,147,216,.6); font-style: normal; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── LIST ── */
+  .styled-list { list-style: none; padding: 0; margin: 1rem 0; }
+  .styled-list li {
+    padding: .6rem 0 .6rem 2rem;
+    position: relative;
+    color: var(--muted);
+    font-size: .95rem;
+    border-bottom: 1px solid rgba(79,195,247,.05);
+  }
+  .styled-list li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .85rem;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: .05em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── IMAGE ── */
+  .img-caption {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+  .img-caption img { width: 100%; display: block; }
+  .img-caption figcaption {
+    padding: .75rem 1.25rem;
+    font-size: .8rem;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    border-top: 1px solid var(--border);
+    letter-spacing: .04em;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media(max-width:700px){ .two-col{grid-template-columns:1fr;} .nav-links{display:none;} }
+
+  /* Section separator */
+  .sep {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 4rem 0 2rem;
+  }
+  .sep-line { flex: 1; height: 1px; background: var(--border); }
+  .sep-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .7rem;
+    color: var(--accent);
+    letter-spacing: .15em;
+    background: var(--surface2);
+    padding: .3rem .8rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<nav id="navbar">
+  <span class="nav-logo">ФИЗИКА · ОПТИКА</span>
+  <div class="nav-links">
+    <a href="#diffraction">Дифракция</a>
+    <a href="#huygens">Гюйгенс-Френель</a>
+    <a href="#dispersion">Дисперсия</a>
+    <a href="#polarization">Поляризация</a>
+    <a href="#zones">Зоналар</a>
+  </div>
+</nav>
+
+<div id="app">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Физика · Толқын Оптикасы</div>
+    <h1>Жарық Толқындарының<br>Физикасы</h1>
+    <p>Дифракция, Гюйгенс–Френель принципі, жарықтың дисперсиясы мен поляризациясы және Френельдің зоналық әдісі — терең түсіндірме және интерактивті демонстрациялар.</p>
+    <div class="hero-nav">
+      <a href="#diffraction">Дифракция</a>
+      <a href="#huygens">Гюйгенс–Френель</a>
+      <a href="#dispersion">Дисперсия</a>
+      <a href="#polarization">Поляризация</a>
+      <a href="#zones">Зоналық әдіс</a>
+    </div>
+    <div class="scroll-hint">↓ &nbsp; ТӨМЕН ЖЫЛЖЫ</div>
+  </section>
+
+  <!-- ════════════════════════════ 1. ДИФРАКЦИЯ ════════════════════════════ -->
+  <section class="section" id="diffraction">
+    <div class="section-label">01 — Diffraction</div>
+    <h2>Толқындардың <span>Дифракциясы</span></h2>
+    <p class="lead">
+      Дифракция — толқынның кедергілер мен тесіктер жиектерінде бұрылып, геометриялық жарық жолымен жетпейтін аймаққа кіруі. Бұл толқындық табиғаттың ең маңызды дәлелі.
+    </p>
+
+    <div class="cards cols2">
+      <div class="card">
+        <div class="card-icon">🌊</div>
+        <h3>Дифракция дегеніміз не?</h3>
+        <p>Толқын тарылған тесіктен немесе кедергінің жиегінен өткенде, ол тура жол бойынша бармайды — толқындар бұрылып, «көлеңкелі» аймаққа кіреді. Бұл эффект толқын ұзындығы λ кедергінің өлшемімен салыстырғанда үлкен болған кезде айқын байқалады.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <h3>Дифракция шарты</h3>
+        <p>Дифракция маңызды болу үшін: <strong style="color:var(--gold)">λ ≈ d</strong>, мұнда λ — толқын ұзындығы, d — тесіктің немесе кедергінің өлшемі. Жарық үшін λ ≈ 400–700 нм, сондықтан дифракция тар саңылауларда (микрондар ретінде) жақсы байқалады.</p>
+      </div>
+    </div>
+
+    <!-- Demo 1: Wave Diffraction -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">ИНТЕРАКТИВТІ ДЕМОНСТРАЦИЯ — ТОЛҚЫН ДИФРАКЦИЯСЫ</span>
+      </div>
+      <canvas id="difCanvas" height="320"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Саңылау ені:</label>
+          <input type="range" id="slitW" min="1" max="8" step="0.5" value="3">
+          <span class="val-badge" id="slitWVal">3λ</span>
+        </div>
+        <div class="ctrl-group">
+          <label>Толқын ұзын.:</label>
+          <input type="range" id="waveLen" min="1" max="4" step="0.5" value="2">
+          <span class="val-badge" id="waveLenVal">2</span>
+        </div>
+        <button class="btn" id="difToggle">⏸ Тоқтату</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--accent2)">Дифракция түрлері</h3>
+        <ul class="styled-list">
+          <li><strong style="color:var(--text)">Френель дифракциясы</strong> — бақылаушы немесе жарық көзі кедергіге жақын (жуықтама толқын фронты — сфера)</li>
+          <li><strong style="color:var(--text)">Фраунгофер дифракциясы</strong> — жарық көзі мен экран алыста (жазық толқын фронты, линза қолданылады)</li>
+          <li><strong style="color:var(--text)">Дифракциялық тор</strong> — көп саңылаулы жүйе, жарықты түстерге ажыратады</li>
+        </ul>
+      </div>
+      <div>
+        <div class="formula-block">
+          d · sin θ = m · λ
+          <div class="formula-desc">
+            <span>d</span> — тор кезеңі (саңылаулар аралығы)<br>
+            <span>θ</span> — дифракция бұрышы<br>
+            <span>m</span> — дифракция реті (0, ±1, ±2, …)<br>
+            <span>λ</span> — толқын ұзындығы
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>🔬 Дифракцияның маңыздылығы</h4>
+      <p>Дифракция рентген сәулелерінің кристалдардағы шашырауы арқылы атомдық құрылымды анықтауға мүмкіндік береді. Брэгг заңы: <strong style="color:var(--gold)">2d·sinθ = mλ</strong> — осы принципке негізделген. ДНҚ-ның қос спиральдық құрылымы да рентген дифракциясы арқылы ашылды (1953, Уотсон мен Крик).</p>
+    </div>
+
+    <!-- Single slit intensity demo -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">БІР САҢЫЛАУДАҒЫ ДИФРАКЦИЯ СУРЕТІ (ИНТЕНСИВТІЛІК)</span>
+      </div>
+      <canvas id="intensityCanvas" height="200"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Саңылау / λ:</label>
+          <input type="range" id="slit2" min="1" max="20" value="8">
+          <span class="val-badge" id="slit2Val">8</span>
+        </div>
+      </div>
+    </div>
+
+    <blockquote>
+      «Жарық тура жүрмейді — ол өзінің табиғатын ашу үшін кедергінің маңайында билейді.»
+      <cite>— Толқын оптикасының жалпы принципі</cite>
+    </blockquote>
+  </section>
+
+  <!-- ════════════════════════════ 2. ГЮЙГЕНС–ФРЕНЕЛЬ ════════════════════════════ -->
+  <section class="section" id="huygens">
+    <div class="sep"><div class="sep-line"></div><div class="sep-num">02</div><div class="sep-line"></div></div>
+    <div class="section-label">02 — Huygens–Fresnel</div>
+    <h2>Гюйгенс–Френель <span>Принципі</span></h2>
+    <p class="lead">
+      «Толқын фронтының әр нүктесі жаңа сфералық толқындардың (екінші реттік толқындардың) көзі болып табылады, ал олардың суперпозициясы жаңа толқын фронтын қалыптастырады.»
+    </p>
+
+    <div class="cards cols3">
+      <div class="card">
+        <div class="card-icon">💡</div>
+        <h3>Гюйгенс принципі (1678)</h3>
+        <p>Кристиан Гюйгенс жарық таралуын сфералық толқындардың конструктивті интерференциясы арқылы түсіндірді. Бірақ ол дифракцияны толық түсіндіре алмады.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Френель толықтырмасы (1816)</h3>
+        <p>Огюстен-Жан Френель Гюйгенс принципіне амплитуда мен фазаны ескеретін интеграл қосты — осылайша дифракция мен интерференцияны бірге түсіндіруге болды.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔭</div>
+        <h3>Кирхгоф нақтылауы (1882)</h3>
+        <p>Густав Кирхгоф Гюйгенс–Френель принципін математикалық дифракция теориясы негізінде дәл тұжырымдады — оны скалярлық дифракция теориясы деп атайды.</p>
+      </div>
+    </div>
+
+    <!-- Huygens wavelet demo -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">ГЮЙГЕНС ТОЛҚЫНШАЛАРЫ — ИНТЕРАКТИВТІ</span>
+      </div>
+      <canvas id="huygensCanvas" height="340"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Толқыншалар:</label>
+          <input type="range" id="numWavelets" min="3" max="15" value="7">
+          <span class="val-badge" id="numWaveletsVal">7</span>
+        </div>
+        <div class="ctrl-group">
+          <label>Жылдамдық:</label>
+          <input type="range" id="waveSpeed" min="1" max="5" value="2">
+          <span class="val-badge" id="waveSpeedVal">2</span>
+        </div>
+        <button class="btn" id="huygensToggle">⏸ Тоқтату</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--accent2)">Принцип қалай жұмыс істейді</h3>
+        <p style="color:var(--muted);margin-bottom:1rem">Жарық толқыны А нүктесінен В нүктесіне жеткенде, жол бойындағы <em>әрбір нүкте</em> жаңа сфералық толқынның бастауы болады. Осы «Гюйгенс толқыншалары» бір-бірімен интерференцияланып жаңа толқын фронтын жасайды.</p>
+        <ul class="styled-list">
+          <li>Толқынның алға таралуы — конструктивті интерференция</li>
+          <li>Артқа таралмауы — деструктивті интерференция</li>
+          <li>Тесіктен өткенде кейбір толқыншалар тоқтатылмайды → дифракция</li>
+        </ul>
+      </div>
+      <div>
+        <div class="formula-block" style="font-size:.9rem">
+          U(P) = ∫∫ U(Q) · K(χ) · (e<sup>ikr</sup>/r) dS
+          <div class="formula-desc">
+            <span>U(P)</span> — P нүктесіндегі толқын амплитудасы<br>
+            <span>U(Q)</span> — Q нүктесіндегі бастапқы амплитуда<br>
+            <span>K(χ)</span> — бұрыштық (облыстық) фактор<br>
+            <span>k = 2π/λ</span> — толқын саны<br>
+            <span>r</span> — Q-дан P-ге дейінгі қашықтық
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>🪞 Практикалық қолдану</h4>
+      <p>Гюйгенс–Френель принципі оптикалық жүйелерді (линзалар, айналар, апертуралар) есептеуде, лазер сәулелерінің таралуын модельдеуде, голография теориясында және радиотолқынның таралуын есептеуде қолданылады.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ 3. ДИСПЕРСИЯ ════════════════════════════ -->
+  <section class="section" id="dispersion">
+    <div class="sep"><div class="sep-line"></div><div class="sep-num">03</div><div class="sep-line"></div></div>
+    <div class="section-label">03 — Dispersion</div>
+    <h2>Жарықтың <span>Дисперсиясы</span></h2>
+    <p class="lead">
+      Дисперсия — заттағы жарықтың сыну көрсеткішінің толқын ұзындығына (жиілікке) тәуелділігі. Ньютонның призмадан алған спектрі — дисперсияның классикалық демонстрациясы.
+    </p>
+
+    <div class="spectrum-strip"></div>
+    <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:.5rem;margin-bottom:2rem">
+      <span>400 нм · Күлгін</span>
+      <span>450 нм · Көк</span>
+      <span>500 нм · Жасыл</span>
+      <span>580 нм · Сары</span>
+      <span>620 нм · Қызылсары</span>
+      <span>700 нм · Қызыл</span>
+    </div>
+
+    <div class="cards cols2">
+      <div class="card">
+        <div class="card-icon">🔺</div>
+        <h3>Неге дисперсия болады?</h3>
+        <p>Зат молекулалары жарықпен резонанс жиілігіне байланысты әртүрлі деңгейде өзара әрекеттеседі. Жоғары жиілікті (күлгін) жарық тёзірек баяулайды → жоғары n. Төмен жиілікті (қызыл) жарық аз баяулайды → төменгі n.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌈</div>
+        <h3>Кәдімгі және анамальды дисперсия</h3>
+        <p><strong style="color:var(--green)">Кәдімгі:</strong> n λ кішірейген сайын өседі (dn/dλ &lt; 0) — шыны, су. <strong style="color:var(--violet)">Анамальды:</strong> белгілі бір жиілік аймағында n кенет кемиді — резонанс жиілігінің маңайында болады.</p>
+      </div>
+    </div>
+
+    <!-- Prism demo -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">ПРИЗМАДАҒЫ ДИСПЕРСИЯ — ИНТЕРАКТИВТІ</span>
+      </div>
+      <canvas id="prismCanvas" height="320"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Сыну к-ші n:</label>
+          <input type="range" id="prismN" min="1.3" max="1.9" step="0.05" value="1.5">
+          <span class="val-badge" id="prismNVal">1.50</span>
+        </div>
+        <div class="ctrl-group">
+          <label>Түсу бұрышы:</label>
+          <input type="range" id="prismAngle" min="20" max="70" value="45">
+          <span class="val-badge" id="prismAngleVal">45°</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="formula-block" style="font-size:.9rem">
+          n(λ) = A + B/λ² + C/λ⁴
+          <div class="formula-desc">
+            <span>Коши формуласы</span> — шыны үшін жуықтама<br>
+            <span>A, B, C</span> — заттың эмпирикалық константалары<br><br>
+            <strong style="color:var(--gold)">Селмейер формуласы:</strong><br>
+            n²(λ) = 1 + Σ Bᵢλ² / (λ² − Cᵢ)
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--accent2)">Дисперсия қолданылуы</h3>
+        <ul class="styled-list">
+          <li>Спектроскопия — заттар спектрін зерттеу</li>
+          <li>Оптикалық талшық — хроматикалық дисперсия деректерге кедергі жасайды</li>
+          <li>Кемпірқосақ — ауадағы су тамшылары</li>
+          <li>Ахромат линзалар — дисперсияны компенсациялайды</li>
+          <li>Лазер импульстері — дисперсия импульсті кеңейтеді</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>🌈 Кемпірқосақ физикасы</h4>
+      <p>Су тамшысының ішіне кірген күн сәулесі сынып, ішкі шағылысып, содан кейін қайта сынады. Әр түстің сыну бұрышы әртүрлі болғандықтан олар кеңістікте бөлінеді. Бірінші кемпірқосақ: 40–42° бұрышта, екіншісі: 51–53°.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ 4. ПОЛЯРИЗАЦИЯ ════════════════════════════ -->
+  <section class="section" id="polarization">
+    <div class="sep"><div class="sep-line"></div><div class="sep-num">04</div><div class="sep-line"></div></div>
+    <div class="section-label">04 — Polarization</div>
+    <h2>Жарықтың <span>Поляризациясы</span></h2>
+    <p class="lead">
+      Поляризация — электромагниттік толқынның электр өрісі тербелістерінің кеңістіктегі бағытталуы. Табиғи жарықта тербелістер бар бағытта кездейсоқ болса, поляризацияланған жарықта — белгілі бір бағытта немесе заңдылықпен.
+    </p>
+
+    <div class="polar-grid">
+      <div class="polar-card">
+        <canvas id="polCanvas1" width="140" height="140"></canvas>
+        <h4>Табиғи жарық</h4>
+        <p>Тербелістер барлық бағытта кездейсоқ — ешқандай артықшылықты бағыт жоқ</p>
+      </div>
+      <div class="polar-card">
+        <canvas id="polCanvas2" width="140" height="140"></canvas>
+        <h4>Сызықты поляризация</h4>
+        <p>Тербелістер тек бір жазықтықта — вектор тура сызықты қозғалады</p>
+      </div>
+      <div class="polar-card">
+        <canvas id="polCanvas3" width="140" height="140"></canvas>
+        <h4>Шеңберлі поляризация</h4>
+        <p>Тербелістер шеңбер бойымен айналады — оң немесе сол айналым</p>
+      </div>
+      <div class="polar-card">
+        <canvas id="polCanvas4" width="140" height="140"></canvas>
+        <h4>Эллипстік поляризация</h4>
+        <p>Жалпы жағдай — тербелістер эллипс бойымен жүреді</p>
+      </div>
+    </div>
+
+    <!-- Malus Law Demo -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">МАЛЮС ЗАҢЫ — ПОЛЯРИЗАТОР БҰРЫШЫ МЕН ИНТЕНСИВТІЛІК</span>
+      </div>
+      <canvas id="malusCanvas" height="280"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Анализатор бұрышы:</label>
+          <input type="range" id="malusAngle" min="0" max="180" value="45">
+          <span class="val-badge" id="malusAngleVal">45°</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="formula-block">
+          I = I₀ · cos²θ
+          <div class="formula-desc">
+            <span>Малюс заңы (1809)</span><br>
+            <span>I₀</span> — поляризатордан кейінгі интенсивтілік<br>
+            <span>θ</span> — поляризатор мен анализатор арасындағы бұрыш<br>
+            <span>I</span> — анализатордан өткен интенсивтілік
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--accent2)">Поляризация тәсілдері</h3>
+        <ul class="styled-list">
+          <li><strong style="color:var(--text)">Шағылысу</strong> — Брюстер бұрышында толық поляризация</li>
+          <li><strong style="color:var(--text)">Сыну</strong> — анизотропты кристалдарда екіге бөлінеді</li>
+          <li><strong style="color:var(--text)">Шашырау</strong> — Рэлей шашырауы (аспанның көктігі)</li>
+          <li><strong style="color:var(--text)">Поляроид</strong> — дихроикалық материал — бір бағытты сіңіреді</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="formula-block" style="font-size:.95rem">
+      tan θ_B = n₂ / n₁
+      <div class="formula-desc">
+        <span>Брюстер бұрышы</span> — шағылысқан жарық толық поляризацияланады<br>
+        <span>θ_B</span> — Брюстер бұрышы<br>
+        <span>n₁, n₂</span> — екі ортаның сыну көрсеткіштері<br>
+        Шыны үшін: n = 1.5 → θ_B ≈ 56°
+      </div>
+    </div>
+
+    <div class="cards cols3">
+      <div class="card">
+        <div class="card-icon">🕶️</div>
+        <h3>Поляризациялық күннен қорғайтын көзілдірік</h3>
+        <p>Горизонталь поляризацияланған шағылысқан жарықты сүзеді — судан, жолдан шағылысқан «бліктерді» жояды.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📺</div>
+        <h3>LCD дисплейлер</h3>
+        <p>Сұйық кристалды дисплейлер поляризацияланған жарықтың бағытын электр өрісімен басқарады — пиксельдер осылай жанады немесе сөнеді.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔬</div>
+        <h3>Петрографиялық микроскоп</h3>
+        <p>Минералдар мен тастарды зерттеу үшін — поляризацияланған жарықта кристалдар өзіне тән түстер мен суреттер береді.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ 5. ЗОНАЛЫҚ ӘДІс ════════════════════════════ -->
+  <section class="section" id="zones">
+    <div class="sep"><div class="sep-line"></div><div class="sep-num">05</div><div class="sep-line"></div></div>
+    <div class="section-label">05 — Fresnel Zones</div>
+    <h2>Френельдің <span>Зоналық Әдісі</span></h2>
+    <p class="lead">
+      Френель зоналары — толқын фронтын бірдей жол айырымы бар сақина тәрізді аймақтарға бөлу арқылы дифракциялық суреттерді есептеудің күшті геометриялық әдісі.
+    </p>
+
+    <!-- Zone Plate Demo -->
+    <div class="demo-wrap">
+      <div class="demo-header">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-title">ФРЕНЕЛЬ ЗОНАЛАРЫ — ИНТЕРАКТИВТІ ВИЗУАЛИЗАЦИЯ</span>
+      </div>
+      <canvas id="zonesCanvas" height="360"></canvas>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label>Зона саны:</label>
+          <input type="range" id="numZones" min="1" max="12" value="5">
+          <span class="val-badge" id="numZonesVal">5</span>
+        </div>
+        <div class="ctrl-group">
+          <label>Қашықтық b:</label>
+          <input type="range" id="zoneDist" min="50" max="200" value="120">
+          <span class="val-badge" id="zoneDistVal">120</span>
+        </div>
+        <button class="btn" id="zonesAnimate">▶ Анимация</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--accent2)">Зоналардың қасиеттері</h3>
+        <ul class="styled-list">
+          <li>m-ші зонаның сыртқы шетінен P нүктесіне дейінгі жол: <strong style="color:var(--gold)">b + mλ/2</strong></li>
+          <li>Кез-келген екі іргелес зона бірін-бірі шамамен компенсациялайды</li>
+          <li>Барлық ашық зоналардың амплитудасы тек 1-ші зонаның жартысына тең</li>
+          <li>Тақ зоналарды жабу → интенсивтілік 4 есе артады</li>
+        </ul>
+      </div>
+      <div>
+        <div class="formula-block" style="font-size:.9rem">
+          rₘ = √(m · λ · b)
+          <div class="formula-desc">
+            <span>rₘ</span> — m-ші зонаның радиусы<br>
+            <span>m</span> — зона нөмірі (1, 2, 3, …)<br>
+            <span>λ</span> — толқын ұзындығы<br>
+            <span>b</span> — толқын фронтынан бақылау нүктесіне дейін<br><br>
+            Дәл формула: rₘ = √(m·λ·b·a / (a+b))
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="zone-table">
+      <thead>
+        <tr>
+          <th>Зона № (m)</th>
+          <th>Радиус (λ=500нм, b=1м)</th>
+          <th>Фаза жолы</th>
+          <th>Интерференция</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="zone-num">1</td><td>0.707 мм</td><td>b + λ/2</td><td style="color:var(--green)">Конструктивті</td></tr>
+        <tr><td class="zone-num">2</td><td>1.000 мм</td><td>b + λ</td><td style="color:var(--violet)">Деструктивті</td></tr>
+        <tr><td class="zone-num">3</td><td>1.225 мм</td><td>b + 3λ/2</td><td style="color:var(--green)">Конструктивті</td></tr>
+        <tr><td class="zone-num">4</td><td>1.414 мм</td><td>b + 2λ</td><td style="color:var(--violet)">Деструктивті</td></tr>
+        <tr><td class="zone-num">5</td><td>1.581 мм</td><td>b + 5λ/2</td><td style="color:var(--green)">Конструктивті</td></tr>
+        <tr><td class="zone-num">m</td><td>√(mλb)</td><td>b + mλ/2</td><td style="color:var(--muted)">Тақ→+, жұп→−</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cards cols2">
+      <div class="card">
+        <div class="card-icon">🔭</div>
+        <h3>Зоналық пластинка</h3>
+        <p>Жұп немесе тақ Френель зоналарын жабатын экран — линза сияқты жарықты жинайды! Рентген және гамма-сәулелер үшін линза болмағандықтан, зоналық пластинкалар қолданылады. Синтетикалық апертуралы РЛС та осы принципте жұмыс істейді.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📡</div>
+        <h3>Радиотолқындар мен Френель</h3>
+        <p>Радиобайланыс желілерінде бірінші Френель зонасын ашық ұстау маңызды — кедергілер зонаның 60%-ын жаппауы тиіс. Антенналар арасындағы оптималды биіктік осы принцип бойынша есептеледі.</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>💡 Зоналық әдіс нені береді?</h4>
+      <p>Кейбір жағдайларда кедергі (мысалы, диск) жарықтың артына <em>фокустелуіне</em> себеп болады — бұл Пуассон–Ароного жарық нүктесі деп аталады. Ол дифракцияның нақты болжамы болып, толқын теориясының тәжірибелік растауы ретінде тарихқа кірді.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div style="margin-bottom:.5rem;color:var(--accent);font-size:1rem;font-family:'Playfair Display',serif">Толқын Оптикасы</div>
+    Физика · Толқын теориясы · Интерактивті оқулық · Қазақ тілінде
+  </footer>
+</div>
+
+<script>
+// ── UTILITIES ──────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const TAU = Math.PI * 2;
+
+function resizeCanvas(canvas) {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = rect.width;
+  canvas.width = w;
+  return { w, h: canvas.height };
+}
+
+// ── NAV SCROLL ──────────────────────────────────────────────────────────────
+const navbar = $('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('visible', window.scrollY > 80);
+});
+
+// ── SECTION REVEAL ─────────────────────────────────────────────────────────
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+
+// ════════════════════════════════════════════════════
+// 1. DIFFRACTION WAVE DEMO
+// ════════════════════════════════════════════════════
+const difCanvas = $('difCanvas');
+let difRunning = true;
+let difT = 0;
+
+function drawDiffraction() {
+  const { w, h } = resizeCanvas(difCanvas);
+  const ctx = difCanvas.getContext('2d');
+  const slitW = parseFloat($('slitW').value);
+  const wl = parseFloat($('waveLen').value) * 18;
+  const slitPx = slitW * wl * 0.4;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  const wallX = w * 0.4;
+  const midY = h / 2;
+
+  // Draw incoming waves
+  for (let x = 20; x < wallX - 4; x += 4) {
+    const phase = (x / wl - difT) * TAU;
+    const alpha = 0.15 + 0.1 * Math.sin(phase);
+    ctx.strokeStyle = `rgba(79,195,247,${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+
+  // Wall
+  const topWall = midY - slitPx / 2;
+  const botWall = midY + slitPx / 2;
+  ctx.fillStyle = '#1a2a4a';
+  ctx.fillRect(wallX - 2, 0, 6, topWall);
+  ctx.fillRect(wallX - 2, botWall, 6, h - botWall);
+  ctx.strokeStyle = 'rgba(79,195,247,.4)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(wallX - 2, 0, 6, topWall);
+  ctx.strokeRect(wallX - 2, botWall, 6, h - botWall);
+
+  // Slit label
+  ctx.fillStyle = 'rgba(255,213,79,.7)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('d = ' + slitW + 'λ', wallX + 8, midY);
+
+  // Diffracted waves from slit
+  const numSrc = Math.max(3, Math.floor(slitPx / 8));
+  for (let s = 0; s < numSrc; s++) {
+    const sy = topWall + (slitPx / (numSrc - 1)) * s;
+    for (let r = 10; r < w - wallX - 10; r += 6) {
+      const phase = (r / wl - difT) * TAU;
+      const amp = Math.max(0, 0.18 - r / (w * 3));
+      ctx.strokeStyle = `rgba(79,195,247,${amp * (0.7 + 0.3 * Math.sin(phase))})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.arc(wallX + 2, sy, r, -Math.PI / 2 - 0.6, Math.PI / 2 + 0.6);
+      ctx.stroke();
+    }
+  }
+
+  // Intensity pattern on right wall
+  const rightX = w - 20;
+  ctx.strokeStyle = 'rgba(255,213,79,.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let y = 0; y < h; y++) {
+    const angle = Math.atan2(y - midY, rightX - wallX);
+    const beta = (Math.PI * slitPx / wl) * Math.sin(angle);
+    const intensity = beta === 0 ? 1 : Math.pow(Math.sin(beta) / beta, 2);
+    const xPlot = rightX - intensity * 40;
+    if (y === 0) ctx.moveTo(xPlot, y); else ctx.lineTo(xPlot, y);
+  }
+  ctx.stroke();
+
+  if (difRunning) {
+    difT += 0.025;
+    requestAnimationFrame(drawDiffraction);
+  }
+}
+drawDiffraction();
+
+$('difToggle').onclick = function() {
+  difRunning = !difRunning;
+  this.textContent = difRunning ? '⏸ Тоқтату' : '▶ Жалғастыру';
+  if (difRunning) drawDiffraction();
+};
+$('slitW').oninput = function() { $('slitWVal').textContent = this.value + 'λ'; };
+$('waveLen').oninput = function() { $('waveLenVal').textContent = this.value; };
+
+// ── Intensity pattern ─────────────────────────────────────────────────────
+const intCanvas = $('intensityCanvas');
+function drawIntensity() {
+  const { w, h } = resizeCanvas(intCanvas);
+  const ctx = intCanvas.getContext('2d');
+  const aOverLambda = parseFloat($('slit2').value);
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  const steps = 400;
+  for (let i = 0; i <= steps; i++) {
+    const angle = (i / steps - 0.5) * Math.PI;
+    const beta = Math.PI * aOverLambda * Math.sin(angle);
+    const intensity = beta === 0 ? 1 : Math.pow(Math.sin(beta) / beta, 2);
+    const pos = i / steps;
+    grad.addColorStop(pos, `rgba(79,195,247,${intensity.toFixed(3)})`);
+  }
+
+  ctx.fillStyle = grad;
+  const bh = h * 0.6;
+  ctx.fillRect(0, (h - bh) / 2, w, bh);
+
+  // Curve
+  ctx.strokeStyle = 'rgba(255,213,79,.8)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let x = 0; x <= w; x++) {
+    const angle = ((x / w) - 0.5) * Math.PI;
+    const beta = Math.PI * aOverLambda * Math.sin(angle);
+    const intensity = beta === 0 ? 1 : Math.pow(Math.sin(beta) / beta, 2);
+    const y = h - intensity * h * 0.85 - h * 0.05;
+    if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,213,79,.5)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('d/λ = ' + aOverLambda, 10, h - 8);
+}
+drawIntensity();
+$('slit2').oninput = function() { $('slit2Val').textContent = this.value; drawIntensity(); };
+window.addEventListener('resize', drawIntensity);
+
+// ════════════════════════════════════════════════════
+// 2. HUYGENS WAVELET DEMO
+// ════════════════════════════════════════════════════
+const huyCanvas = $('huygensCanvas');
+let huyRunning = true;
+let huyT = 0;
+
+function drawHuygens() {
+  const { w, h } = resizeCanvas(huyCanvas);
+  const ctx = huyCanvas.getContext('2d');
+  const N = parseInt($('numWavelets').value);
+  const speed = parseFloat($('waveSpeed').value);
+
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  const spacing = h / (N + 1);
+  const startX = w * 0.25;
+  const maxR = w * 0.6;
+
+  // Primary wavefront
+  ctx.strokeStyle = 'rgba(79,195,247,.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(startX, 0);
+  ctx.lineTo(startX, h);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(79,195,247,.6)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('Толқын фронты', startX + 6, 16);
+
+  // Envelope
+  const envelopeX = startX + (huyT * speed * 1.5) % maxR;
+  ctx.strokeStyle = 'rgba(255,213,79,.5)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(envelopeX, 0);
+  ctx.lineTo(envelopeX, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(255,213,79,.5)';
+  ctx.fillText('Жаңа фронт', envelopeX + 6, 16);
+
+  // Wavelets
+  for (let i = 0; i < N; i++) {
+    const cy = spacing * (i + 1);
+    const r = ((huyT * speed * 1.5) % maxR);
+
+    ctx.strokeStyle = `rgba(165,214,167,0.5)`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(startX, cy, r, -Math.PI / 2, Math.PI / 2);
+    ctx.stroke();
+
+    // Source dot
+    ctx.fillStyle = '#a5d6a7';
+    ctx.beginPath();
+    ctx.arc(startX, cy, 4, 0, TAU);
+    ctx.fill();
+  }
+
+  if (huyRunning) {
+    huyT += 0.4;
+    requestAnimationFrame(drawHuygens);
+  }
+}
+drawHuygens();
+
+$('huygensToggle').onclick = function() {
+  huyRunning = !huyRunning;
+  this.textContent = huyRunning ? '⏸ Тоқтату' : '▶ Жалғастыру';
+  if (huyRunning) drawHuygens();
+};
+$('numWavelets').oninput = function() { $('numWaveletsVal').textContent = this.value; };
+$('waveSpeed').oninput = function() { $('waveSpeedVal').textContent = this.value; };
+
+// ════════════════════════════════════════════════════
+// 3. PRISM DISPERSION DEMO
+// ════════════════════════════════════════════════════
+const prismCanvas = $('prismCanvas');
+function drawPrism() {
+  const { w, h } = resizeCanvas(prismCanvas);
+  const ctx = prismCanvas.getContext('2d');
+  const n = parseFloat($('prismN').value);
+  const incAngle = parseFloat($('prismAngle').value) * Math.PI / 180;
+
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2, cy = h / 2;
+  const ps = Math.min(w, h) * 0.35;
+
+  // Prism
+  const p1 = { x: cx - ps * 0.6, y: cy + ps * 0.5 };
+  const p2 = { x: cx + ps * 0.6, y: cy + ps * 0.5 };
+  const p3 = { x: cx, y: cy - ps * 0.5 };
+
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+  ctx.closePath();
+  const pg = ctx.createLinearGradient(p1.x, p1.y, p3.x, p3.y);
+  pg.addColorStop(0, 'rgba(79,195,247,.08)');
+  pg.addColorStop(1, 'rgba(79,195,247,.18)');
+  ctx.fillStyle = pg;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(79,195,247,.4)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Incoming white ray
+  const rayStartX = 30, rayEndX = p1.x + (p3.x - p1.x) * 0.35;
+  const rayEndY = p1.y - (p1.y - p3.y) * 0.35;
+  ctx.strokeStyle = 'rgba(255,255,255,.7)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(rayStartX, rayEndY);
+  ctx.lineTo(rayEndX, rayEndY);
+  ctx.stroke();
+
+  // Dispersed rays
+  const colors = [
+    { c: '#9b59b6', dn: 0.030 },
+    { c: '#3498db', dn: 0.022 },
+    { c: '#2ecc71', dn: 0.012 },
+    { c: '#f1c40f', dn: 0.005 },
+    { c: '#e67e22', dn: -0.003 },
+    { c: '#e74c3c', dn: -0.012 },
+  ];
+
+  colors.forEach(({ c, dn }) => {
+    const ni = n + dn;
+    const exitAngle = Math.asin(Math.sin(incAngle) / ni) + dn * 8;
+    const exitX = rayEndX + Math.cos(exitAngle + 0.2) * ps * 0.6;
+    const exitY = rayEndY + Math.sin(exitAngle + 0.2) * ps * 0.4;
+    const endX = exitX + Math.cos(exitAngle + dn * 6) * (w - exitX - 20) * 0.9;
+    const endY = exitY + Math.sin(exitAngle + dn * 6) * ps * 1.5;
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(rayEndX, rayEndY);
+    ctx.lineTo(exitX, exitY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+
+  // Labels
+  ctx.fillStyle = 'rgba(79,195,247,.6)';
+  ctx.font = '12px IBM Plex Mono';
+  ctx.fillText(`n = ${n.toFixed(2)}`, cx - 20, cy + ps * 0.5 + 20);
+}
+drawPrism();
+$('prismN').oninput = function() { $('prismNVal').textContent = parseFloat(this.value).toFixed(2); drawPrism(); };
+$('prismAngle').oninput = function() { $('prismAngleVal').textContent = this.value + '°'; drawPrism(); };
+window.addEventListener('resize', drawPrism);
+
+// ════════════════════════════════════════════════════
+// 4. POLARIZATION VISUALS
+// ════════════════════════════════════════════════════
+function drawPolarCanvas(canvasId, type) {
+  const c = $(canvasId);
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  const cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.38;
+
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(79,195,247,.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke();
+
+  function animatePol(t) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#0d1628';
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(79,195,247,.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke();
+
+    if (type === 'natural') {
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * TAU + t * 0.4 * (i % 3 === 0 ? 1 : -1);
+        ctx.strokeStyle = `rgba(79,195,247,${0.3 + (i % 4) * 0.1})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - Math.cos(a) * r * 0.7, cy - Math.sin(a) * r * 0.7);
+        ctx.lineTo(cx + Math.cos(a) * r * 0.7, cy + Math.sin(a) * r * 0.7);
+        ctx.stroke();
+      }
+    } else if (type === 'linear') {
+      const a = 0;
+      const ex = Math.cos(t * 2) * r * 0.7;
+      ctx.strokeStyle = '#4fc3f7';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - ex, cy); ctx.lineTo(cx + ex, cy);
+      ctx.stroke();
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath(); ctx.arc(cx + ex, cy, 4, 0, TAU); ctx.fill();
+    } else if (type === 'circular') {
+      ctx.strokeStyle = 'rgba(79,195,247,.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, r * 0.65, 0, TAU); ctx.stroke();
+      const ex = Math.cos(t * 2) * r * 0.65;
+      const ey = Math.sin(t * 2) * r * 0.65;
+      ctx.strokeStyle = '#ce93d8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy); ctx.lineTo(cx + ex, cy + ey);
+      ctx.stroke();
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath(); ctx.arc(cx + ex, cy + ey, 4, 0, TAU); ctx.fill();
+    } else if (type === 'elliptic') {
+      const a2 = r * 0.6, b2 = r * 0.3;
+      ctx.strokeStyle = 'rgba(165,214,167,.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, a2, b2, 0.4, 0, TAU);
+      ctx.stroke();
+      const ex = a2 * Math.cos(t * 2);
+      const ey = b2 * Math.sin(t * 2);
+      const rx = ex * Math.cos(0.4) - ey * Math.sin(0.4);
+      const ry = ex * Math.sin(0.4) + ey * Math.cos(0.4);
+      ctx.strokeStyle = '#a5d6a7';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + rx, cy + ry); ctx.stroke();
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath(); ctx.arc(cx + rx, cy + ry, 4, 0, TAU); ctx.fill();
+    }
+    requestAnimationFrame(tt => animatePol(tt / 200));
+  }
+  requestAnimationFrame(tt => animatePol(tt / 200));
+}
+drawPolarCanvas('polCanvas1', 'natural');
+drawPolarCanvas('polCanvas2', 'linear');
+drawPolarCanvas('polCanvas3', 'circular');
+drawPolarCanvas('polCanvas4', 'elliptic');
+
+// ── Malus Law Demo ────────────────────────────────────────────────────────
+const malusCanvas = $('malusCanvas');
+function drawMalus() {
+  const { w, h } = resizeCanvas(malusCanvas);
+  const ctx = malusCanvas.getContext('2d');
+  const theta = parseFloat($('malusAngle').value) * Math.PI / 180;
+  const I = Math.pow(Math.cos(theta), 2);
+
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw cos² graph
+  ctx.strokeStyle = 'rgba(79,195,247,.2)';
+  ctx.lineWidth = 1;
+  for (let x = 60; x < w - 20; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, h - 20); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(40, h / 2); ctx.lineTo(w - 20, h / 2); ctx.stroke();
+
+  // cos² curve
+  ctx.strokeStyle = 'rgba(206,147,216,.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let x = 0; x <= w - 60; x++) {
+    const a = (x / (w - 60)) * Math.PI;
+    const y = h - 20 - Math.pow(Math.cos(a), 2) * (h - 40);
+    if (x === 0) ctx.moveTo(x + 40, y); else ctx.lineTo(x + 40, y);
+  }
+  ctx.stroke();
+
+  // Current position
+  const px = 40 + (theta / Math.PI) * (w - 60);
+  const py = h - 20 - I * (h - 40);
+  ctx.strokeStyle = '#ffd54f';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, h - 20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(40, py); ctx.lineTo(px, py); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ffd54f';
+  ctx.beginPath(); ctx.arc(px, py, 6, 0, TAU); ctx.fill();
+
+  // Labels
+  ctx.fillStyle = 'rgba(255,213,79,.8)';
+  ctx.font = '13px IBM Plex Mono';
+  ctx.fillText(`θ = ${$('malusAngle').value}°`, 50, 38);
+  ctx.fillText(`I/I₀ = ${I.toFixed(3)}`, 50, 58);
+  ctx.fillStyle = 'rgba(79,195,247,.5)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('0°', 38, h - 5);
+  ctx.fillText('90°', w / 2 - 15, h - 5);
+  ctx.fillText('180°', w - 50, h - 5);
+
+  // Beam visualization
+  const bx = w * 0.6, by = h * 0.25, bw = w * 0.35, bh2 = 50;
+  ctx.fillStyle = `rgba(79,195,247,${I * 0.8})`;
+  ctx.shadowColor = 'rgba(79,195,247,.4)';
+  ctx.shadowBlur = 20 * I;
+  ctx.fillRect(bx, by - bh2 / 2, bw * I, bh2);
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = 'rgba(79,195,247,.3)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(bx, by - bh2 / 2, bw, bh2);
+  ctx.fillStyle = 'rgba(79,195,247,.5)';
+  ctx.font = '10px IBM Plex Mono';
+  ctx.fillText('Жарық сәулесі', bx, by - bh2 / 2 - 6);
+}
+drawMalus();
+$('malusAngle').oninput = function() { $('malusAngleVal').textContent = this.value + '°'; drawMalus(); };
+window.addEventListener('resize', drawMalus);
+
+// ════════════════════════════════════════════════════
+// 5. FRESNEL ZONES DEMO
+// ════════════════════════════════════════════════════
+const zonesCanvas = $('zonesCanvas');
+let zonesAnimating = false;
+let zonesT = 0;
+
+function drawZones(animated) {
+  const { w, h } = resizeCanvas(zonesCanvas);
+  const ctx = zonesCanvas.getContext('2d');
+  const N = parseInt($('numZones').value);
+  const b = parseFloat($('zoneDist').value);
+
+  ctx.fillStyle = '#0d1628';
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const lambda = 1;
+  const scale = h / (2.5 * Math.sqrt(N * lambda * b));
+
+  // Draw zones (from outside in to show layering)
+  for (let m = N; m >= 1; m--) {
+    const r = Math.sqrt(m * lambda * b) * scale;
+    const isOdd = m % 2 === 1;
+    let alpha = 0.7;
+    if (animated) {
+      alpha = 0.5 + 0.3 * Math.sin(zonesT + m);
+    }
+    ctx.fillStyle = isOdd
+      ? `rgba(79,195,247,${alpha * 0.35})`
+      : `rgba(206,147,216,${alpha * 0.35})`;
+    ctx.strokeStyle = isOdd
+      ? `rgba(79,195,247,${alpha})`
+      : `rgba(206,147,216,${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+
+    // Zone label
+    if (m <= 6) {
+      ctx.fillStyle = isOdd ? 'rgba(79,195,247,.8)' : 'rgba(206,147,216,.8)';
+      ctx.font = '11px IBM Plex Mono';
+      const labelR = (Math.sqrt(m * lambda * b) + Math.sqrt(Math.max(0, (m - 1) * lambda * b))) / 2 * scale;
+      ctx.fillText(String(m), cx + labelR * 0.7, cy - labelR * 0.7);
+    }
+  }
+
+  // Center dot (source)
+  ctx.fillStyle = '#ffd54f';
+  ctx.beginPath(); ctx.arc(cx, cy, 5, 0, TAU); ctx.fill();
+  ctx.fillStyle = 'rgba(255,213,79,.6)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('S', cx + 8, cy - 8);
+
+  // Legend
+  ctx.fillStyle = 'rgba(79,195,247,.7)';
+  ctx.fillRect(20, 20, 16, 16);
+  ctx.fillStyle = 'rgba(79,195,247,.9)';
+  ctx.font = '11px IBM Plex Mono';
+  ctx.fillText('Тақ зоналар (+)', 42, 33);
+
+  ctx.fillStyle = 'rgba(206,147,216,.7)';
+  ctx.fillRect(20, 44, 16, 16);
+  ctx.fillStyle = 'rgba(206,147,216,.9)';
+  ctx.fillText('Жұп зоналар (−)', 42, 57);
+}
+
+drawZones(false);
+$('numZones').oninput = function() { $('numZonesVal').textContent = this.value; drawZones(zonesAnimating); };
+$('zoneDist').oninput = function() { $('zoneDistVal').textContent = this.value; drawZones(zonesAnimating); };
+
+$('zonesAnimate').onclick = function() {
+  zonesAnimating = !zonesAnimating;
+  this.textContent = zonesAnimating ? '⏸ Тоқтату' : '▶ Анимация';
+  if (zonesAnimating) {
+    function anim() {
+      if (!zonesAnimating) return;
+      zonesT += 0.05;
+      drawZones(true);
+      requestAnimationFrame(anim);
+    }
+    anim();
+  }
+};
+
+window.addEventListener('resize', () => {
+  drawPrism();
+  drawMalus();
+  drawZones(false);
+  drawIntensity();
+});
+</script>
+</body>
+</html>
