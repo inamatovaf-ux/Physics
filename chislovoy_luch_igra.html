@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Полёт по числовому лучу</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: radial-gradient(circle at 20% 10%, #4b2e9e 0%, #2a1a63 45%, #170f3d 100%);
+    color: #2B2250;
+    padding: 24px 12px 60px;
+    overflow-x: hidden;
+  }
+  .stars {
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+      radial-gradient(2px 2px at 140px 90px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 260px 50px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 320px 160px, #fff, transparent),
+      radial-gradient(2px 2px at 380px 40px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 60px 190px, #fff, transparent);
+    background-repeat: repeat;
+    background-size: 400px 220px;
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #FFFDF7;
+    border-radius: 32px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 16px 0 rgba(0,0,0,0.15), 0 24px 40px rgba(0,0,0,0.35);
+  }
+  h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 30px;
+    text-align: center;
+    margin: 0 0 4px;
+    color: #5B2EE8;
+  }
+  .subtitle {
+    text-align: center;
+    margin: 0 0 18px;
+    color: #6b6690;
+    font-weight: 700;
+  }
+  .mascot {
+    text-align: center;
+    font-size: 54px;
+    margin-bottom: 6px;
+    transition: transform 0.25s;
+  }
+  .mascot.shake { animation: shake 0.4s; }
+  .mascot.fly { animation: flyoff 0.9s ease-in; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0) rotate(0); }
+    25% { transform: translateX(-10px) rotate(-6deg); }
+    75% { transform: translateX(10px) rotate(6deg); }
+  }
+  @keyframes flyoff {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-60px) scale(1.3); }
+  }
+  #ineqCard {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(135deg,#FFD54F,#FF8A65);
+    color: #5A2A00;
+    border-radius: 20px;
+    padding: 10px 16px;
+    margin: 0 auto 28px;
+    max-width: 300px;
+    box-shadow: 0 6px 0 #E56A2C;
+  }
+  .line-wrap {
+    position: relative;
+    margin: 0 6px 30px;
+    padding-top: 6px;
+  }
+  .line {
+    position: absolute;
+    left: 0; right: 14px; top: 29px;
+    height: 6px;
+    border-radius: 6px;
+    background: linear-gradient(90deg,#B0A2FF,#8E7BFF);
+  }
+  .arrow {
+    position: absolute;
+    right: -2px; top: 20px;
+    width: 0; height: 0;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 18px solid #8E7BFF;
+  }
+  #pointsRow {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .pt {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 4px 0 #C9C2E8, inset 0 0 0 3px #C9C2E8;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s;
+  }
+  .pt:active { transform: translateY(2px); }
+  .pt.selected { background: #FFE58A; box-shadow: 0 4px 0 #E0A400, inset 0 0 0 3px #E0A400; }
+  .pt.correct { background: #7CE7A8; box-shadow: 0 4px 0 #2FA968, inset 0 0 0 3px #2FA968; }
+  .pt.wrong { background: #FF9A9A; box-shadow: 0 4px 0 #D64545, inset 0 0 0 3px #D64545; }
+  .pt[disabled] { cursor: default; }
+  .col span {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8b85ad;
+  }
+  .values-section { margin-bottom: 18px; }
+  .values-section label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #5B2EE8;
+  }
+  #valuesInput {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 3px solid #D9D3FF;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+  }
+  #valuesInput:focus { border-color: #8E7BFF; }
+  #valuesError { color: #D64545; font-weight: 700; font-size: 13px; margin-top: 6px; display: none; }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  button.action {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 22px;
+    cursor: pointer;
+    color: #fff;
+  }
+  #checkBtn { background: #5B2EE8; box-shadow: 0 5px 0 #3B1AA0; }
+  #checkBtn:active { transform: translateY(3px); box-shadow: 0 2px 0 #3B1AA0; }
+  #nextBtn { background: #FF6F91; box-shadow: 0 5px 0 #C13B5A; display: none; }
+  #nextBtn:active { transform: translateY(3px); box-shadow: 0 2px 0 #C13B5A; }
+  #score {
+    margin-left: auto;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    color: #5B2EE8;
+    font-size: 16px;
+  }
+  #feedback {
+    margin-top: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    min-height: 24px;
+  }
+  #feedback.good { color: #2FA968; }
+  #feedback.bad { color: #D64545; }
+  .confetti-piece {
+    position: fixed;
+    top: -20px;
+    font-size: 22px;
+    z-index: 5;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="app">
+  <h1>Полёт по числовому лучу</h1>
+  <p class="subtitle">Помоги ракете найти планеты-решения!</p>
+  <div class="mascot" id="mascot">🚀</div>
+
+  <div id="ineqCard"></div>
+
+  <div class="line-wrap">
+    <div class="line"></div>
+    <div class="arrow"></div>
+    <div id="pointsRow"></div>
+  </div>
+
+  <div class="values-section">
+    <label for="valuesInput">Впиши 5 любых значений через запятую</label>
+    <input id="valuesInput" type="text" placeholder="Например: 350, 400, 500, 700, 1000" />
+    <div id="valuesError"></div>
+  </div>
+
+  <div class="controls">
+    <button class="action" id="checkBtn">Проверить 🔍</button>
+    <button class="action" id="nextBtn">Дальше 👉</button>
+    <div id="score">⭐ Счёт: 0 из 0</div>
+  </div>
+
+  <div id="feedback"></div>
+</div>
+
+<script>
+const POINTS = [0,100,200,300,400,500,600,700,800,900,1000];
+const POOL = [
+  {expr:'x > 200', bound:200, dir:'>'},
+  {expr:'x < 550', bound:550, dir:'<'},
+  {expr:'x > 290', bound:290, dir:'>'},
+  {expr:'x > 100', bound:100, dir:'>'},
+  {expr:'300 < x', bound:300, dir:'>'},
+  {expr:'x < 400', bound:400, dir:'<'},
+  {expr:'x > 600', bound:600, dir:'>'},
+  {expr:'x < 850', bound:850, dir:'<'},
+  {expr:'700 < x', bound:700, dir:'>'},
+  {expr:'x < 250', bound:250, dir:'<'}
+];
+const PLANETS = ['🪐','🌍','🌕','⭐','🌟','☄️'];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+let queue = shuffle(POOL);
+let qIndex = 0;
+let selected = new Set();
+let roundsPlayed = 0;
+let roundsCorrect = 0;
+let checked = false;
+
+const mascot = document.getElementById('mascot');
+const ineqCard = document.getElementById('ineqCard');
+const pointsRow = document.getElementById('pointsRow');
+const valuesInput = document.getElementById('valuesInput');
+const valuesError = document.getElementById('valuesError');
+const checkBtn = document.getElementById('checkBtn');
+const nextBtn = document.getElementById('nextBtn');
+const scoreEl = document.getElementById('score');
+const feedback = document.getElementById('feedback');
+
+function isSolution(val, round){
+  return round.dir === '>' ? val > round.bound : val < round.bound;
+}
+function currentRound(){ return queue[qIndex]; }
+function updateScore(){ scoreEl.textContent = '⭐ Счёт: ' + roundsCorrect + ' из ' + roundsPlayed; }
+
+function renderPoints(){
+  pointsRow.innerHTML = '';
+  POINTS.forEach((val, i) => {
+    const col = document.createElement('div');
+    col.className = 'col';
+
+    const btn = document.createElement('button');
+    btn.className = 'pt';
+    btn.dataset.val = val;
+    btn.textContent = PLANETS[i % PLANETS.length];
+    btn.setAttribute('aria-label', 'Точка ' + val);
+    btn.addEventListener('click', () => {
+      if(checked) return;
+      if(selected.has(val)){
+        selected.delete(val);
+        btn.classList.remove('selected');
+      } else {
+        selected.add(val);
+        btn.classList.add('selected');
+      }
+    });
+
+    const label = document.createElement('span');
+    label.textContent = val;
+
+    col.appendChild(btn);
+    col.appendChild(label);
+    pointsRow.appendChild(col);
+  });
+}
+
+function startRound(){
+  if(qIndex >= queue.length){
+    queue = shuffle(POOL);
+    qIndex = 0;
+  }
+  selected = new Set();
+  checked = false;
+  mascot.textContent = '🚀';
+  mascot.className = 'mascot';
+  ineqCard.textContent = currentRound().expr;
+  renderPoints();
+  valuesInput.value = '';
+  valuesError.style.display = 'none';
+  feedback.textContent = '';
+  feedback.className = '';
+  checkBtn.style.display = '';
+  nextBtn.style.display = 'none';
+  updateScore();
+}
+
+function launchConfetti(){
+  const pieces = ['🎉','⭐','✨','🪐','🎊'];
+  for(let i = 0; i < 24; i++){
+    const span = document.createElement('span');
+    span.className = 'confetti-piece';
+    span.textContent = pieces[Math.floor(Math.random()*pieces.length)];
+    span.style.left = Math.random()*100 + 'vw';
+    span.style.animationDuration = (1.6 + Math.random()*1.2) + 's';
+    document.body.appendChild(span);
+    setTimeout(() => span.remove(), 3000);
+  }
+}
+
+checkBtn.addEventListener('click', () => {
+  const raw = valuesInput.value.trim();
+  if(!raw){
+    valuesError.textContent = 'Впиши хотя бы одно значение.';
+    valuesError.style.display = 'block';
+    return;
+  }
+  const tokens = raw.split(',').map(t => t.trim()).filter(t => t.length > 0);
+  const nums = [];
+  for(const t of tokens){
+    const n = Number(t);
+    if(Number.isNaN(n)){
+      valuesError.textContent = 'Значения должны быть числами.';
+      valuesError.style.display = 'block';
+      return;
+    }
+    nums.push(n);
+  }
+  valuesError.style.display = 'none';
+
+  const round = currentRound();
+  checked = true;
+  roundsPlayed += 1;
+
+  let pointsAllCorrect = true;
+  pointsRow.querySelectorAll('.pt').forEach(btn => {
+    const val = Number(btn.dataset.val);
+    const shouldBeSelected = isSolution(val, round);
+    const isSelected = selected.has(val);
+    btn.disabled = true;
+    if(isSelected === shouldBeSelected){
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('wrong');
+      pointsAllCorrect = false;
+    }
+  });
+
+  const badValues = nums.filter(n => !isSolution(n, round));
+  const valuesAllCorrect = badValues.length === 0;
+
+  if(pointsAllCorrect && valuesAllCorrect){
+    roundsCorrect += 1;
+    mascot.className = 'mascot fly';
+    feedback.className = 'good';
+    feedback.textContent = 'Ура! Ракета летит верно — все планеты и числа подходят неравенству ' + round.expr + '!';
+    launchConfetti();
+  } else {
+    mascot.className = 'mascot shake';
+    feedback.className = 'bad';
+    let msg = '';
+    if(!pointsAllCorrect) msg += 'Красным горят планеты, где ответ не совпал. ';
+    if(!valuesAllCorrect) msg += 'Эти числа не подходят: ' + badValues.join(', ') + '.';
+    feedback.textContent = msg;
+  }
+
+  updateScore();
+  checkBtn.style.display = 'none';
+  nextBtn.style.display = '';
+});
+
+nextBtn.addEventListener('click', () => {
+  qIndex += 1;
+  startRound();
+});
+
+startRound();
+</script>
+</body>
+</html>
