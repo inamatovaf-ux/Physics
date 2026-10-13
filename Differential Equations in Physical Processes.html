@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Differential Equations in Physical Processes</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f7f6f2;--card:#fff;--tx:#1d2330;--mu:#5b6475;--ac:#d9480f;--ac2:#1c7ed6;--ln:#e3e0d8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171f;--card:#1d222d;--tx:#eceef3;--mu:#9aa3b5;--ac:#ff8a4c;--ac2:#5aa9ff;--ln:#2e3545}}
+:root[data-theme="dark"]{--bg:#14171f;--card:#1d222d;--tx:#eceef3;--mu:#9aa3b5;--ac:#ff8a4c;--ac2:#5aa9ff;--ln:#2e3545}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.6 Georgia,"Times New Roman",serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:2.2rem;line-height:1.15;margin:.2em 0}
+h2{font-size:1.5rem;margin:0 0 .4em}
+.tag{color:var(--ac);font:600 .8rem system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.sub{color:var(--mu);font-size:1.1rem}
+section{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:22px;margin:22px 0}
+.eq{background:var(--bg);border-left:4px solid var(--ac);padding:10px 14px;margin:12px 0;font-family:"Cambria Math",Georgia,serif;font-size:1.15rem;overflow-x:auto;white-space:nowrap}
+.eq.b{border-color:var(--ac2)}
+.prob{border:1px dashed var(--mu);border-radius:10px;padding:10px 14px;color:var(--mu);font-style:italic}
+ol{padding-left:1.2em} li{margin:.5em 0}
+svg{width:100%;height:auto;display:block}
+.chart text,.tank text{fill:var(--tx);font:12px system-ui,sans-serif}
+.ctl{font:15px system-ui,sans-serif;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.ctl input{flex:1;min-width:160px}
+.ans{font:600 1rem system-ui,sans-serif;background:var(--ac);color:#fff;border-radius:8px;padding:8px 14px;display:inline-block}
+.ans.b{background:var(--ac2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.grid div{background:var(--bg);border-radius:10px;padding:12px;font-size:.95rem}
+.flow{stroke-dasharray:3 12;stroke-linecap:round;animation:fl 1s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-15}}
+.stir{animation:sp 2.5s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.dot{animation:wb var(--d,3s) ease-in-out infinite alternate}
+@keyframes wb{from{transform:translate(0,0)}to{transform:translate(var(--dx),var(--dy))}}
+.tb{border-collapse:collapse;width:100%;font:15px system-ui,sans-serif;margin:8px 0}.tb td,.tb th{border:1px solid var(--ln);padding:6px 10px;text-align:left}
+@media (prefers-reduced-motion:reduce){.flow,.stir,.dot{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="tag">Mathematics in the real world</div>
+  <h1>Differential Equations in Physical Processes</h1>
+  <p class="sub">How a simple rule about <em>rate of change</em> predicts cooling coffee and salty water.</p>
+</header>
+
+<section>
+  <h2>1. The big idea</h2>
+  <p>Many physical laws do not tell us the quantity itself — they tell us <b>how fast it changes</b>. A rate of change is a derivative, so the law becomes a <b>differential equation</b>.</p>
+  <div class="grid">
+    <div><b>Step 1.</b> Read the physics: what is the rate of change proportional to?</div>
+    <div><b>Step 2.</b> Write it as an equation with a derivative.</div>
+    <div><b>Step 3.</b> Separate the variables and integrate.</div>
+    <div><b>Step 4.</b> Use the given data to find the constants.</div>
+  </div>
+  <div class="eq">dy/dt = k · y  &nbsp;⟹&nbsp; y = C · e<sup>kt</sup></div>
+</section>
+
+<section>
+  <h2>2. Example A — Newton's law of cooling</h2>
+  <div class="prob"><b>Problem 80.</b> A body cooled in 10 minutes from 100° to 60°. The surrounding air is kept at 20°. When will the body cool to 25°? (Rate of cooling is proportional to the difference between body and air temperature.)</div>
+  <p><b>Model.</b> Let T(t) be the body temperature, 20° the air temperature:</p>
+  <div class="eq">dT/dt = −k (T − 20)</div>
+  <p><b>Solution.</b></p>
+  <ol>
+    <li>Separate variables: <span class="eq" style="display:inline;border:0;padding:0;background:none">dT/(T − 20) = −k dt</span></li>
+    <li>Integrate: ln(T − 20) = −kt + ln C, so <b>T − 20 = C·e<sup>−kt</sup></b></li>
+    <li>At t = 0, T = 100: C = 80. So T = 20 + 80·e<sup>−kt</sup></li>
+    <li>At t = 10, T = 60: 40 = 80·e<sup>−10k</sup>, so e<sup>−10k</sup> = 1/2. The temperature difference halves every 10 minutes.</li>
+    <li>We need T = 25: 5 = 80·(1/2)<sup>t/10</sup>, so (1/2)<sup>t/10</sup> = 1/16 = (1/2)<sup>4</sup>, hence t/10 = 4.</li>
+  </ol>
+  <div class="eq">T(t) = 20 + 80 · (1/2)<sup>t/10</sup></div>
+  <span class="ans">Answer: after 40 minutes</span>
+  <div class="chart" style="margin-top:14px"><svg id="c1" viewBox="0 0 600 320" role="img" aria-label="Cooling curve"></svg></div>
+  <div class="ctl"><label for="s1">Time t:</label><input id="s1" type="range" min="0" max="60" value="10"><output id="o1"></output></div>
+</section>
+
+<section>
+  <h2>3. Example B — Mixing problem (salt in a tank)</h2>
+  <div class="prob"><b>Problem 78.</b> A tank holds 100 L of solution containing 10 kg of salt. Water flows in continuously at 5 L/min and is stirred in; the mixture flows out at the same rate. How much salt remains after one hour?</div>
+  <div class="tank"><svg viewBox="0 0 600 250" role="img" aria-label="Animated tank: water flows in, stirred mixture flows out">
+    <line class="flow" x1="40" y1="62" x2="190" y2="62" stroke="#1c7ed6" stroke-width="6"/>
+    <text x="40" y="44">IN: pure water, 5 L/min</text>
+    <rect x="190" y="30" width="220" height="190" rx="8" fill="none" stroke="currentColor" stroke-width="3"/>
+    <rect x="193" y="75" width="214" height="142" rx="5" fill="#74c0fc" opacity=".5"/>
+    <g id="salt" fill="#fff" stroke="#667" stroke-width="1"></g>
+    <line x1="300" y1="48" x2="300" y2="150" stroke="currentColor" stroke-width="3"/>
+    <g class="stir" style="transform-origin:300px 150px"><line x1="268" y1="150" x2="332" y2="150" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+    <text x="200" y="22">V = 100 L (constant), x(0) = 10 kg</text>
+    <line id="outp" class="flow" x1="410" y1="198" x2="560" y2="198" stroke="#1c7ed6" stroke-width="6"/>
+    <text x="418" y="182">OUT: 5 L/min</text>
+    <text x="418" y="224">carries x/100 kg of salt per L</text>
+    <text x="40" y="240">white dots = salt (stirred evenly)</text>
+  </svg></div>
+  <div class="ctl"><button id="p2" class="ans b" style="border:0;cursor:pointer">▶ Play</button><label for="s2">Time t:</label><input id="s2" type="range" min="0" max="120" value="0"><output id="o2"></output></div>
+  <div class="ctl" id="tk"></div>
+  <div class="eq b">General mixture formula: dx/dt = c<sub>in</sub>·r<sub>in</sub> − (x/V)·r<sub>out</sub></div>
+  <p style="font-size:.95rem;color:var(--mu)">x — amount of salt (kg); V — volume of liquid in the tank (L); c<sub>in</sub> — concentration of the incoming liquid (kg/L); r<sub>in</sub>, r<sub>out</sub> — flow rates in and out (L/min). Idea: <b>rate of change of salt = salt coming in − salt going out</b>.</p>
+  <p><b>Step 1 — put in the numbers.</b> Inflow equals outflow (5 L/min), so the volume stays V = 100 L.</p>
+  <table class="tb"><tr><th>Part</th><th>Formula</th><th>Value</th></tr><tr><td>Salt IN</td><td>c<sub>in</sub>·r<sub>in</sub></td><td>0 × 5 = 0 kg/min (pure water)</td></tr><tr><td>Salt OUT</td><td>(x/V)·r<sub>out</sub></td><td>(x/100) × 5 = 0.05x kg/min</td></tr></table>
+  <p><b>Step 2 — write the equation.</b> Salt IN minus salt OUT:</p>
+  <div class="eq b">dx/dt = 0 − 5 · (x/100) = −0.05 x</div>
+  <p><b>Solution.</b></p>
+  <ol>
+    <li><b>Separate variables</b> (x on the left, t on the right): dx/x = −0.05 dt</li>
+    <li><b>Integrate both sides:</b> ln x = −0.05t + ln C. Remove the logarithm: <b>x = C·e<sup>−0.05t</sup></b></li>
+    <li><b>Use the start:</b> at t = 0 there are 10 kg, so 10 = C·e<sup>0</sup> and C = 10.</li>
+    <li><b>One hour = 60 min:</b> x = 10·e<sup>−0.05·60</sup> = 10·e<sup>−3</sup> ≈ 10 × 0.0498 ≈ 0.50 kg.</li>
+  </ol>
+  <div class="eq b">x(t) = 10 · e<sup>−0.05 t</sup></div>
+  <span class="ans b">Answer: ≈ 0.5 kg of salt (about 5% of the original)</span>
+  <p style="font-size:.95rem;color:var(--mu)">Meaning of k = 0.05 = r/V = 5/100: every minute 5% of the liquid is replaced. The amount of salt halves about every ln 2 / 0.05 ≈ 14 minutes.</p>
+  <div class="chart" style="margin-top:14px"><svg id="c2" viewBox="0 0 600 320" role="img" aria-label="Salt decay curve"></svg></div>
+  
+</section>
+
+<section>
+  <h2>4. What both problems share</h2>
+  <p>Both obey the same pattern: the rate of change is proportional to the current "excess" (temperature difference or amount of salt). The solution is always an exponential, and the quantity approaches its limit (20° or 0 kg) but never overshoots it.</p>
+  <div class="eq">dy/dt = −k (y − y<sub>∞</sub>) &nbsp;⟹&nbsp; y = y<sub>∞</sub> + (y<sub>0</sub> − y<sub>∞</sub>) e<sup>−kt</sup></div>
+  <p class="sub" style="font-size:1rem">Same mathematics also describes radioactive decay, discharging capacitors and drug elimination from the body.</p>
+</section>
+</main>
+<script>
+function chart(id,f,tmax,ymin,ymax,yl,pts,asym,col,sid,oid,unit){
+  var s=document.getElementById(id),L=56,R=20,T=16,B=44,W=600,H=320,ns='http://www.w3.org/2000/svg';
+  var X=function(t){return L+(W-L-R)*t/tmax},Y=function(y){return H-B-(H-T-B)*(y-ymin)/(ymax-ymin)};
+  var h='<g stroke="currentColor" opacity=".25">';
+  for(var i=0;i<=5;i++){var yy=ymin+(ymax-ymin)*i/5;h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(yy)+'" y2="'+Y(yy)+'"/>';}
+  h+='</g><g>';
+  for(i=0;i<=5;i++){yy=ymin+(ymax-ymin)*i/5;h+='<text x="'+(L-8)+'" y="'+(Y(yy)+4)+'" text-anchor="end">'+(+yy.toFixed(1))+'</text>';}
+  for(i=0;i<=6;i++){var tt=tmax*i/6;h+='<text x="'+X(tt)+'" y="'+(H-B+18)+'" text-anchor="middle">'+Math.round(tt)+'</text>';}
+  h+='<text x="'+(W/2)+'" y="'+(H-6)+'" text-anchor="middle">t, minutes</text><text x="12" y="'+(T+4)+'">'+yl+'</text></g>';
+  if(asym!==null)h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(asym)+'" y2="'+Y(asym)+'" stroke="#888" stroke-dasharray="6 4"/><text x="'+(W-R-4)+'" y="'+(Y(asym)-6)+'" text-anchor="end">limit '+asym+'</text>';
+  var p='';for(i=0;i<=200;i++){var t=tmax*i/200;p+=(i?'L':'M')+X(t).toFixed(1)+' '+Y(f(t)).toFixed(1);}
+  h+='<path d="'+p+'" fill="none" stroke="'+col+'" stroke-width="3"/>';
+  pts.forEach(function(q){h+='<circle cx="'+X(q[0])+'" cy="'+Y(q[1])+'" r="5" fill="'+col+'"/><text x="'+(X(q[0])+8)+'" y="'+(Y(q[1])-8)+'">'+q[2]+'</text>';});
+  h+='<line id="'+id+'v" y1="'+T+'" y2="'+(H-B)+'" stroke="'+col+'" opacity=".5"/><circle id="'+id+'d" r="6" fill="#fff" stroke="'+col+'" stroke-width="3"/>';
+  s.innerHTML=h;
+  var sl=document.getElementById(sid),o=document.getElementById(oid);
+  function up(){var t=+sl.value,v=f(t);document.getElementById(id+'d').setAttribute('cx',X(t));document.getElementById(id+'d').setAttribute('cy',Y(v));
+    var l=document.getElementById(id+'v');l.setAttribute('x1',X(t));l.setAttribute('x2',X(t));o.textContent='t = '+t+' min → '+v.toFixed(2)+unit;}
+  sl.oninput=up;up();
+}
+chart('c1',function(t){return 20+80*Math.pow(.5,t/10)},60,0,100,'T, °C',[[0,100,'100°'],[10,60,'60°'],[40,25,'25° at 40 min']],20,'#d9480f','s1','o1','°');
+chart('c2',function(t){return 10*Math.exp(-.05*t)},120,0,10,'x, kg',[[0,10,'10 kg'],[60,10*Math.exp(-3),'≈0.5 kg at 60 min']],null,'#1c7ed6','s2','o2',' kg');
+(function(){
+  var g=document.getElementById('salt'),N=40,ns='http://www.w3.org/2000/svg',dots=[];
+  for(var i=0;i<N;i++){var c=document.createElementNS(ns,'circle');c.setAttribute('class','dot');c.setAttribute('r','4');
+    c.setAttribute('cx',210+Math.random()*180);c.setAttribute('cy',95+Math.random()*110);
+    c.style.setProperty('--dx',(Math.random()*40-20)+'px');c.style.setProperty('--dy',(Math.random()*30-15)+'px');c.style.setProperty('--d',(1.5+Math.random()*2.5)+'s');
+    g.appendChild(c);dots.push(c);}
+  var s=document.getElementById('s2'),old=s.oninput,tk=document.getElementById('tk'),out=document.getElementById('outp');
+  function tank(){var t=+s.value,x=10*Math.exp(-.05*t),n=Math.round(N*x/10);
+    dots.forEach(function(d,i){d.style.display=i<n?'':'none'});
+    out.setAttribute('stroke-opacity',(.3+.7*x/10).toFixed(2));
+    tk.textContent='Salt in tank: '+x.toFixed(2)+' kg · concentration x/100 = '+(x/100).toFixed(3)+' kg/L';}
+  s.oninput=function(){old();tank()};s.oninput();
+  var p=document.getElementById('p2'),h=null;
+  p.onclick=function(){if(h){clearInterval(h);h=null;p.textContent='▶ Play';return}
+    if(+s.value>=120)s.value=0;p.textContent='❚❚ Pause';
+    h=setInterval(function(){s.value=+s.value+1;s.oninput();if(+s.value>=120){clearInterval(h);h=null;p.textContent='▶ Play'}},80);};
+})();
+</script>
+</body>
+</html>
