@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exponential Growth: Bacterial Colony</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f8fb;--card:#fff;--tx:#14213d;--mut:#5a6578;--ac:#2b6cb0;--hd:#5b9bd5;--hd2:#d0deef;--bd:#d8e0ec;--ok:#1d7a4d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151d;--card:#18202c;--tx:#e6ecf5;--mut:#9aa7ba;--ac:#7ab4f0;--hd:#2f5f93;--hd2:#22344b;--bd:#2c3a4e;--ok:#5fd49a}}
+:root[data-theme="dark"]{--bg:#10151d;--card:#18202c;--tx:#e6ecf5;--mut:#9aa7ba;--ac:#7ab4f0;--hd:#2f5f93;--hd2:#22344b;--bd:#2c3a4e;--ok:#5fd49a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 Georgia,'Times New Roman',serif}
+main{max-width:860px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;margin:.2em 0}h2{font-size:1.25rem;color:var(--ac);margin:0 0 .6em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin:16px 0}
+.sub{color:var(--mut)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{border:1px solid var(--bd);padding:8px 10px;text-align:center}
+th{background:var(--hd);color:#fff}td{background:var(--hd2)}
+.step{display:flex;gap:12px;margin:12px 0}
+.n{flex:0 0 28px;height:28px;border-radius:50%;background:var(--ac);color:var(--bg);display:grid;place-items:center;font:600 14px sans-serif}
+.eq{background:var(--hd2);border-radius:8px;padding:8px 12px;margin:6px 0;font-family:'Cambria Math',Georgia,serif;overflow-x:auto}
+.ans{border-left:4px solid var(--ok);padding-left:12px;margin:10px 0}.ans b{color:var(--ok)}
+.dishes{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.dishes figure{margin:0;text-align:center}
+svg{max-width:100%;height:auto}
+</style></head><body><main>
+<h1>Exponential Growth Problem</h1>
+<p class="sub">Lesson 31–32 · Applied problems using integration and differentiation · Differential equations</p>
+
+<section class="card">
+<h2>Problem statement</h2>
+<p>A bacterial colony initially contains <b>100</b> bacteria and begins to grow at a rate proportional to its size. After <b>1 hour</b> the number of bacteria reaches <b>420</b>.</p>
+<p>Find:<br>a) an expression for the number of bacteria after <i>t</i> hours;<br>b) the number of bacteria after 3 hours;<br>c) the growth rate after 3 hours;<br>d) the time when the number of bacteria reaches 10 000.</p>
+</section>
+
+<section class="card">
+<h2>Illustration of the condition</h2>
+<div class="dishes">
+<figure><svg id="d0" width="200" height="200" viewBox="0 0 200 200"></svg><figcaption>t = 0 h · N = 100</figcaption></figure>
+<figure><svg id="d1" width="200" height="200" viewBox="0 0 200 200"></svg><figcaption>t = 1 h · N = 420</figcaption></figure>
+</div>
+<p class="sub" style="text-align:center">Each dot is one bacterium (drawn to scale): in one hour the colony grows 4.2 times.</p>
+<svg id="chart" viewBox="0 0 640 320" width="640" role="img" aria-label="Growth curve N(t)=100·4.2^t"></svg>
+</section>
+
+<section class="card">
+<h2>Step 1–4. Notation and given data</h2>
+<div class="scroll"><table>
+<tr><th>Notation</th><th>Law</th><th>Initial condition</th><th>Additional condition</th><th>Question</th></tr>
+<tr><td>N(t) – number of bacteria at time t</td><td>dN/dt = kN</td><td>N(0) = 100</td><td>N(1) = 420</td><td>N(t) – ?<br>N(3) – ?<br>v(3) – ?<br>N(?) = 10 000</td></tr>
+</table></div>
+<p class="sub">Independent variable: time <i>t</i> (hours). Unknown function: <i>N(t)</i>.</p>
+</section>
+
+<section class="card">
+<h2>Step 5–7. Solution</h2>
+<div class="step"><div class="n">1</div><div><b>Separate the variables</b> (the equation is separable):
+<div class="eq">dN/dt = kN ⟹ dN/N = k dt ⟹ ∫dN/N = ∫k dt ⟹ ln N = kt + c</div>
+<div class="eq">N(t) = C·e<sup>kt</sup>, where C = e<sup>c</sup></div></div></div>
+<div class="step"><div class="n">2</div><div><b>Use the initial condition</b> N(0) = 100:
+<div class="eq">C·e<sup>0</sup> = 100 ⟹ C = 100</div></div></div>
+<div class="step"><div class="n">3</div><div><b>Use the additional condition</b> N(1) = 420:
+<div class="eq">100·e<sup>k</sup> = 420 ⟹ e<sup>k</sup> = 4.2 ⟹ k = ln 4.2 ≈ 1.435</div></div></div>
+<div class="step"><div class="n">4</div><div><b>Particular solution</b>
+<div class="eq">N(t) = 100·e<sup>kt</sup> = 100·(4.2)<sup>t</sup></div></div></div>
+</section>
+
+<section class="card">
+<h2>Step 8. Answers</h2>
+<div class="ans"><b>a)</b> N(t) = 100·4.2<sup>t</sup> = 100·e<sup>1.435t</sup></div>
+<div class="ans"><b>b)</b> N(3) = 100·4.2³ = 100·74.088 ≈ <b>7409</b> bacteria</div>
+<div class="ans"><b>c)</b> Growth rate v(t) = N′(t) = kN(t).<br>v(3) = 1.435·7408.8 ≈ <b>10 632 bacteria per hour</b></div>
+<div class="ans"><b>d)</b> 100·4.2<sup>t</sup> = 10 000 ⟹ 4.2<sup>t</sup> = 100 ⟹ t = ln 100 / ln 4.2 = 4.605 / 1.435 ≈ <b>3.21 h</b> (about 3 h 13 min)</div>
+</section>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+function el(p,t,a,tx){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(tx)e.textContent=tx;p.appendChild(e);return e}
+function dish(id,n,seed){const s=document.getElementById(id);
+el(s,'circle',{cx:100,cy:100,r:94,fill:'#e8f1e4',stroke:'#7a8a99','stroke-width':4,'fill-opacity':.55});
+let x=seed;const r=()=>(x=(x*16807)%2147483647)/2147483647;
+for(let i=0;i<n;i++){const a=r()*6.283,d=Math.sqrt(r())*86;
+const c=el(s,'circle',{cx:100+d*Math.cos(a),cy:100+d*Math.sin(a),r:n>200?1.6:2.6,fill:'#b8481f'});B.push({c,x:100+d*Math.cos(a),y:100+d*Math.sin(a),vx:(r()-.5)*.6,vy:(r()-.5)*.6})}}
+const B=[];dish('d0',100,7);dish('d1',420,11);
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches)(function f(){B.forEach(b=>{b.vx=Math.max(-.8,Math.min(.8,b.vx+(Math.random()-.5)*.3));b.vy=Math.max(-.8,Math.min(.8,b.vy+(Math.random()-.5)*.3));b.x+=b.vx;b.y+=b.vy;const dx=b.x-100,dy=b.y-100;if(dx*dx+dy*dy>86*86){b.vx=-b.vx;b.vy=-b.vy;b.x-=dx*.05;b.y-=dy*.05}b.c.setAttribute('cx',b.x);b.c.setAttribute('cy',b.y)});requestAnimationFrame(f)})();
+(function(){const s=document.getElementById('chart'),X=t=>60+t*160,Y=v=>280-v*250/12000,c='currentColor';
+el(s,'line',{x1:60,y1:280,x2:600,y2:280,stroke:c,opacity:.6});el(s,'line',{x1:60,y1:20,x2:60,y2:280,stroke:c,opacity:.6});
+for(let t=0;t<=3;t++)el(s,'text',{x:X(t),y:300,'text-anchor':'middle',fill:c,'font-size':12,'font-family':'sans-serif'},t);
+[0,4000,8000,12000].forEach(v=>{el(s,'text',{x:54,y:Y(v)+4,'text-anchor':'end',fill:c,'font-size':12,'font-family':'sans-serif'},v);el(s,'line',{x1:60,y1:Y(v),x2:600,y2:Y(v),stroke:c,opacity:.12})});
+el(s,'text',{x:330,y:318,'text-anchor':'middle',fill:c,'font-size':12,'font-family':'sans-serif'},'t, hours');
+el(s,'text',{x:70,y:16,fill:c,'font-size':12,'font-family':'sans-serif'},'N, bacteria');
+let d='';for(let t=0;t<=3.3;t+=.05)d+=(t?'L':'M')+X(t)+' '+Y(100*Math.pow(4.2,t));
+el(s,'path',{d,fill:'none',stroke:'#2b6cb0','stroke-width':3});
+el(s,'line',{x1:60,y1:Y(10000),x2:X(3.209),y2:Y(10000),stroke:'#b8481f','stroke-dasharray':'5 4'});
+el(s,'line',{x1:X(3.209),y1:Y(10000),x2:X(3.209),y2:280,stroke:'#b8481f','stroke-dasharray':'5 4'});
+[[0,100,'100'],[1,420,'420'],[3,7409,'N(3)≈7409'],[3.209,10000,'10 000 at t≈3.21']].forEach(([t,v,l],i)=>{el(s,'circle',{cx:X(t),cy:Y(v),r:5,fill:'#b8481f'});
+el(s,'text',{x:X(t)+(i>1?-10:8),y:Y(v)-(i>1?4:8),'text-anchor':i>1?'end':'start',fill:c,'font-size':12,'font-family':'sans-serif'},l)});
+})();
+</script>
+</main></body></html>
