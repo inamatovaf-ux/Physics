@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RoboMath – Робот құтқарушы</title>
+<style>
+:root{--bg:#f4f7fd;--panel:#fff;--ink:#1f2a44;--mut:#5b6b8c;--line:#e0e6f2;--arena:#f9fbff;--ground:#e8eef9;--soft:#eef3ff;--blue:#2f80ed;--green:#22b573;--red:#ff4d5e;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121826;--panel:#1b2438;--ink:#eef2fb;--mut:#a3b0cc;--line:#2d3a57;--arena:#16203a;--ground:#243153;--soft:#243153}}
+:root[data-theme="dark"]{--bg:#121826;--panel:#1b2438;--ink:#eef2fb;--mut:#a3b0cc;--line:#2d3a57;--arena:#16203a;--ground:#243153;--soft:#243153}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+header{padding:12px 18px;background:var(--panel);border-bottom:4px solid #ffc928}
+h1{margin:0;font-size:1.5rem}h1 span{color:var(--blue)}h2{margin:0 0 8px;font-size:1.1rem}
+main{max-width:1000px;margin:0 auto;padding:14px 18px 24px}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px}
+svg{width:100%;height:auto;display:block;border-radius:12px;background:var(--arena)}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.counters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.counters div{background:var(--soft);border-radius:12px;padding:8px;text-align:center}
+.counters b{display:block;font-size:1.3rem;color:var(--blue)}.counters small{color:var(--mut)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+label{font-weight:700;display:block;margin-bottom:4px}
+input{width:170px;font:inherit;padding:9px 12px;border:2px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink)}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:10px 18px;cursor:pointer;color:#fff}
+#run{background:var(--green)}#reset{background:var(--red)}button:disabled{opacity:.45;cursor:not-allowed}
+#msg{min-height:1.4em;font-weight:700;color:var(--red);margin-top:6px}
+.res{border-radius:12px;padding:10px 12px;font-weight:700;margin:0 0 8px}
+.res.ok{background:#d9f7e8;color:#0b6b3f}.res.warn{background:#fff1cc;color:#6b4a00}.res.bad{background:#ffdfe2;color:#a3162a}
+.step{background:var(--soft);border-radius:10px;padding:7px 10px;margin:6px 0}
+</style>
+</head>
+<body>
+<header><h1>Robo<span>Math</span> · Робот құтқарушы</h1></header>
+<main>
+  <section class="panel">
+    <h2>Арена</h2>
+    <svg id="arena" viewBox="0 0 900 190" role="img" aria-label="Стартан адамға дейінгі жол"></svg>
+    <svg id="close" viewBox="0 0 420 170" style="margin-top:10px" role="img" aria-label="Роботтың жақын көрінісі"></svg>
+    <div class="counters">
+      <div><b id="cRot">0.00</b><small>дөңгелектің айналымы</small></div>
+      <div><b id="cDist">0.00 cm</b><small>жүрілген жол</small></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Бағдарлама</h2>
+    <label for="rot">Дөңгелектің … айналымына алға жүр</label>
+    <div class="row">
+      <input id="rot" type="number" min="0" step="any" inputmode="decimal" placeholder="мысалы, 12.5">
+      <button id="run">▶ Іске қосу</button>
+      <button id="reset">↺ Қайта бастау</button>
+    </div>
+    <div id="msg" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Есептеу</h2>
+    <div id="calc" style="color:var(--mut)">Есептеу іске қосқаннан кейін шығады.</div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const f = x => x.toFixed(2).replace(".", ",");        // rounding for display only
+const P = { d: 5, bump: 12, target: 1000 };           // cm (fixed)
+const C = Math.PI * P.d;
+const MAXN = 300;
+let raf = 0, running = false, K = 0, ext = P.target;
+const X0 = 60, X = c => X0 + c * K;
+
+/* Deterministic physics: axle = rotations × C; front = axle + bump; collision if front reaches the human */
+function calc(N) {
+  const maxRot = (P.target - P.bump) / C, axle = N * C, bumper = axle + P.bump;
+  return { N, maxRot, axle, bumper, hit: N >= maxRot, gap: P.target - bumper, pushed: Math.max(0, bumper - P.target) };
+}
+
+/* ---------- Arena (rebuilt with a longer track when the robot overshoots) ---------- */
+function buildArena(e) {
+  ext = e; K = 780 / ext;
+  const steps = [50, 100, 200, 500, 1000, 2000, 5000], step = steps.find(v => ext / v <= 12) || 5000;
+  let s = `<rect x="0" y="130" width="900" height="30" fill="var(--ground)"/>`;
+  for (let y = 70; y <= 130; y += 30) s += `<line x1="${X0}" x2="${X(ext)}" y1="${y}" y2="${y}" stroke="var(--line)"/>`;
+  for (let c = 0; c <= ext; c += step)
+    s += `<line x1="${X(c)}" x2="${X(c)}" y1="40" y2="160" stroke="var(--line)"/><text x="${X(c)}" y="178" font-size="11" text-anchor="middle" fill="var(--mut)">${c / 100} м</text>`;
+  s += `<line x1="${X(0)}" x2="${X(0)}" y1="30" y2="160" stroke="#22b573" stroke-width="4"/><text x="${X(0)}" y="22" font-size="12" font-weight="700" text-anchor="middle" fill="#22b573">СТАРТ</text>`;
+  s += `<line x1="${X(P.target)}" x2="${X(P.target)}" y1="30" y2="160" stroke="#ff4d5e" stroke-width="3" stroke-dasharray="6 4"/><text x="${X(P.target)}" y="22" font-size="12" font-weight="700" text-anchor="middle" fill="#ff4d5e">АДАМ (${P.target / 100} м)</text>`;
+  // human: outer group = position on the track, inner group = flight (lift + tumble)
+  s += `<g id="hum"><g id="humb"><g stroke="#1f2a44" stroke-width="3" stroke-linecap="round" fill="none"><circle cx="8" cy="-38" r="7" fill="#ffd9b3"/><path d="M8-31V-14M8-26L1-18M8-26L15-18M8-14L3 0M8-14L13 0"/></g></g></g>`;
+  s += `<g id="rob"><g transform="scale(${K})"><rect x="-18" y="-14" width="18" height="10" rx="2" fill="#2f80ed"/><rect x="-14" y="-20" width="8" height="6" fill="#ffc928"/><rect x="0" y="-11" width="${P.bump}" height="6" fill="#ff4d5e"/><circle cx="0" cy="-2.5" r="2.5" fill="#1f2a44"/></g><path d="M0-42l-7-12h14z" fill="#2f80ed"/></g>`;
+  s += `<text id="boom" x="0" y="95" font-size="38" text-anchor="middle" style="opacity:0;transition:opacity .6s">💥</text>`;
+  $("arena").innerHTML = s;
+}
+(function buildClose() {
+  const wheel = `<circle r="20" fill="#2b3552"/><circle r="12" fill="#e9eefc"/><line x1="-12" x2="12" stroke="#2b3552" stroke-width="3"/><line y1="-12" y2="12" stroke="#2b3552" stroke-width="3"/><circle cx="16" r="3.5" fill="#ffc928"/>`;
+  $("close").innerHTML =
+    `<line x1="0" x2="420" y1="140" y2="140" stroke="var(--mut)" stroke-width="2"/>
+     <g id="w2" opacity=".5">${wheel}</g>
+     <rect x="26" y="82" width="144" height="46" rx="8" fill="#2f80ed"/><rect x="60" y="62" width="60" height="24" rx="6" fill="#ffc928"/>
+     <circle cx="75" cy="74" r="3" fill="#1f2a44"/><circle cx="90" cy="74" r="3" fill="#1f2a44"/><rect x="130" y="92" width="30" height="26" rx="5" fill="#8a5cf6"/>
+     <rect x="170" y="92" width="${P.bump * 8}" height="30" rx="6" fill="#ff4d5e"/><rect x="${170 + P.bump * 8 - 8}" y="86" width="8" height="42" rx="3" fill="#a3162a"/>
+     <g id="w1">${wheel}</g><circle cx="170" cy="120" r="3" fill="#ffc928" stroke="#2b3552"/>`;
+})();
+
+/* rot = wheel rotations so far; q = 0..1 progress of the human's flight after impact */
+function render(rot, q) {
+  const a = rot * 360, front = rot * C + P.bump, hx = Math.max(P.target, front);
+  $("rob").setAttribute("transform", `translate(${X(rot * C)},130)`);
+  $("w1").setAttribute("transform", `translate(170 120) rotate(${a})`);
+  $("w2").setAttribute("transform", `translate(182 108) rotate(${a})`);
+  $("hum").setAttribute("transform", `translate(${X(hx) + 1},130)`);   // the robot pushes the human along
+  const u = Math.min(1, q / 0.7);                                       // flight: rise, tumble, land lying down
+  $("humb").setAttribute("transform", `translate(0 ${(-70 * Math.sin(Math.PI * u) + 17 * u).toFixed(1)}) rotate(${(-450 * u).toFixed(1)} 8 -20)`);
+  $("cRot").textContent = f(rot);
+  $("cDist").textContent = f(rot * C) + " см";
+}
+
+/* ---------- Run / Reset ---------- */
+function verdict(r) {
+  if (r.hit) return ["bad", "💥 Соқтығыс! Робот адамды қағып кетті."];
+  if (r.gap > 50) return ["warn", "Тым ерте тоқтады."];
+  return ["ok", "✅ Сәтті! Робот адамға жетпей тоқтады."];
+}
+function run() {
+  const N = parseFloat($("rot").value);
+  if (!isFinite(N) || N < 0) { $("msg").textContent = "Айналым санын 0 немесе одан үлкен сан етіп енгізіңіз."; return; }
+  if (N > MAXN) { $("msg").textContent = `Сан тым үлкен (ең көбі ${MAXN}).`; return; }
+  $("msg").textContent = ""; cancelAnimationFrame(raf);
+  const r = calc(N), dur = Math.min(7000, Math.max(1800, N * 110));
+  buildArena(Math.max(P.target, r.bumper)); render(0, 0);          // longer track if the robot goes past the target
+  running = true; $("run").disabled = true; $("calc").textContent = "…";
+  let t0 = null, tImp = null;
+  const step = t => {
+    if (t0 === null) t0 = t;
+    const p = Math.min(1, (t - t0) / dur), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2, rot = N * e;
+    let q = 0;
+    if (r.hit && rot >= r.maxRot) {                                  // impact: human is knocked away
+      if (tImp === null) { tImp = t; boom(); }
+      q = Math.min(1, (t - tImp) / 1000);
+    }
+    render(rot, q);
+    if (p < 1 || (r.hit && q < 1)) { raf = requestAnimationFrame(step); return; }
+    render(N, r.hit ? 1 : 0); running = false; $("run").disabled = false; show(r);
+  };
+  raf = requestAnimationFrame(step);
+}
+function boom() {
+  const b = $("boom"); b.setAttribute("x", X(P.target) + 10); b.style.opacity = 1;
+  setTimeout(() => { b.style.opacity = 0; }, 600);
+  $("arena").classList.add("shake"); setTimeout(() => $("arena").classList.remove("shake"), 450);
+}
+function show(r) {
+  const [cls, txt] = verdict(r);
+  const last = r.hit
+    ? `<div class="step">Адам ${P.target} см нүктесінен <b>${f(r.pushed)} см</b> алысқа ұшып кетті (${f(r.pushed / 100)} м).</div>`
+    : `<div class="step">Адамға дейін: ${P.target} − ${f(r.bumper)} = <b>${f(r.gap)} см</b></div>`;
+  $("calc").innerHTML = `<div class="res ${cls}">${txt}</div>
+   <div class="step">Дөңгелек диаметрі d = ${P.d} см</div>
+   <div class="step">C = π × d = π × ${P.d} ≈ <b>${f(C)} см</b></div>
+   <div class="step">Қашықтық = айналым × C = ${f(r.N)} × ${f(C)} ≈ <b>${f(r.axle)} см</b> (${f(r.axle / 100)} м)</div>
+   <div class="step">Роботтың алды = ${f(r.axle)} + ${P.bump} = <b>${f(r.bumper)} см</b></div>${last}`;
+}
+function reset() {
+  cancelAnimationFrame(raf); running = false; $("run").disabled = false;
+  buildArena(P.target); render(0, 0); $("msg").textContent = "";
+  $("calc").textContent = "Есептеу іске қосқаннан кейін шығады.";
+}
+$("run").onclick = run; $("reset").onclick = reset;
+$("rot").addEventListener("keydown", e => { if (e.key === "Enter" && !running) run(); });
+buildArena(P.target); render(0, 0);
+</script>
+</body>
+</html>
